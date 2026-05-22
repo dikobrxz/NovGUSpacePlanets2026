@@ -1,42 +1,67 @@
 using UnityEngine;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("UI Panels")]
-    [SerializeField] private GameObject startScreen;
-    [SerializeField] private GameObject questUI;
-    [SerializeField] private GameObject quizUI;
-    [SerializeField] private GameObject finalScreen;
+    [Header("Subtitle UI")]
+    [SerializeField] private GameObject subtitlePanel;
+    [SerializeField] private TMP_Text subtitleText;
 
-    public void HideAllUI()
+    [Header("Lever Value UI")]
+    [SerializeField] private GameObject firstLeverPanel;
+    [SerializeField] private TMP_Text firstLeverText;
+
+    [SerializeField] private GameObject secondLeverPanel;
+    [SerializeField] private TMP_Text secondLeverText;
+
+    private void Start()
     {
-        startScreen.SetActive(false);
-        questUI.SetActive(false);
-        quizUI.SetActive(false);
-        finalScreen.SetActive(false);
+        HideSubtitles();
+        HideFirstLeverValue();
+        HideSecondLeverValue();
     }
 
-    public void ShowStartScreen()
+    public void ShowSubtitles(string text)
     {
-        HideAllUI();
-        startScreen.SetActive(true);
+        subtitleText.text = text;
+        subtitlePanel.SetActive(true);
     }
 
-    public void ShowQuestUI()
+    public void ShowHint(string text)
     {
-        HideAllUI();
-        questUI.SetActive(true);
+        subtitleText.text = text;
+        subtitlePanel.SetActive(true);
     }
 
-    public void ShowQuiz()
+    public void HideTextPanel()
     {
-        HideAllUI();
-        quizUI.SetActive(true);
+        subtitlePanel.SetActive(false);
     }
 
-    public void ShowFinalScreen()
+    public void HideSubtitles()
     {
-        HideAllUI();
-        finalScreen.SetActive(true);
+        subtitlePanel.SetActive(false);
+    }
+
+    public void ShowFirstLeverValue(int value)
+    {
+        firstLeverText.text = value.ToString();
+        firstLeverPanel.SetActive(true);
+    }
+
+    public void HideFirstLeverValue()
+    {
+        firstLeverPanel.SetActive(false);
+    }
+
+    public void ShowSecondLeverValue(int value)
+    {
+        secondLeverText.text = value.ToString();
+        secondLeverPanel.SetActive(true);
+    }
+
+    public void HideSecondLeverValue()
+    {
+        secondLeverPanel.SetActive(false);
     }
 }

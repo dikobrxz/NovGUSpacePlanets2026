@@ -3,7 +3,57 @@ guid: 516832242c1bf4f4f86212e968cf16b8
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material _
+    second: {fileID: 2100000, guid: adafc804ebe346e4397d6b28609f06a9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Vents
+    second: {fileID: 2100000, guid: 3f1a1950a2481f744853751f311c3fd2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: aluminum
+    second: {fileID: 2100000, guid: 03afe3cc20118b74683ab82ff466de34, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: black_krinkle
+    second: {fileID: 2100000, guid: b229e8821b580ec4fab46713abaa97ff, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: dish_AO
+    second: {fileID: 2100000, guid: 95158cb3f8ff644439502b11b15fafb2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: foil_gold
+    second: {fileID: 2100000, guid: bb7b26dcfd1109440b4dea1d93a80d5b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: foil_gold_2
+    second: {fileID: 2100000, guid: cca3199b951c5084fa3ec22a8a5bd10c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: plastic_dark
+    second: {fileID: 2100000, guid: 7599353a21240c84b8efdaefc4605a8b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: tex_01
+    second: {fileID: 2100000, guid: 64d4c114f5585fd4792c3b85be3bc229, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: transparent
+    second: {fileID: 2100000, guid: 95867ee146b91ef479caf28de99db43d, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
