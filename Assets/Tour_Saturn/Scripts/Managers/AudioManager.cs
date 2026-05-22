@@ -9,8 +9,11 @@ public enum AudioType
     Research,
     Quest,
     Return,
-    End,
-    SuccessSignal
+    SuccessSignal,
+    QuizGood,
+    QuizBad,
+    QuizPerfect,
+    End
 }
 
 public class AudioManager : MonoBehaviour
@@ -29,6 +32,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip researchClip;
     [SerializeField] private AudioClip questClip;
     [SerializeField] private AudioClip returnClip;
+    [SerializeField] private AudioClip quizGoodClip;
+    [SerializeField] private AudioClip quizBadClip;
+    [SerializeField] private AudioClip quizPerfectClip;
     [SerializeField] private AudioClip endClip;
 
     [Header("SFX Clips")]
@@ -110,5 +116,10 @@ public class AudioManager : MonoBehaviour
 
             _ => ""
         };
+    }
+
+    public void PlayFinalResult(AudioType type)
+    {
+        StartCoroutine(PlayAndWait(type));
     }
 }

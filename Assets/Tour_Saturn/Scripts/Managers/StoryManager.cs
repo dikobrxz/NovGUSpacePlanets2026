@@ -40,7 +40,7 @@ public class StoryManager : MonoBehaviour
     [SerializeField] private TransmitterQuest transmitterQuest;
 
     [Header("Hints")]
-    [SerializeField] private HintManager hintManager;
+    //[SerializeField] private HintManager hintManager;
     [SerializeField] private ContinueInput continueInput;
 
     public Stage CurrentStage { get; private set; }
