@@ -16,6 +16,8 @@ public class TransmitterQuest : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioManager audioManager;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip clickSound;
 
     public bool IsCompleted { get; private set; }
 
