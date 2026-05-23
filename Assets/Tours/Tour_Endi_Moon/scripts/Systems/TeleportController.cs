@@ -45,10 +45,15 @@ namespace MoonGame
         [Header("Задержка перед запуском квиза после возврата (сек)")]
         [SerializeField] private float quizStartDelay = 1.5f;
 
+        [Header("Locomotion")]
+        [SerializeField] private UnityEngine.XR.Interaction.Toolkit.Locomotion.Movement.ContinuousMoveProvider moveProvider;
+
         private StoryManager story;
 
         private void Start()
         {
+            if (moveProvider != null)
+                moveProvider.enabled = false;
             story = GameManager.Instance != null
                 ? GameManager.Instance.Story
                 : FindFirstObjectByType<StoryManager>();
@@ -75,6 +80,11 @@ namespace MoonGame
 
         private void HandleStateChanged(GameState state)
         {
+            if (moveProvider != null)
+                moveProvider.enabled = state == GameState.Exploration
+                                    || state == GameState.Collecting
+                                    || state == GameState.Return;
+
             switch (state)
             {
                 // Spawn 1 → Spawn 2: второй монолог
@@ -107,12 +117,18 @@ namespace MoonGame
         /// </summary>
         public void TriggerReturnTeleport()
         {
-            if (spawn2 == null) return;
+            Debug.Log("[TeleportController] TriggerReturnTeleport вызван!");
+            if (spawn2 == null)
+            {
+                Debug.LogError("[TeleportController] spawn2 не назначен!");
+                return;
+            }
             StartCoroutine(DoTeleport(spawn2, afterTeleport: StartQuizDelayed));
         }
 
         private IEnumerator DoTeleport(Transform destination, System.Action afterTeleport)
         {
+            Debug.Log($"[TeleportController] DoTeleport → {destination.name}, fader: {fader}");
             if (fader == null)
             {
                 MoveRig(destination);

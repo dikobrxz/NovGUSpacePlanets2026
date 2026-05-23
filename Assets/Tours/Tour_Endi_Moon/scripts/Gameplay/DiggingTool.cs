@@ -15,10 +15,6 @@ namespace MoonGame
 
         private readonly System.Collections.Generic.Dictionary<int, float> lastHitTime = new();
 
-        // Фрейм последнего удара — гарантирует, что за один физический контакт
-        // бьётся ровно одна кучка, даже если коллайдеры соседних кучек перекрываются.
-        private int lastHitFrame = -1;
-
         private void OnTriggerEnter(Collider other)
         {
             RegisterPileHit(other);
@@ -34,17 +30,13 @@ namespace MoonGame
             var pile = other.GetComponent<SandPile>();
             if (pile == null || pile.IsDug) return;
 
-            // Один удар за кадр — исключаем одновременное попадание по двум кучкам
-            int frame = Time.frameCount;
-            if (frame == lastHitFrame) return;
-
             float now = Time.time;
             int id = pile.GetInstanceID();
             if (lastHitTime.TryGetValue(id, out float prev) && now - prev < hitCooldown) return;
 
-            lastHitFrame = frame;
             lastHitTime[id] = now;
             pile.RegisterHit();
         }
     }
+
 }

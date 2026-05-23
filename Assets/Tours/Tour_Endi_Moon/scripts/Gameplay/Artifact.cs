@@ -6,7 +6,7 @@ namespace MoonGame
 {
     /// <summary>
     /// Артефакт, спрятанный в кучке земли.
-    /// После откапывания остаётся лежать на месте с лунной гравитацией,
+    /// После откапывания остаётся лежать на месте,
     /// пока игрок сам не возьмёт его в руку.
     /// После укладки в ящик — полностью блокируется (см. ArtifactBox).
     /// </summary>
@@ -20,21 +20,12 @@ namespace MoonGame
         [SerializeField] private float riseHeight = 0.15f;
         [SerializeField] private float riseDuration = 0.6f;
 
-        [Header("Лунная гравитация (м/с²). Реальная ~1.62, для геймплея ~1.2–1.8)")]
-        [SerializeField] private float lunarGravity = 1.62f;
-
-        [Header("Линейное сопротивление для плавного падения (0.5–1.5)")]
-        [SerializeField] private float linearDamping = 1.0f;
-
         [Header("XR Grab Interactable (будет активирован после откопки)")]
         [SerializeField] private XRGrabInteractable grabInteractable;
 
         private Rigidbody rb;
-        private Coroutine gravityCoroutine;
 
         public bool IsUncovered { get; private set; }
-
-        /// <summary>true после того как артефакт зафиксирован в ящике.</summary>
         public bool IsStored { get; private set; }
 
         private Vector3 riseStartPos;
@@ -48,7 +39,6 @@ namespace MoonGame
             if (grabInteractable != null)
             {
                 grabInteractable.enabled = false;
-                // Прерываем анимацию подъёма при захвате, чтобы Update не перезаписывал позицию
                 grabInteractable.selectEntered.AddListener(_ => CancelRise());
             }
 
@@ -76,7 +66,6 @@ namespace MoonGame
             }
         }
 
-        /// <summary>Прерывает анимацию подъёма при захвате артефакта игроком.</summary>
         private void CancelRise()
         {
             if (!rising) return;
@@ -109,32 +98,19 @@ namespace MoonGame
 
         /// <summary>
         /// Вызывается из ArtifactBox при фиксации артефакта в коробке.
-        /// После этого SandPile не сможет повторно «открыть» этот артефакт.
         /// </summary>
         public void MarkStored()
         {
             IsStored = true;
-            IsUncovered = true; // на всякий случай
+            IsUncovered = true;
         }
 
-        /// <summary>Включает лунную гравитацию через кастомную силу.</summary>
+        /// <summary>Включает стандартную гравитацию Unity.</summary>
         private void EnablePhysics()
         {
             if (rb == null) return;
             rb.isKinematic = false;
-            rb.useGravity = false;            // стандартная гравитация отключена — применяем лунную
-            rb.linearDamping = linearDamping; // плавное торможение — имитация лёгкого сопротивления
-            if (gravityCoroutine != null) StopCoroutine(gravityCoroutine);
-            gravityCoroutine = StartCoroutine(ApplyLunarGravity());
-        }
-
-        private IEnumerator ApplyLunarGravity()
-        {
-            while (rb != null && !rb.isKinematic)
-            {
-                rb.AddForce(Vector3.down * lunarGravity, ForceMode.Acceleration);
-                yield return new WaitForFixedUpdate();
-            }
+            rb.useGravity = true;
         }
     }
 }
