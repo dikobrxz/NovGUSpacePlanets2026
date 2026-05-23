@@ -13,7 +13,7 @@ public class GrabLogger : MonoBehaviour
 
     private void OnGrabbed(SelectEnterEventArgs args)
     {
-        Debug.Log("��������� ����! (Marker grabbed)");
+        Debug.Log("Marker grabbed");
 
         GetComponent<Renderer>().material.color = Color.red;
     }
