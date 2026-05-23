@@ -125,13 +125,6 @@ public class QuizManager : MonoBehaviour
     {
         quizCanvas.SetActive(false);
 
-        if (correctAnswers == 5)
-            audioManager.PlayFinalResult(AudioType.QuizPerfect);
-        else if (correctAnswers >= 3)
-            audioManager.PlayFinalResult(AudioType.QuizGood);
-        else
-            audioManager.PlayFinalResult(AudioType.QuizBad);
-
         OnQuizFinished?.Invoke();
 
         Debug.Log($"Квиз завершён. Правильных ответов: {correctAnswers}");

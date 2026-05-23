@@ -83,6 +83,9 @@ public class AudioManager : MonoBehaviour
             AudioType.Research => researchClip,
             AudioType.Quest => questClip,
             AudioType.Return => returnClip,
+            AudioType.QuizBad => quizBadClip,
+            AudioType.QuizGood => quizGoodClip,
+            AudioType.QuizPerfect => quizPerfectClip,
             AudioType.End => endClip,
             AudioType.SuccessSignal => successSignalClip,
             _ => null
@@ -110,6 +113,15 @@ public class AudioManager : MonoBehaviour
 
             AudioType.Return =>
                 "Благодаря тебе мы отправили эти данные учёным. Теперь мы можем вернуться на корабль.",
+
+            AudioType.QuizBad =>
+                "Спасибо, юный друг! Думаю, нам стоит ещё раз посетить Сатурн, чтобы узнать немного больше.",
+
+            AudioType.QuizGood =>
+                "Спасибо, наш юный исследователь! Твоих знаний уже достаточно, чтобы помочь учёным организовать новую миссию по исследованию Сатурна.",
+
+            AudioType.QuizPerfect =>
+                "Это невероятный успех нашего с тобой исследования Сатурна! Твои знания помогут человечеству узнать больше о нашей Солнечной системе.",
 
             AudioType.End =>
                 "Ну что ж, отправимся в новое приключение.",

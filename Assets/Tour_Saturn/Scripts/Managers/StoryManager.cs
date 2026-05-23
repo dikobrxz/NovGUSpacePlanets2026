@@ -9,6 +9,7 @@ public class StoryManager : MonoBehaviour
     [Header("Managers")]
     [SerializeField] private AudioManager audioManager;
     [SerializeField] private UIManager uiManager;
+    [SerializeField] private QuizManager quizManager;
 
     [Header("Player")]
     [SerializeField] private Transform player;
@@ -22,6 +23,7 @@ public class StoryManager : MonoBehaviour
 
     [Header("Story Objects")]
     [SerializeField] private GameObject saturn;
+    [SerializeField] private GameObject rings;
     [SerializeField] private GameObject terrain;
     [SerializeField] private GameObject titan;
     [SerializeField] private GameObject cassini;
@@ -29,8 +31,9 @@ public class StoryManager : MonoBehaviour
     [SerializeField] private GameObject sun;
     [SerializeField] private GameObject stormClouds;
 
-    [Header("Fog")]
-    [SerializeField] private ParticleFogFade fogFade;
+    [Header("Particle Fade")]
+    [SerializeField] private ParticleFadeOut fogFade;
+    [SerializeField] private ParticleFadeOut tornadoFade;
 
     [Header("Movement")]
     [SerializeField] private OrbitMovement titanMovement;
@@ -43,6 +46,8 @@ public class StoryManager : MonoBehaviour
     //[SerializeField] private HintManager hintManager;
     [SerializeField] private ContinueInput continueInput;
 
+    private bool quizFinished;
+
     public Stage CurrentStage { get; private set; }
 
     public enum Stage
@@ -53,6 +58,7 @@ public class StoryManager : MonoBehaviour
         ResearchHistory,
         Quest,
         Return,
+        Quiz,
         End
     }
 
@@ -71,6 +77,7 @@ public class StoryManager : MonoBehaviour
         yield return RunResearchHistory();
         yield return RunQuest();
         yield return RunReturn();
+        yield return RunQuiz();
         yield return RunEnd();
 
         Debug.Log("Сценарий завершён");
@@ -96,6 +103,8 @@ public class StoryManager : MonoBehaviour
         saturn.SetActive(false);
         terrain.SetActive(true);
         stormClouds.SetActive(true);
+        sun.SetActive(true);
+        rings.SetActive(true);
 
         yield return audioManager.PlayAndWait(AudioType.Atmosphere);
 
@@ -109,14 +118,14 @@ public class StoryManager : MonoBehaviour
         MovePlayer(observationPoint);
 
         if (fogFade != null)
-            yield return StartCoroutine(fogFade.FadeOut());
+            StartCoroutine(fogFade.FadeOut());
+
+        if (tornadoFade != null)
+            StartCoroutine(tornadoFade.FadeOut());
 
         yield return audioManager.PlayAndWait(AudioType.Observation);
 
-        stormClouds.SetActive(false);
-        sun.SetActive(true);
         titan.SetActive(true);
-        saturn.SetActive(true);
 
         titanMovement.StartMovement();
 
@@ -128,6 +137,9 @@ public class StoryManager : MonoBehaviour
         SetStage(Stage.ResearchHistory);
 
         cassini.SetActive(true);
+
+        if (cassiniMovement != null)
+            cassiniMovement.StartMovement();
 
         yield return audioManager.PlayAndWait(AudioType.Research);
 
@@ -156,6 +168,32 @@ public class StoryManager : MonoBehaviour
         saturn.SetActive(true);
 
         yield return audioManager.PlayAndWait(AudioType.Return);
+
+        yield return WaitForContinue("Нажмите маленькую кнопку на контроллере, чтобы перейти к финальному квизу.");
+    }
+
+    private IEnumerator RunQuiz()
+    {
+        SetStage(Stage.Quiz);
+
+        quizFinished = false;
+
+        quizManager.StartQuiz();
+
+        yield return new WaitUntil(() => quizFinished);
+
+        if (quizManager.CorrectAnswers == 5)
+        {
+            yield return audioManager.PlayAndWait(AudioType.QuizPerfect);
+        }
+        else if (quizManager.CorrectAnswers >= 3)
+        {
+            yield return audioManager.PlayAndWait(AudioType.QuizGood);
+        }
+        else
+        {
+            yield return audioManager.PlayAndWait(AudioType.QuizBad);
+        }
     }
 
     private IEnumerator RunEnd()
@@ -173,12 +211,15 @@ public class StoryManager : MonoBehaviour
 
     private void MovePlayer(Transform point)
     {
-        player.SetPositionAndRotation(point.position, point.rotation);
+        player.SetPositionAndRotation(point.position, point.rotation); 
+        
+        Physics.SyncTransforms();
     }
 
     private void HideAllObjects()
     {
         saturn.SetActive(false);
+        rings.SetActive(false);
         terrain.SetActive(false);
         titan.SetActive(false);
         cassini.SetActive(false);
@@ -199,176 +240,8 @@ public class StoryManager : MonoBehaviour
         uiManager.HideTextPanel();
     }
 
-    /*[Header("Managers")]
-    [SerializeField] private AudioManager audioManager;
-    [SerializeField] private UIManager uiManager;
-
-    [Header("Player")]
-    [SerializeField] private Transform player;
-
-    [Header("Checkpoints")]
-    [SerializeField] private Transform startPoint;
-    [SerializeField] private Transform atmospherePoint;
-    [SerializeField] private Transform observationPoint;
-    [SerializeField] private Transform questPoint;
-    [SerializeField] private Transform returnPoint;
-
-    [Header("Story Objects")]
-    [SerializeField] private GameObject saturn;
-    [SerializeField] private GameObject terrain;
-    [SerializeField] private GameObject titan;
-    [SerializeField] private GameObject cassini;
-    [SerializeField] private GameObject transmitter;
-    [SerializeField] private GameObject sun;
-
-    private int _index;
-    public Stage CurrentStage;
-
-    public enum Stage
+    public void OnQuizFinished()
     {
-        Start,
-        Atmosphere,
-        Observation,
-        ResearchHistory,
-        Quest,
-        Return,
-        Quiz,
-        End
+        quizFinished = true;
     }
-
-    public void StoryStart()
-    {
-        _index = 0;
-        SetStage();
-
-        GetCurrentStage();
-    }
-
-    public void NextStage()
-    {
-        _index++;
-
-        if (_index >= System.Enum.GetValues(typeof(Stage)).Length)
-        {
-            Debug.Log("Конец сценария");
-            return;
-        }
-
-        SetStage();
-    }
-
-    public void SetStage()
-    {
-        CurrentStage = (Stage)_index;
-
-        GetCurrentStage();
-
-        //HideObjects();
-
-        switch (CurrentStage)
-        {
-            case Stage.Start:
-                MovePlayer(startPoint);
-
-                saturn.SetActive(true);
-
-                //audioManager.PlayStartAudio();
-                //uiManager.ShowStartScreen();
-
-                Invoke(nameof(NextStage), 5f);
-
-                break;
-
-            case Stage.Atmosphere:
-                MovePlayer(atmospherePoint);
-
-                saturn.SetActive(false);
-                terrain.SetActive(true);
-
-                //audioManager.PlayAtmosphereAudio();
-
-                Invoke(nameof(NextStage), 5f);
-
-                break;
-
-            case Stage.Observation:
-                MovePlayer(observationPoint);
-
-                sun.SetActive(true);
-                titan.SetActive(true);
-
-                //audioManager.PlayObservationAudio();
-
-                Invoke(nameof(NextStage), 5f);
-
-                break;
-
-            case Stage.ResearchHistory:
-                cassini.SetActive(true);
-
-                //audioManager.PlayResearchAudio();
-
-                Invoke(nameof(NextStage), 5f);
-
-                break;
-
-            case Stage.Quest:
-                MovePlayer(questPoint);
-
-                transmitter.SetActive(true);
-
-                //audioManager.PlayQuestAudio();
-                //uiManager.ShowQuestUI();
-
-                Invoke(nameof(NextStage), 5f);
-
-                break;
-
-            case Stage.Return:
-                MovePlayer(returnPoint);
-
-                HideObjects();
-                saturn.SetActive(true);
-                
-                //audioManager.PlayReturnAudio();
-
-                Invoke(nameof(NextStage), 5f);
-
-                break;
-
-            case Stage.Quiz:
-                //uiManager.ShowQuiz();
-
-                Invoke(nameof(NextStage), 5f);
-
-                break;
-
-            case Stage.End:
-                //uiManager.ShowFinalScreen();
-                //audioManager.PlayEndAudio();
-
-                Invoke(nameof(NextStage), 5f);
-
-                break;
-        }
-    }
-
-    public void GetCurrentStage()
-    {
-        Debug.Log($"Текущая стадия: {CurrentStage}");
-    }
-
-    private void MovePlayer(Transform point)
-    {
-        player.position = point.position;
-        player.rotation = point.rotation;
-    }
-
-    private void HideObjects()
-    {
-        terrain.SetActive(false);
-        titan.SetActive(false);
-        cassini.SetActive(false);
-        transmitter.SetActive(false);
-    }*/
 }
