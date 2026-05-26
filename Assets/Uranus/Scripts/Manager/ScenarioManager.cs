@@ -3,11 +3,12 @@ using UnityEngine;
 public enum SceneState
 {
     Start,
-    Orbit,
     Landing,
     Exploration,
+    Historical,
     Quest,
-    Return
+    Return,
+    End
 }
 
 public class ScenarioManager : MonoBehaviour
@@ -18,12 +19,13 @@ public class ScenarioManager : MonoBehaviour
     {
         switch (state)
         {
-            case SceneState.Start: return 10f;
-            case SceneState.Orbit: return 20f;
-            case SceneState.Landing: return 18f;
-            case SceneState.Exploration: return 25f;
+            case SceneState.Start: return 9f;
+            case SceneState.Landing: return 19f;
+            case SceneState.Exploration: return 17f;
+            case SceneState.Historical: return 25f;
             case SceneState.Quest: return 4f;
-            case SceneState.Return: return 8f;
+            case SceneState.Return: return -1f;
+            case SceneState.End: return -1f;
             default: return 10f;
         }
     }
@@ -38,16 +40,38 @@ public class ScenarioManager : MonoBehaviour
     {
         switch (currentState)
         {
-            case SceneState.Start: currentState = SceneState.Orbit; break;
-            case SceneState.Orbit: currentState = SceneState.Landing; break;
-            case SceneState.Landing: currentState = SceneState.Exploration; break;
-            case SceneState.Exploration: currentState = SceneState.Quest; break;
-            case SceneState.Quest: currentState = SceneState.Return; break;
+            case SceneState.Start:
+                currentState = SceneState.Landing;
+                break;
+            case SceneState.Landing:
+                currentState = SceneState.Exploration;
+                break;
+            case SceneState.Exploration:
+                currentState = SceneState.Historical;
+                break;
+            case SceneState.Historical:
+                currentState = SceneState.Quest;
+                break;
+            case SceneState.Quest:
+                currentState = SceneState.Return;
+                break;
             case SceneState.Return:
-                Debug.Log("[ScenarioManager] Сценарий завершён!");
+                currentState = SceneState.End;
+                break;
+            case SceneState.End:
+                Debug.Log("[ScenarioManager] Сценарий полностью завершён!");
                 return;
         }
         Debug.Log($"[ScenarioManager] Переход на этап: {currentState}");
+    }
+
+    public void CompleteReturn()
+    {
+        if (currentState == SceneState.Return)
+        {
+            currentState = SceneState.End;
+            Debug.Log($"[ScenarioManager] Возврат завершён! Переход на этап: {currentState}");
+        }
     }
 
     public SceneState GetCurrentState() => currentState;

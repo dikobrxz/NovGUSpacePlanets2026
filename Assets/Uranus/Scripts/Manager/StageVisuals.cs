@@ -1,5 +1,6 @@
 using Unity.XR.CoreUtils;
 using UnityEngine;
+using System.Collections;
 
 public class StageVisuals : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class StageVisuals : MonoBehaviour
 
     [Header("UI")]
     public GameObject sendButton;
+    public GameObject exitButton;
+    public GameObject returnPlatform;
 
     [Header("Lighting")]
     public GameObject directionalLight;
@@ -26,9 +29,9 @@ public class StageVisuals : MonoBehaviour
     [Header("Audio")]
     public AudioSource voiceOver;
     public AudioClip startClip;
-    public AudioClip orbitClip;
     public AudioClip landingClip;
     public AudioClip explorationClip;
+    public AudioClip historicalClip;
     public AudioClip questClip;
     public AudioClip returnClip;
 
@@ -39,26 +42,35 @@ public class StageVisuals : MonoBehaviour
     private SceneState currentStage;
     private GameObject locomotionFolder;
 
+    private float planetRotationSpeed = 5f;
+    private bool isPlanetRotating = false;
+
     void Start()
     {
         scenarioManager = GetComponent<ScenarioManager>();
         xrOrigin = FindFirstObjectByType<XROrigin>();
+        characterController = xrOrigin.GetComponent<CharacterController>();
 
-        if (xrOrigin != null)
-        {
-            characterController = xrOrigin.GetComponent<CharacterController>();
-            Transform locoTransform = xrOrigin.transform.Find("Locomotion");
-            if (locoTransform != null) locomotionFolder = locoTransform.gameObject;
-        }
+        Transform locoTransform = xrOrigin.transform.Find("Locomotion");
+        if (locoTransform != null) locomotionFolder = locoTransform.gameObject;
 
         SetupPlanet();
         SetupReturnPoint();
 
-        if (sendButton != null) sendButton.SetActive(false);
+        sendButton.SetActive(false);
+        exitButton.SetActive(false);
+        returnPlatform.SetActive(false);
 
         HideAll();
+        StartCoroutine(TeleportToShipAtStart());
         currentStage = SceneState.Start;
         ShowStartStage();
+    }
+
+    private IEnumerator TeleportToShipAtStart()
+    {
+        yield return null;
+        TeleportToShip();
     }
 
     void Update()
@@ -71,6 +83,11 @@ public class StageVisuals : MonoBehaviour
             currentStage = newStage;
             UpdateStageVisuals(newStage);
         }
+
+        if (isPlanetRotating)
+        {
+            uranusPlanet.transform.Rotate(Vector3.up, planetRotationSpeed * Time.deltaTime);
+        }
     }
 
     private void UpdateStageVisuals(SceneState stage)
@@ -78,26 +95,23 @@ public class StageVisuals : MonoBehaviour
         switch (stage)
         {
             case SceneState.Start: ShowStartStage(); break;
-            case SceneState.Orbit: ShowOrbitStage(); break;
             case SceneState.Landing: ShowLandingStage(); break;
             case SceneState.Exploration: ShowExplorationStage(); break;
+            case SceneState.Historical: ShowHistoricalStage(); break;
             case SceneState.Quest: ShowQuestStage(); break;
             case SceneState.Return: ShowReturnStage(); break;
+            case SceneState.End: ShowEndStage(); break;
         }
     }
 
     private void SetupPlanet()
     {
-        if (uranusPlanet != null)
-        {
-            uranusPlanet.transform.localScale = new Vector3(100f, 100f, 100f);
-        }
+        uranusPlanet.transform.localScale = new Vector3(100f, 100f, 100f);
+        uranusPlanet.transform.rotation = Quaternion.Euler(0f, 0f, 25f);
     }
 
     private void SetupReturnPoint()
     {
-        if (spaceship == null) return;
-
         returnPoint = spaceship.transform.Find("PlayerReturnPoint");
         if (returnPoint == null)
         {
@@ -110,159 +124,176 @@ public class StageVisuals : MonoBehaviour
 
     private void HideAll()
     {
-        if (uranusPlanet != null) uranusPlanet.SetActive(false);
-        if (terrain != null) terrain.SetActive(false);
-        if (skySphere != null) skySphere.SetActive(false);
-        if (spaceship != null) spaceship.SetActive(false);
-        if (drawingBoard != null) drawingBoard.SetActive(false);
-        if (markerCub != null) markerCub.SetActive(false);
-        if (directionalLight != null) directionalLight.SetActive(false);
-        if (windParticles != null) windParticles.Stop();
-        if (cloudParticles != null) cloudParticles.Stop();
-        if (sendButton != null) sendButton.SetActive(false);
+        uranusPlanet.SetActive(false);
+        terrain.SetActive(false);
+        skySphere.SetActive(false);
+        spaceship.SetActive(false);
+        drawingBoard.SetActive(false);
+        markerCub.SetActive(false);
+        directionalLight.SetActive(false);
+        returnPlatform.SetActive(false);
+        sendButton.SetActive(false);
+        exitButton.SetActive(false);
+        windParticles.Stop();
+        cloudParticles.Stop();
+        isPlanetRotating = false;
     }
 
-    private void SetLocomotion(bool enabled)
+    private void DisableLocomotion()
     {
-        if (characterController != null) characterController.enabled = enabled;
-        if (locomotionFolder != null) locomotionFolder.SetActive(enabled);
-        Debug.Log($"Локомоция: {(enabled ? "ВКЛ" : "ВЫКЛ")}");
+        characterController.enabled = false;
+        if (locomotionFolder != null) locomotionFolder.SetActive(false);
+    }
+
+    private void EnableLocomotion()
+    {
+        characterController.enabled = true;
+        if (locomotionFolder != null) locomotionFolder.SetActive(true);
     }
 
     private void ShowPlanet(Vector3 position)
     {
-        if (uranusPlanet != null)
-        {
-            uranusPlanet.SetActive(true);
-            uranusPlanet.transform.position = position;
-        }
+        uranusPlanet.SetActive(true);
+        uranusPlanet.transform.position = position;
     }
 
     private void ShowStartStage()
     {
-        Debug.Log("=== СТАРТОВЫЙ ЭТАП ===");
         HideAll();
-        SetLocomotion(false);
+        DisableLocomotion();
 
+        spaceship.SetActive(true);
+        skySphere.SetActive(true);
+        directionalLight.SetActive(true);
         ShowPlanet(new Vector3(0, 130f, 170f));
-
-        if (skySphere != null) skySphere.SetActive(true);
-        if (directionalLight != null) directionalLight.SetActive(true);
+        isPlanetRotating = true;
 
         PlayClip(startClip);
     }
 
-    private void ShowOrbitStage()
-    {
-        Debug.Log("=== ОРБИТА ===");
-        HideAll();
-        SetLocomotion(false);
-
-        ShowPlanet(new Vector3(0, 125f, 170f));
-
-        if (skySphere != null) skySphere.SetActive(true);
-        if (directionalLight != null) directionalLight.SetActive(true);
-
-        PlayClip(orbitClip);
-    }
-
     private void ShowLandingStage()
     {
-        Debug.Log("=== ВЫСАДКА ===");
         HideAll();
-        SetLocomotion(true);
+        EnableLocomotion();
 
-        if (terrain != null) terrain.SetActive(true);
-        if (skySphere != null) skySphere.SetActive(true);
-        if (directionalLight != null) directionalLight.SetActive(true);
-        if (windParticles != null) windParticles.Play();
-        if (cloudParticles != null) cloudParticles.Play();
+        terrain.SetActive(true);
+        skySphere.SetActive(true);
+        directionalLight.SetActive(true);
+        windParticles.Play();
+        cloudParticles.Play();
 
         PlayClip(landingClip);
     }
 
     private void ShowExplorationStage()
     {
-        Debug.Log("=== ИССЛЕДОВАНИЕ ===");
         HideAll();
-        SetLocomotion(true);
+        EnableLocomotion();
 
-        if (terrain != null) terrain.SetActive(true);
-        if (skySphere != null) skySphere.SetActive(true);
-        if (directionalLight != null) directionalLight.SetActive(true);
-        if (windParticles != null) windParticles.Play();
+        terrain.SetActive(true);
+        skySphere.SetActive(true);
+        directionalLight.SetActive(true);
+        windParticles.Play();
 
         PlayClip(explorationClip);
     }
 
+    private void ShowHistoricalStage()
+    {
+        HideAll();
+        EnableLocomotion();
+
+        terrain.SetActive(true);
+        skySphere.SetActive(true);
+        directionalLight.SetActive(true);
+        windParticles.Play();
+
+        PlayClip(historicalClip);
+    }
+
     private void ShowQuestStage()
     {
-        Debug.Log("=== КВЕСТ ===");
         HideAll();
-        SetLocomotion(true);
+        EnableLocomotion();
 
-        if (terrain != null) terrain.SetActive(true);
-        if (skySphere != null) skySphere.SetActive(true);
-        if (directionalLight != null) directionalLight.SetActive(true);
-        if (drawingBoard != null) drawingBoard.SetActive(true);
-        if (markerCub != null) markerCub.SetActive(true);
-        if (sendButton != null) sendButton.SetActive(true);
+        terrain.SetActive(true);
+        skySphere.SetActive(true);
+        directionalLight.SetActive(true);
+        drawingBoard.SetActive(true);
+        markerCub.SetActive(true);
+        sendButton.SetActive(true);
 
         PlayClip(questClip);
     }
 
     private void ShowReturnStage()
     {
-        Debug.Log("=== ВОЗВРАЩЕНИЕ ===");
         HideAll();
-        SetLocomotion(true);
+        EnableLocomotion();
 
-        if (spaceship != null) spaceship.SetActive(true);
-        if (skySphere != null) skySphere.SetActive(true);
-        if (directionalLight != null) directionalLight.SetActive(true);
+        terrain.SetActive(true);
+        skySphere.SetActive(true);
+        directionalLight.SetActive(true);
+        returnPlatform.SetActive(true);
 
         PlayClip(returnClip);
-        TeleportToShip();
+    }
+
+    private void ShowEndStage()
+    {
+        HideAll();
+        EnableLocomotion();
+
+        spaceship.SetActive(true);
+        skySphere.SetActive(true);
+        directionalLight.SetActive(true);
+        ShowPlanet(new Vector3(0, 130f, 170f));
+        isPlanetRotating = true;
+        exitButton.SetActive(true);
     }
 
     private void TeleportToShip()
     {
-        if (xrOrigin == null || returnPoint == null)
-        {
-            Debug.LogError("Телепорт не удался!");
-            return;
-        }
-
-        // Сохраняем состояние CharacterController
-        bool wasEnabled = characterController != null && characterController.enabled;
-        if (characterController != null) characterController.enabled = false;
-
+        DisableLocomotion();
         xrOrigin.transform.position = returnPoint.position;
         xrOrigin.transform.rotation = returnPoint.rotation;
+        EnableLocomotion();
+    }
 
-        if (characterController != null) characterController.enabled = wasEnabled;
+    public void TeleportPlayerToShip()
+    {
+        if (currentStage != SceneState.Return) return;
 
-        Debug.Log($"Телепорт на корабль: {returnPoint.position}");
+        TeleportToShip();
+        returnPlatform.SetActive(false);
+
+        GameManager gm = FindFirstObjectByType<GameManager>();
+        gm?.OnPlayerReturnedToShip();
     }
 
     private void PlayClip(AudioClip clip)
     {
-        if (voiceOver != null && clip != null)
-        {
-            voiceOver.Stop();
-            voiceOver.clip = clip;
-            voiceOver.Play();
-        }
+        if (clip == null) return;
+        voiceOver.Stop();
+        voiceOver.clip = clip;
+        voiceOver.Play();
     }
 
     public void OnSendButtonPressed()
     {
-        Debug.Log("Кнопка отправки нажата!");
-        if (scenarioManager != null && scenarioManager.GetCurrentState() == SceneState.Quest)
-        {
-            GameManager gm = FindFirstObjectByType<GameManager>();
-            gm?.OnSendDrawingButtonPressed();
-            if (sendButton != null) sendButton.SetActive(false);
-        }
+        if (scenarioManager.GetCurrentState() != SceneState.Quest) return;
+
+        GameManager gm = FindFirstObjectByType<GameManager>();
+        gm?.OnSendDrawingButtonPressed();
+        sendButton.SetActive(false);
+    }
+
+    public void OnExitButtonPressed()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
     }
 }

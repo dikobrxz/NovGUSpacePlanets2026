@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     private bool isScenarioFinished = false;
     private bool isQuestActive = false;
     private bool isDrawing = false;
+    private bool isQuestCompleted = false;
 
     [SerializeField] private float questDrawingTime = 90f;
 
@@ -38,21 +39,18 @@ public class GameManager : MonoBehaviour
 
     private void HandleNormalStage(SceneState currentState)
     {
-        stageTimer += Time.deltaTime;
-
         float duration = scenarioManager.GetStageDuration(currentState);
+
+        if (duration < 0)
+        {
+            return;
+        }
+
+        stageTimer += Time.deltaTime;
 
         if (stageTimer >= duration)
         {
             stageTimer = 0f;
-
-            if (currentState == SceneState.Return)
-            {
-                isScenarioFinished = true;
-                Debug.Log("[GameManager] Сценарий завершён!");
-                return;
-            }
-
             scenarioManager.NextStage();
             Debug.Log($"[GameManager] Переход на этап: {scenarioManager.GetCurrentState()}");
         }
@@ -60,6 +58,8 @@ public class GameManager : MonoBehaviour
 
     private void HandleQuestStage()
     {
+        if (isQuestCompleted) return;
+
         if (!isQuestActive)
         {
             stageTimer += Time.deltaTime;
@@ -85,21 +85,33 @@ public class GameManager : MonoBehaviour
 
     private void CompleteQuest()
     {
+        if (isQuestCompleted) return;
+
         isDrawing = false;
         isQuestActive = false;
+        isQuestCompleted = true;
         questTimer = 0f;
         stageTimer = 0f;
 
         scenarioManager.NextStage();
-        Debug.Log("[GameManager] Квест завершён. Переход на возвращение.");
+        Debug.Log("[GameManager] Квест завершён. Переход на этап Return. Платформа появится, ждём игрока.");
     }
 
     public void OnSendDrawingButtonPressed()
     {
-        if (scenarioManager.GetCurrentState() == SceneState.Quest && isDrawing)
+        if (scenarioManager.GetCurrentState() == SceneState.Quest && isDrawing && !isQuestCompleted)
         {
             Debug.Log("[GameManager] Рисунок отправлен досрочно!");
             CompleteQuest();
+        }
+    }
+
+    public void OnPlayerReturnedToShip()
+    {
+        if (scenarioManager.GetCurrentState() == SceneState.Return)
+        {
+            Debug.Log("[GameManager] Игрок вернулся на корабль!");
+            scenarioManager.CompleteReturn();
         }
     }
 }
