@@ -18,7 +18,6 @@ public class GameManager : MonoBehaviour
         if (scenarioManager == null) return;
 
         scenarioManager.StartScenario();
-        Debug.Log($"[GameManager] Сценарий запущен");
     }
 
     void Update()
@@ -52,7 +51,6 @@ public class GameManager : MonoBehaviour
         {
             stageTimer = 0f;
             scenarioManager.NextStage();
-            Debug.Log($"[GameManager] Переход на этап: {scenarioManager.GetCurrentState()}");
         }
     }
 
@@ -69,7 +67,6 @@ public class GameManager : MonoBehaviour
                 stageTimer = 0f;
                 isQuestActive = true;
                 isDrawing = true;
-                Debug.Log("[GameManager] Начало рисования! 90 секунд");
             }
         }
         else if (isDrawing)
@@ -94,14 +91,12 @@ public class GameManager : MonoBehaviour
         stageTimer = 0f;
 
         scenarioManager.NextStage();
-        Debug.Log("[GameManager] Квест завершён. Переход на этап Return. Платформа появится, ждём игрока.");
     }
 
     public void OnSendDrawingButtonPressed()
     {
         if (scenarioManager.GetCurrentState() == SceneState.Quest && isDrawing && !isQuestCompleted)
         {
-            Debug.Log("[GameManager] Рисунок отправлен досрочно!");
             CompleteQuest();
         }
     }
@@ -110,7 +105,6 @@ public class GameManager : MonoBehaviour
     {
         if (scenarioManager.GetCurrentState() == SceneState.Return)
         {
-            Debug.Log("[GameManager] Игрок вернулся на корабль!");
             scenarioManager.CompleteReturn();
         }
     }

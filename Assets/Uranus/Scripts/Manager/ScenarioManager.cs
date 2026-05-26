@@ -70,7 +70,6 @@ public class ScenarioManager : MonoBehaviour
         if (currentState == SceneState.Return)
         {
             currentState = SceneState.End;
-            Debug.Log($"[ScenarioManager] Возврат завершён! Переход на этап: {currentState}");
         }
     }
 

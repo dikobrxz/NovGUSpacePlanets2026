@@ -38,12 +38,15 @@ public class StageVisuals : MonoBehaviour
     private ScenarioManager scenarioManager;
     private XROrigin xrOrigin;
     private CharacterController characterController;
-    private Transform returnPoint;
     private SceneState currentStage;
     private GameObject locomotionFolder;
 
     private float planetRotationSpeed = 5f;
     private bool isPlanetRotating = false;
+
+    private readonly Vector3 startPosition = new Vector3(-4f, 100f, -15f);
+    private readonly Vector3 landingPosition = new Vector3(83f, 74f, -90f);
+    private readonly Quaternion startRotation = Quaternion.identity;
 
     void Start()
     {
@@ -55,22 +58,21 @@ public class StageVisuals : MonoBehaviour
         if (locoTransform != null) locomotionFolder = locoTransform.gameObject;
 
         SetupPlanet();
-        SetupReturnPoint();
 
         sendButton.SetActive(false);
         exitButton.SetActive(false);
         returnPlatform.SetActive(false);
 
         HideAll();
-        StartCoroutine(TeleportToShipAtStart());
+        StartCoroutine(TeleportToStart());
         currentStage = SceneState.Start;
         ShowStartStage();
     }
 
-    private IEnumerator TeleportToShipAtStart()
+    private IEnumerator TeleportToStart()
     {
         yield return null;
-        TeleportToShip();
+        TeleportToPosition(startPosition, startRotation);
     }
 
     void Update()
@@ -80,6 +82,7 @@ public class StageVisuals : MonoBehaviour
         SceneState newStage = scenarioManager.GetCurrentState();
         if (currentStage != newStage)
         {
+            SceneState previousStage = currentStage;
             currentStage = newStage;
             UpdateStageVisuals(newStage);
         }
@@ -108,18 +111,6 @@ public class StageVisuals : MonoBehaviour
     {
         uranusPlanet.transform.localScale = new Vector3(100f, 100f, 100f);
         uranusPlanet.transform.rotation = Quaternion.Euler(0f, 0f, 25f);
-    }
-
-    private void SetupReturnPoint()
-    {
-        returnPoint = spaceship.transform.Find("PlayerReturnPoint");
-        if (returnPoint == null)
-        {
-            GameObject point = new GameObject("PlayerReturnPoint");
-            point.transform.SetParent(spaceship.transform);
-            point.transform.localPosition = new Vector3(0, 1.5f, 0);
-            returnPoint = point.transform;
-        }
     }
 
     private void HideAll()
@@ -151,10 +142,22 @@ public class StageVisuals : MonoBehaviour
         if (locomotionFolder != null) locomotionFolder.SetActive(true);
     }
 
-    private void ShowPlanet(Vector3 position)
+    private void TeleportToPosition(Vector3 position, Quaternion rotation)
     {
-        uranusPlanet.SetActive(true);
-        uranusPlanet.transform.position = position;
+        DisableLocomotion();
+
+        Transform cameraOffset = xrOrigin.GetComponentInChildren<Camera>().transform.parent;
+        float cameraYOffset = xrOrigin.CameraYOffset;
+
+        xrOrigin.transform.position = position;
+        xrOrigin.transform.rotation = rotation;
+        cameraOffset.position = position;
+        cameraOffset.rotation = rotation;
+
+        cameraOffset.localPosition = new Vector3(0, 1.7f, 0);
+        xrOrigin.CameraYOffset = 1.7f;
+
+        EnableLocomotion();
     }
 
     private void ShowStartStage()
@@ -165,7 +168,7 @@ public class StageVisuals : MonoBehaviour
         spaceship.SetActive(true);
         skySphere.SetActive(true);
         directionalLight.SetActive(true);
-        ShowPlanet(new Vector3(0, 130f, 170f));
+        uranusPlanet.SetActive(true);
         isPlanetRotating = true;
 
         PlayClip(startClip);
@@ -174,6 +177,7 @@ public class StageVisuals : MonoBehaviour
     private void ShowLandingStage()
     {
         HideAll();
+        TeleportToPosition(landingPosition, startRotation);
         EnableLocomotion();
 
         terrain.SetActive(true);
@@ -247,24 +251,16 @@ public class StageVisuals : MonoBehaviour
         spaceship.SetActive(true);
         skySphere.SetActive(true);
         directionalLight.SetActive(true);
-        ShowPlanet(new Vector3(0, 130f, 170f));
+        uranusPlanet.SetActive(true);
         isPlanetRotating = true;
         exitButton.SetActive(true);
-    }
-
-    private void TeleportToShip()
-    {
-        DisableLocomotion();
-        xrOrigin.transform.position = returnPoint.position;
-        xrOrigin.transform.rotation = returnPoint.rotation;
-        EnableLocomotion();
     }
 
     public void TeleportPlayerToShip()
     {
         if (currentStage != SceneState.Return) return;
 
-        TeleportToShip();
+        TeleportToPosition(startPosition, startRotation);
         returnPlatform.SetActive(false);
 
         GameManager gm = FindFirstObjectByType<GameManager>();
@@ -293,7 +289,7 @@ public class StageVisuals : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
-            Application.Quit();
+        Application.Quit();
 #endif
     }
 }
