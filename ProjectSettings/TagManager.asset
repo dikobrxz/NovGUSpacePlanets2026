@@ -25,6 +25,7 @@ TagManager:
   - Tag18
   - Tag19
   - Tag20
+  - Marker
   layers:
   - Default
   - TransparentFX
