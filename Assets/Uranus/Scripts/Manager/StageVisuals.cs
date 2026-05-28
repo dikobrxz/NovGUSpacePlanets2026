@@ -23,6 +23,10 @@ public class StageVisuals : MonoBehaviour
     public GameObject exitButton;
     public GameObject returnPlatform;
 
+    [Header("Quiz")]
+    public GameObject quizCanvas;
+    public QuizManager quizManager;
+
     [Header("Lighting")]
     public GameObject directionalLight;
 
@@ -254,6 +258,15 @@ public class StageVisuals : MonoBehaviour
         uranusPlanet.SetActive(true);
         isPlanetRotating = true;
         exitButton.SetActive(true);
+
+        if (quizCanvas != null)
+        {
+            quizCanvas.SetActive(true);
+        }
+        if (quizManager != null)
+        {
+            quizManager.StartQuiz();
+        }
     }
 
     public void TeleportPlayerToShip()

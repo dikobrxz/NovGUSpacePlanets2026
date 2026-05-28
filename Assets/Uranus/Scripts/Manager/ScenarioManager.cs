@@ -19,10 +19,11 @@ public class ScenarioManager : MonoBehaviour
     {
         switch (state)
         {
-            case SceneState.Start: return 9f;
-            case SceneState.Landing: return 19f;
-            case SceneState.Exploration: return 17f;
-            case SceneState.Historical: return 25f;
+            //исправить длину
+            case SceneState.Start: return 9f; 
+            case SceneState.Landing: return 10f;
+            case SceneState.Exploration: return 10f;
+            case SceneState.Historical: return 10f;
             case SceneState.Quest: return 4f;
             case SceneState.Return: return -1f;
             case SceneState.End: return -1f;
