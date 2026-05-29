@@ -11,26 +11,24 @@ public class TransmitterQuest : MonoBehaviour
     [SerializeField] private int firstTargetValue = 2004;
     [SerializeField] private int secondTargetValue = 2017;
 
-    [Header("Objects")]
-    [SerializeField] private GameObject sendButton;
+    /*[Header("Objects")]
+    [SerializeField] private GameObject sendButton;*/
 
     [Header("Audio")]
     [SerializeField] private AudioManager audioManager;
-    [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip clickSound;
 
     public bool IsCompleted { get; private set; }
 
     public UnityEvent OnQuestCompleted;
 
+    private bool canSendData;
     private bool signalPlayed;
 
     public void StartQuest()
     {
         IsCompleted = false;
+        canSendData = false;
         signalPlayed = false;
-
-        sendButton.SetActive(false);
 
         firstLever.OnValueChanged -= CheckLevers;
         secondLever.OnValueChanged -= CheckLevers;
@@ -43,19 +41,17 @@ public class TransmitterQuest : MonoBehaviour
 
     private void CheckLevers()
     {
-        bool isCorrect =
+        bool canSendData =
             firstLever.CurrentValue == firstTargetValue &&
             secondLever.CurrentValue == secondTargetValue;
 
-        sendButton.SetActive(isCorrect);
-
-        if (isCorrect && !signalPlayed)
+        if (canSendData && !signalPlayed)
         {
             signalPlayed = true;
             audioManager.Play(AudioType.SuccessSignal);
         }
 
-        if (!isCorrect)
+        if (!canSendData)
         {
             signalPlayed = false;
         }
@@ -63,14 +59,23 @@ public class TransmitterQuest : MonoBehaviour
 
     public void SendData()
     {
+        audioManager.Play(AudioType.ButtonPress);
+
         bool isCorrect =
-            firstLever.CurrentValue == firstTargetValue &&
-            secondLever.CurrentValue == secondTargetValue;
+        firstLever.CurrentValue == firstTargetValue &&
+        secondLever.CurrentValue == secondTargetValue;
+
+        Debug.Log($"Левый: {firstLever.CurrentValue}, правый: {secondLever.CurrentValue}");
 
         if (!isCorrect)
+        {
+            Debug.Log("Передатчик ещё не настроен. Данные не отправлены.");
             return;
+        }
 
         IsCompleted = true;
+
+        audioManager.Play(AudioType.DataSend);
 
         firstLever.OnValueChanged -= CheckLevers;
         secondLever.OnValueChanged -= CheckLevers;

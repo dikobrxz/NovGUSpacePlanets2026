@@ -13,7 +13,10 @@ public enum AudioType
     QuizGood,
     QuizBad,
     QuizPerfect,
-    End
+    End,
+    ButtonPress,
+    DataSend,
+    ContinueButton
 }
 
 public class AudioManager : MonoBehaviour
@@ -39,19 +42,20 @@ public class AudioManager : MonoBehaviour
 
     [Header("SFX Clips")]
     [SerializeField] private AudioClip successSignalClip;
+    [SerializeField] private AudioClip buttonPressClip;
+    [SerializeField] private AudioClip dataSendClip;
+    [SerializeField] private AudioClip continueButtonClip;
 
     public IEnumerator PlayAndWait(AudioType type)
     {
         AudioClip clip = GetClip(type);
-        string subtitle = GetSubtitle(type);
 
         if (clip == null)
             yield break;
 
         voiceSource.Stop();
 
-        if (!string.IsNullOrEmpty(subtitle))
-            uiManager.ShowSubtitles(subtitle);
+        StartCoroutine(ShowSubtitlesForClip(type, clip.length));
 
         voiceSource.clip = clip;
         voiceSource.Play();
@@ -88,8 +92,46 @@ public class AudioManager : MonoBehaviour
             AudioType.QuizPerfect => quizPerfectClip,
             AudioType.End => endClip,
             AudioType.SuccessSignal => successSignalClip,
+            AudioType.ButtonPress => buttonPressClip,
+            AudioType.DataSend => dataSendClip,
+            AudioType.ContinueButton => continueButtonClip,
             _ => null
         };
+    }
+
+    private IEnumerator ShowSubtitlesForClip(AudioType type, float clipLength)
+    {
+        if (type == AudioType.Atmosphere)
+        {
+            uiManager.ShowSubtitles(
+                "Сатурн назван в честь римского бога земледелия. В основном он состоит из водорода с примесями гелия, а также следами воды, метана, аммиака и более тяжёлых элементов."
+            );
+
+            yield return new WaitForSeconds(clipLength * 0.6f);
+
+            uiManager.ShowSubtitles(
+                "По строению Сатурн, как и Юпитер, является газовым гигантом. При этом ветра на нём в несколько раз сильнее. Человек не смог бы прожить здесь и доли секунды."
+            );
+        }
+        else if (type == AudioType.Observation)
+        {
+            uiManager.ShowSubtitles(
+                "Сатурн отличается от других планет прежде всего своими кольцами. По одной из теорий, в далёком прошлом рядом с ним произошло крупное столкновение,"
+            );
+
+            yield return new WaitForSeconds(clipLength / 2f);
+
+            uiManager.ShowSubtitles(
+                "после которого и сформировалась система колец и множество спутников. Один из самых известных спутников Сатурна — Титан, который по размерам даже больше Меркурия."
+            );
+        }
+        else
+        {
+            string subtitle = GetSubtitle(type);
+
+            if (!string.IsNullOrEmpty(subtitle))
+                uiManager.ShowSubtitles(subtitle);
+        }
     }
 
     private string GetSubtitle(AudioType type)
@@ -99,17 +141,17 @@ public class AudioManager : MonoBehaviour
             AudioType.Start =>
                 "Сегодня, дорогой исследователь, ты познакомишься с шестой планетой от Солнца и второй по величине после Юпитера.",
 
-            AudioType.Atmosphere =>
-                "Сатурн назван в честь римского бога земледелия. В основном он состоит из водорода с примесями гелия. По строению Сатурн является газовым гигантом. Человек не смог бы прожить здесь и доли секунды.",
-
-            AudioType.Observation =>
-                "Сатурн отличается от других планет прежде всего своими кольцами. Один из самых известных спутников Сатурна — Титан, который по размерам даже больше Меркурия.",
-
+            /*AudioType.Atmosphere =>
+                "Сатурн назван в честь римского бога земледелия. В основном он состоит из водорода с примесями гелия, а также следами воды, метана, аммиака и более тяжёлых элементов. По строению Сатурн, как и Юпитер, является газовым гигантом. При этом ветра на нём в несколько раз сильнее. Человек не смог бы прожить здесь и доли секунды",
+*/
+            /*AudioType.Observation =>
+                "Сатурн отличается от других планет прежде всего своими кольцами. По одной из теорий, в далёком прошлом рядом с ним произошло крупное столкновение, после которого и сформировалась система колец и множество спутников. Один из самых известных спутников Сатурна — Титан, который по размерам даже больше Меркурия.",
+*/
             AudioType.Research =>
                 "Титан — один из самых интересных объектов Солнечной системы. В период с 2004 по 2017 год Сатурн и его спутники изучал аппарат Кассини.",
 
             AudioType.Quest =>
-                "Давай возьмём передатчик и попробуем настроиться на частоту космического аппарата. Первый рычажок поверни до значения 2004, второй — до 2017.",
+                "Давай возьмём передатчик и попробуем настроиться на частоту космического аппарата, чтобы передать данные с планеты — годы её изучения аппаратом „Кассини“",
 
             AudioType.Return =>
                 "Благодаря тебе мы отправили эти данные учёным. Теперь мы можем вернуться на корабль.",
@@ -134,4 +176,6 @@ public class AudioManager : MonoBehaviour
     {
         StartCoroutine(PlayAndWait(type));
     }
+
+
 }

@@ -21,11 +21,20 @@ public class RotationLever : MonoBehaviour
     [SerializeField] private UIManager uiManager;
     [SerializeField] private bool isFirstLever = true;
 
+    private int lastPlayedValue;
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip rotateTickClip;
+
     private XRGrabInteractable grab;
     private IXRSelectInteractor interactor;
 
     private Quaternion startHandRotation;
     private Quaternion startPivotRotation;
+
+    private float currentAngle;
+    private float startAngle;
 
     public int CurrentValue { get; private set; }
 
@@ -37,6 +46,13 @@ public class RotationLever : MonoBehaviour
 
         grab.selectEntered.AddListener(OnGrab);
         grab.selectExited.AddListener(OnRelease);
+    }
+
+    private void Start()
+    {
+        UpdateValueFromCurrentRotation();
+
+        lastPlayedValue = CurrentValue;
     }
 
     private void Update()
@@ -55,11 +71,18 @@ public class RotationLever : MonoBehaviour
         if (Vector3.Dot(axis, worldAxis) < 0)
             angle = -angle;
 
-        float clampedAngle = Mathf.Clamp(-angle, minAngle, maxAngle);
+        float deltaAngle = angle;
 
-        pivot.localRotation = startPivotRotation * Quaternion.AngleAxis(clampedAngle, rotationAxis);
+        currentAngle = Mathf.Clamp(
+            startAngle + deltaAngle,
+            minAngle,
+            maxAngle
+        );
 
-        UpdateValue(clampedAngle);
+        pivot.localRotation =
+            startPivotRotation * Quaternion.AngleAxis(currentAngle - startAngle, rotationAxis);
+
+        UpdateValue(currentAngle);
     }
 
     private void UpdateValue(float angle)
@@ -71,6 +94,15 @@ public class RotationLever : MonoBehaviour
             return;
 
         CurrentValue = newValue;
+
+        if (CurrentValue != lastPlayedValue)
+        {
+            lastPlayedValue = CurrentValue;
+
+            if (audioSource != null && rotateTickClip != null)
+                audioSource.PlayOneShot(rotateTickClip);
+        }
+
         Debug.Log($"{gameObject.name}: {CurrentValue}");
 
         OnValueChanged?.Invoke();
@@ -79,6 +111,17 @@ public class RotationLever : MonoBehaviour
             uiManager.ShowFirstLeverValue(CurrentValue);
         else
             uiManager.ShowSecondLeverValue(CurrentValue);
+    }
+
+    private void UpdateValueFromCurrentRotation()
+    {
+        float angle = Vector3.SignedAngle(
+            Vector3.forward,
+            pivot.forward,
+            rotationAxis
+        );
+
+        UpdateValue(angle);
     }
 
     private void OnGrab(SelectEnterEventArgs args)
@@ -90,6 +133,8 @@ public class RotationLever : MonoBehaviour
         startHandRotation = hand.rotation;
         startPivotRotation = pivot.localRotation;
 
+        startAngle = currentAngle;
+
         if (isFirstLever)
             uiManager.ShowFirstLeverValue(CurrentValue);
         else
@@ -99,11 +144,6 @@ public class RotationLever : MonoBehaviour
     private void OnRelease(SelectExitEventArgs args)
     {
         interactor = null;
-
-        if (isFirstLever)
-            uiManager.HideFirstLeverValue();
-        else
-            uiManager.HideSecondLeverValue();
     }
 
     private void OnDestroy()

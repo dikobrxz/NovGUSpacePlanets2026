@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
 public class QuizQuestion
 {
@@ -20,16 +21,27 @@ public class QuizManager : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private GameObject quizCanvas;
+    [SerializeField] private GameObject quizPanel;
+    [SerializeField] private GameObject resultsPanel;
     [SerializeField] private TMP_Text questionText;
     [SerializeField] private QuizAnswerButton[] answerButtons;
 
-    [Header("Audio")]
-    [SerializeField] private AudioManager audioManager;
+    [Header("Score UI")]
+    [SerializeField] private TMP_Text correctAnswersText;
+    [SerializeField] private TMP_Text wrongAnswersText;
+
+    /*[Header("Audio")]
+    [SerializeField] private AudioManager audioManager;*/
+
+    [Header("Settings")]
+    [SerializeField] private float resultShowTime = 1f;
 
     public UnityEvent OnQuizFinished;
 
     private int currentQuestionIndex;
     private int correctAnswers;
+    private int wrongAnswers;
+    private bool answerSelected;
 
     private QuizQuestion[] questions;
 
@@ -77,16 +89,28 @@ public class QuizManager : MonoBehaviour
     {
         currentQuestionIndex = 0;
         correctAnswers = 0;
+        wrongAnswers = 0;
+        answerSelected = false;
 
         quizCanvas.SetActive(true);
+        quizPanel.SetActive(true);
+        resultsPanel.SetActive(false);
+
         ShowQuestion();
     }
 
     private void ShowQuestion()
     {
+        answerSelected = false;
+
         QuizQuestion question = questions[currentQuestionIndex];
 
         questionText.text = question.Question;
+
+        foreach (var button in answerButtons)
+        {
+            button.ResetColor();
+        }
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
@@ -102,7 +126,61 @@ public class QuizManager : MonoBehaviour
         }
     }
 
-    public void ChooseAnswer(int answerIndex)
+    public void ChooseAnswer(int answerIndex, QuizAnswerButton selectedButton)
+    {
+        if (answerSelected)
+            return;
+
+        StartCoroutine(ChooseAnswerRoutine(answerIndex, selectedButton));
+    }
+
+    private IEnumerator ChooseAnswerRoutine(int answerIndex, QuizAnswerButton selectedButton)
+    {
+        answerSelected = true;
+
+        QuizQuestion question = questions[currentQuestionIndex];
+
+        bool isCorrect = answerIndex == question.CorrectAnswerIndex;
+
+        if (isCorrect)
+        {
+            correctAnswers++;
+            selectedButton.SetCorrect();
+        }
+        else
+        {
+            wrongAnswers++;
+            selectedButton.SetWrong();
+
+            if (question.CorrectAnswerIndex >= 0 &&
+                question.CorrectAnswerIndex < answerButtons.Length)
+            {
+                answerButtons[question.CorrectAnswerIndex].SetCorrect();
+            }
+        }
+
+        yield return new WaitForSeconds(resultShowTime);
+
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex >= questions.Length)
+        {
+            FinishQuiz();
+        }
+        else
+        {
+            answerSelected = false;
+            ShowQuestion();
+        }
+    }
+
+    private void UpdateScoreUI()
+    {
+        correctAnswersText.text = $"Правильно: {correctAnswers}";
+        wrongAnswersText.text = $"Ошибки: {wrongAnswers}";
+    }
+
+    /*public void ChooseAnswer(int answerIndex)
     {
         QuizQuestion question = questions[currentQuestionIndex];
 
@@ -119,11 +197,14 @@ public class QuizManager : MonoBehaviour
         {
             ShowQuestion();
         }
-    }
+    }*/
 
     private void FinishQuiz()
     {
-        quizCanvas.SetActive(false);
+        //quizCanvas.SetActive(false);
+        quizPanel.SetActive(false);
+        resultsPanel.SetActive(true);
+        UpdateScoreUI();
 
         OnQuizFinished?.Invoke();
 

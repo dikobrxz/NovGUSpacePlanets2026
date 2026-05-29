@@ -5,6 +5,8 @@ public class ContinueInput : MonoBehaviour
 {
     [SerializeField] private InputActionProperty continueAction;
 
+    [SerializeField] private AudioManager audioManager;
+
     public bool WasPressed { get; private set; }
 
     private void OnEnable()
@@ -21,6 +23,8 @@ public class ContinueInput : MonoBehaviour
     {
         if (continueAction.action.WasPressedThisFrame())
         {
+            audioManager.Play(AudioType.ContinueButton);
+
             WasPressed = true;
         }
     }

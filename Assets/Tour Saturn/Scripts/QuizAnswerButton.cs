@@ -1,11 +1,16 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
-using System.Collections;
+using UnityEngine.UI;
 
 public class QuizAnswerButton : MonoBehaviour
 {
     [Header("Text")]
     [SerializeField] private TMP_Text answerText;
+
+    [Header("Image")]
+    [SerializeField] private Image buttonImage;
+    private Color defaultColor;
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
@@ -13,6 +18,11 @@ public class QuizAnswerButton : MonoBehaviour
 
     private int answerIndex;
     private QuizManager quizManager;
+
+    private void Awake()
+    {
+        defaultColor = buttonImage.color;
+    }
 
     public void SetAnswer(string text, int index, QuizManager manager)
     {
@@ -31,8 +41,23 @@ public class QuizAnswerButton : MonoBehaviour
         if (audioSource != null && clickSound != null)
             audioSource.PlayOneShot(clickSound);
 
-        yield return new WaitForSeconds(0.2f);
+        quizManager.ChooseAnswer(answerIndex, this);
 
-        quizManager.ChooseAnswer(answerIndex);
+        yield return new WaitForSeconds(0.2f);
+    }
+
+    public void SetCorrect()
+    {
+        buttonImage.color = Color.green;
+    }
+
+    public void SetWrong()
+    {
+        buttonImage.color = Color.red;
+    }
+
+    public void ResetColor()
+    {
+        buttonImage.color = defaultColor;
     }
 }

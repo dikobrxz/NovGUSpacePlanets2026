@@ -17,8 +17,8 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         HideSubtitles();
-        HideFirstLeverValue();
-        HideSecondLeverValue();
+        /*HideFirstLeverValue();
+        HideSecondLeverValue();*/
     }
 
     public void ShowSubtitles(string text)
@@ -49,10 +49,10 @@ public class UIManager : MonoBehaviour
         firstLeverPanel.SetActive(true);
     }
 
-    public void HideFirstLeverValue()
+    /*public void HideFirstLeverValue()
     {
         firstLeverPanel.SetActive(false);
-    }
+    }*/
 
     public void ShowSecondLeverValue(int value)
     {
@@ -60,8 +60,8 @@ public class UIManager : MonoBehaviour
         secondLeverPanel.SetActive(true);
     }
 
-    public void HideSecondLeverValue()
+    /*public void HideSecondLeverValue()
     {
         secondLeverPanel.SetActive(false);
-    }
+    }*/
 }
