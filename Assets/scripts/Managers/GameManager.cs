@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
@@ -38,7 +39,7 @@ public class GameManager : MonoBehaviour
 
     private void Update()       //тестовое управление для переключения этапов
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             if (SceneManager != null)
             {

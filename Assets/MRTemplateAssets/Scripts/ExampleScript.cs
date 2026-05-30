@@ -12,11 +12,11 @@ public class ExampleScript : MonoBehaviour
         InitializePlayer();
     }
 
-    private void Update() {
-        if (Time.frameCount % 60 == 0) {
-            Debug.Log($"Кадр обновлён! Скорость: {speed}, кадр: {Time.frameCount}");
-        }
-    }
+    // private void Update() {
+    //     if (Time.frameCount % 60 == 0) {
+    //         Debug.Log($"Кадр обновлён! Скорость: {speed}, кадр: {Time.frameCount}");
+    //     }
+    // }
 
     private void InitializePlayer() {
         Debug.Log($"Игрок '{name}' инициализирован! Счёт: {score}, статус запуска: {isStarted}");
