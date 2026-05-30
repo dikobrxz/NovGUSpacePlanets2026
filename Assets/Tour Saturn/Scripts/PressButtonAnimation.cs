@@ -4,7 +4,7 @@ using System.Collections;
 public class PressButtonAnimation : MonoBehaviour
 {
     [SerializeField] private Transform buttonVisual;
-    [SerializeField] private Vector3 pressOffset = new Vector3(0f, -0.02f, 0f);
+    [SerializeField] private Vector3 pressOffset = new Vector3(0f, -0.02f, -0.03f);
     [SerializeField] private float pressTime = 0.08f;
     [SerializeField] private float returnTime = 0.12f;
 

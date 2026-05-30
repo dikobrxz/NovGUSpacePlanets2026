@@ -1,8 +1,6 @@
-using Newtonsoft.Json.Bson;
-using System.Drawing;
-using UnityEditor.TerrainTools;
 using UnityEngine;
 using System.Collections;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class StoryManager : MonoBehaviour
 {
@@ -14,6 +12,9 @@ public class StoryManager : MonoBehaviour
     [SerializeField] private AudioManager audioManager;
     [SerializeField] private UIManager uiManager;
     [SerializeField] private QuizManager quizManager;
+
+    [Header("UI")]
+    [SerializeField] private ContinueUIManager continueUI;
 
     [Header("Player")]
     [SerializeField] private Transform player;
@@ -49,15 +50,15 @@ public class StoryManager : MonoBehaviour
     [Header("Quest")]
     [SerializeField] private TransmitterQuest transmitterQuest;
 
-    [Header("Hints")]
-    [SerializeField] private ContinueInput continueInput;
+    [Header("Transmitter Spawn")]
+    [SerializeField] private Transform playerCamera;
 
     [Header("Look Hints")]
     [SerializeField] private LookHintTrigger titanLookHint;
 
     [Header("Quiz Ray")]
-    [SerializeField] private GameObject rightRayInteractor;
-    [SerializeField] private GameObject rightPokeInteractor;
+    [SerializeField] private NearFarInteractor rightInteractor;
+    [SerializeField] private NearFarInteractor leftInteractor;
 
     private bool quizFinished;
 
@@ -70,7 +71,6 @@ public class StoryManager : MonoBehaviour
         Observation,
         ResearchHistory,
         Quest,
-        Return,
         Quiz,
         End
     }
@@ -114,12 +114,6 @@ public class StoryManager : MonoBehaviour
             case Stage.Quest:
                 MovePlayer(questPoint);
                 terrain.SetActive(true);
-                transmitter.SetActive(true);
-                break;
-
-            case Stage.Return:
-                MovePlayer(returnPoint);
-                saturn.SetActive(true);
                 break;
 
             case Stage.Quiz:
@@ -137,8 +131,8 @@ public class StoryManager : MonoBehaviour
 
     private IEnumerator StoryRoutine()
     {
-        rightRayInteractor.SetActive(false);
-        rightPokeInteractor.SetActive(false);
+        rightInteractor.enableFarCasting = true;
+        leftInteractor.enableFarCasting = true;
 
         if (useDebugStartStage)
         {
@@ -166,10 +160,6 @@ public class StoryManager : MonoBehaviour
                     yield return RunQuest();
                     break;
 
-                case Stage.Return:
-                    yield return RunReturn();
-                    break;
-
                 case Stage.Quiz:
                     yield return RunQuiz();
                     break;
@@ -187,7 +177,6 @@ public class StoryManager : MonoBehaviour
         yield return RunObservation();
         yield return RunResearchHistory();
         yield return RunQuest();
-        yield return RunReturn();
         yield return RunQuiz();
         yield return RunEnd();
 
@@ -199,12 +188,14 @@ public class StoryManager : MonoBehaviour
         SetStage(Stage.Start);
         MovePlayer(startPoint);
 
+        HideAllObjects();
+
         ship.SetActive(true);
         saturn.SetActive(true);
 
         yield return audioManager.PlayAndWait(AudioType.Start);
 
-        yield return WaitForContinue("Нажмите маленькую кнопку на контроллере, чтобы продолжить.");
+        yield return WaitForContinue("Начать");
 
         yield return screenFadeManager.FadeOut();
     }
@@ -218,14 +209,13 @@ public class StoryManager : MonoBehaviour
         ship.SetActive(false);
         terrain.SetActive(true);
         stormClouds.SetActive(true);
-        //sun.SetActive(true);
         rings.SetActive(true);
 
         yield return screenFadeManager.FadeIn();
 
         yield return audioManager.PlayAndWait(AudioType.Atmosphere);
 
-        yield return WaitForContinue("Осмотритесь и нажмите маленькую кнопку на контроллере, чтобы продолжить.");
+        yield return WaitForContinue("Продолжить");
     }
 
     private IEnumerator RunObservation()
@@ -248,15 +238,11 @@ public class StoryManager : MonoBehaviour
 
         yield return StartCoroutine(titanLookHint.CheckLookDirection());
 
-        yield return WaitForContinue("Осмотритесь и нажмите маленькую кнопку на контроллере, чтобы продолжить.");
+        yield return WaitForContinue("Продолжить");
     }
 
     private IEnumerator RunResearchHistory()
     {
-        /*titan.SetActive(true);
-
-        titanMovement.StartMovement();*/
-
         SetStage(Stage.ResearchHistory);
 
         cassini.SetActive(true);
@@ -266,7 +252,7 @@ public class StoryManager : MonoBehaviour
 
         yield return audioManager.PlayAndWait(AudioType.Research);
 
-        yield return WaitForContinue("Осмотритесь и нажмите маленькую кнопку на контроллере, чтобы продолжить.");
+        yield return WaitForContinue("Продолжить");
     }
 
     private IEnumerator RunQuest()
@@ -274,42 +260,49 @@ public class StoryManager : MonoBehaviour
         SetStage(Stage.Quest);
         MovePlayer(questPoint);
 
+        yield return null;
+
+        rightInteractor.enableNearCasting = true;
+        rightInteractor.enableFarCasting = false;
+        leftInteractor.enableNearCasting = true;
+        leftInteractor.enableFarCasting = false;
+
+        PlaceTransmitterNearPlayer();
         transmitter.SetActive(true);
         transmitterQuest.StartQuest();
 
         yield return audioManager.PlayAndWait(AudioType.Quest);
 
         yield return new WaitUntil(() => transmitterQuest.IsCompleted);
+
+        yield return audioManager.PlayAndWait(AudioType.Return);
+
+        yield return WaitForContinue("Вернуться", -1.1f);
+
+        leftInteractor.enableFarCasting = true;
     }
 
-    private IEnumerator RunReturn()
+    private IEnumerator RunQuiz()
     {
         yield return screenFadeManager.FadeOut();
 
-        SetStage(Stage.Return);
+        SetStage(Stage.Quiz);
         MovePlayer(returnPoint);
 
         HideAllObjects();
         ship.SetActive(true);
         saturn.SetActive(true);
 
-        yield return screenFadeManager.FadeIn();
-
-        yield return audioManager.PlayAndWait(AudioType.Return);
-
-        yield return WaitForContinue("Нажмите маленькую кнопку на контроллере, чтобы перейти к финальному квизу.");
-    }
-
-    private IEnumerator RunQuiz()
-    {
-        SetStage(Stage.Quiz);
-
-        rightRayInteractor.SetActive(true);
-        rightPokeInteractor.SetActive(true);
+        rightInteractor.enableNearCasting = false;
+        rightInteractor.enableFarCasting = true;
+        leftInteractor.enableNearCasting = false;
+        leftInteractor.enableFarCasting = true;
 
         quizFinished = false;
 
         quizManager.StartQuiz();
+
+        yield return screenFadeManager.FadeIn();
 
         yield return new WaitUntil(() => quizFinished);
 
@@ -342,8 +335,8 @@ public class StoryManager : MonoBehaviour
 
     private void MovePlayer(Transform point)
     {
-        player.SetPositionAndRotation(point.position, point.rotation); 
-        
+        player.SetPositionAndRotation(point.position, point.rotation);
+
         Physics.SyncTransforms();
     }
 
@@ -356,20 +349,40 @@ public class StoryManager : MonoBehaviour
         titan.SetActive(false);
         cassini.SetActive(false);
         transmitter.SetActive(false);
-        //sun.SetActive(false);
         stormClouds.SetActive(false);
     }
 
-    private IEnumerator WaitForContinue(string hint)
+    private IEnumerator WaitForContinue(string buttonText, float sideOffset = 0f)
     {
         yield return new WaitForSeconds(1.5f);
 
-        continueInput.ResetPress();
-        uiManager.ShowHint(hint);
+        continueUI.PlaceNearPlayer(playerCamera, sideOffset);
+        continueUI.Show(buttonText);
 
-        yield return new WaitUntil(() => continueInput.WasPressed);
+        yield return new WaitUntil(() => continueUI.WasPressed);
+        yield return new WaitForSeconds(0.2f);
 
-        uiManager.HideTextPanel();
+        continueUI.Hide();
+    }
+
+    private void PlaceTransmitterNearPlayer()
+    {
+        Vector3 forward = playerCamera.forward;
+        forward.y = 0f;
+        forward.Normalize();
+
+        Vector3 spawnPosition = playerCamera.position + forward * 0.35f;
+
+        spawnPosition.y =
+            playerCamera.position.y - 0.2f;
+
+        transmitter.transform.position = spawnPosition;
+
+        Vector3 lookDirection = playerCamera.position - transmitter.transform.position;
+
+        lookDirection.y = 0f;
+
+        transmitter.transform.rotation = Quaternion.LookRotation(lookDirection) * Quaternion.Euler(-15f, 0f, 0f);
     }
 
     public void OnQuizFinished()

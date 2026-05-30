@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using TMPro;
 
 public class TransmitterQuest : MonoBehaviour
 {
@@ -11,23 +12,28 @@ public class TransmitterQuest : MonoBehaviour
     [SerializeField] private int firstTargetValue = 2004;
     [SerializeField] private int secondTargetValue = 2017;
 
-    /*[Header("Objects")]
-    [SerializeField] private GameObject sendButton;*/
-
     [Header("Audio")]
     [SerializeField] private AudioManager audioManager;
+
+    [Header("Hint UI")]
+    [SerializeField] private GameObject hintPanel;
+    [SerializeField] private TMP_Text hintText;
+
+    [TextArea]
+    [SerializeField] private string rotateHint = "Поверните левый и правый переключатели до значений 2004 и 2017, чтобы настроить частоту передатчика.";
+
+    [TextArea]
+    [SerializeField] private string sendHint = "Частота настроена. Нажмите кнопку, чтобы отправить данные.";
 
     public bool IsCompleted { get; private set; }
 
     public UnityEvent OnQuestCompleted;
 
-    private bool canSendData;
     private bool signalPlayed;
 
     public void StartQuest()
     {
         IsCompleted = false;
-        canSendData = false;
         signalPlayed = false;
 
         firstLever.OnValueChanged -= CheckLevers;
@@ -36,22 +42,28 @@ public class TransmitterQuest : MonoBehaviour
         firstLever.OnValueChanged += CheckLevers;
         secondLever.OnValueChanged += CheckLevers;
 
-        CheckLevers();
+        ShowHint(rotateHint);
     }
 
     private void CheckLevers()
     {
-        bool canSendData =
-            firstLever.CurrentValue == firstTargetValue &&
-            secondLever.CurrentValue == secondTargetValue;
+        bool isCorrect =
+        firstLever.CurrentValue == firstTargetValue &&
+        secondLever.CurrentValue == secondTargetValue;
 
-        if (canSendData && !signalPlayed)
+        if (isCorrect)
+        {
+            ShowHint(sendHint);
+        }
+
+        if (isCorrect && !signalPlayed)
         {
             signalPlayed = true;
             audioManager.Play(AudioType.SuccessSignal);
+            Debug.Log("Передатчик настроен. Можно отправлять данные.");
         }
 
-        if (!canSendData)
+        if (!isCorrect)
         {
             signalPlayed = false;
         }
@@ -73,6 +85,8 @@ public class TransmitterQuest : MonoBehaviour
             return;
         }
 
+        HideHint();
+
         IsCompleted = true;
 
         audioManager.Play(AudioType.DataSend);
@@ -83,6 +97,17 @@ public class TransmitterQuest : MonoBehaviour
         OnQuestCompleted?.Invoke();
 
         Debug.Log("Данные отправлены на Кассини");
+    }
+
+    private void ShowHint(string text)
+    {
+        hintText.text = text;
+        hintPanel.SetActive(true);
+    }
+
+    private void HideHint()
+    {
+        hintPanel.SetActive(false);
     }
 
     private void OnDisable()

@@ -14,7 +14,8 @@ public class QuizAnswerButton : MonoBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
-    [SerializeField] private AudioClip clickSound;
+    [SerializeField] private AudioClip correctSound;
+    [SerializeField] private AudioClip wrongSound;
 
     private int answerIndex;
     private QuizManager quizManager;
@@ -33,17 +34,18 @@ public class QuizAnswerButton : MonoBehaviour
 
     public void SelectAnswer()
     {
-        StartCoroutine(SelectRoutine());
+        quizManager.ChooseAnswer(answerIndex, this);
     }
 
-    private IEnumerator SelectRoutine()
+    public void PlayAnswerSound(bool isCorrect)
     {
-        if (audioSource != null && clickSound != null)
-            audioSource.PlayOneShot(clickSound);
+        if (audioSource == null)
+            return;
 
-        quizManager.ChooseAnswer(answerIndex, this);
+        AudioClip clip = isCorrect ? correctSound : wrongSound;
 
-        yield return new WaitForSeconds(0.2f);
+        if (clip != null)
+            audioSource.PlayOneShot(clip);
     }
 
     public void SetCorrect()

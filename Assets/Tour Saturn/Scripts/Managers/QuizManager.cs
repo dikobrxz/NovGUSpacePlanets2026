@@ -30,8 +30,9 @@ public class QuizManager : MonoBehaviour
     [SerializeField] private TMP_Text correctAnswersText;
     [SerializeField] private TMP_Text wrongAnswersText;
 
-    /*[Header("Audio")]
-    [SerializeField] private AudioManager audioManager;*/
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip resultsClip;
 
     [Header("Settings")]
     [SerializeField] private float resultShowTime = 1f;
@@ -142,6 +143,8 @@ public class QuizManager : MonoBehaviour
 
         bool isCorrect = answerIndex == question.CorrectAnswerIndex;
 
+        selectedButton.PlayAnswerSound(isCorrect);
+
         if (isCorrect)
         {
             correctAnswers++;
@@ -180,31 +183,13 @@ public class QuizManager : MonoBehaviour
         wrongAnswersText.text = $"Îøèáêè: {wrongAnswers}";
     }
 
-    /*public void ChooseAnswer(int answerIndex)
-    {
-        QuizQuestion question = questions[currentQuestionIndex];
-
-        if (answerIndex == question.CorrectAnswerIndex)
-            correctAnswers++;
-
-        currentQuestionIndex++;
-
-        if (currentQuestionIndex >= questions.Length)
-        {
-            FinishQuiz();
-        }
-        else
-        {
-            ShowQuestion();
-        }
-    }*/
-
     private void FinishQuiz()
     {
-        //quizCanvas.SetActive(false);
         quizPanel.SetActive(false);
         resultsPanel.SetActive(true);
         UpdateScoreUI();
+
+        audioSource.PlayOneShot(resultsClip);
 
         OnQuizFinished?.Invoke();
 
