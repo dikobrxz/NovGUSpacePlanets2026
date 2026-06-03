@@ -12,8 +12,15 @@ public class DrawingBoard : MonoBehaviour
 
     void Start()
     {
+        if (drawingTexture == null)
+        {
+            Debug.LogError("DrawingTexture не назначен!");
+            return;
+        }
+
         texture2D = new Texture2D(drawingTexture.width, drawingTexture.height);
         Clear();
+        Debug.Log("Ready. Texture size: " + drawingTexture.width + "x" + drawingTexture.height);
     }
 
     void OnTriggerStay(Collider other)
@@ -23,12 +30,18 @@ public class DrawingBoard : MonoBehaviour
             Vector3 localPoint = transform.InverseTransformPoint(other.transform.position);
             float u = (localPoint.x / transform.localScale.x) + 0.5f;
             float v = (localPoint.z / transform.localScale.z) + 0.5f;
+
+            Debug.Log("UV: u=" + u + ", v=" + v);
+
             Vector2 currentPos = new Vector2(u * drawingTexture.width, v * drawingTexture.height);
+
+            Debug.Log("Pixel: x=" + currentPos.x + ", y=" + currentPos.y);
 
             if (!drawing)
             {
                 lastPos = currentPos;
                 drawing = true;
+                Debug.Log("Начало рисования");
             }
 
             DrawLine(lastPos, currentPos);
@@ -39,6 +52,8 @@ public class DrawingBoard : MonoBehaviour
     void DrawLine(Vector2 from, Vector2 to)
     {
         float distance = Vector2.Distance(from, to);
+        Debug.Log("Рисуем линию. Длина: " + distance + " пикселей");
+
         for (float t = 0; t <= distance; t++)
         {
             Vector2 point = Vector2.Lerp(from, to, t / distance);
@@ -50,6 +65,8 @@ public class DrawingBoard : MonoBehaviour
     {
         int x = Mathf.RoundToInt(point.x);
         int y = Mathf.RoundToInt(point.y);
+
+        Debug.Log("Точка: " + x + ", " + y);
 
         for (int i = -brushSize; i <= brushSize; i++)
         {
@@ -72,10 +89,14 @@ public class DrawingBoard : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Marker")) drawing = false;
+        if (other.CompareTag("Marker"))
+        {
+            drawing = false;
+            Debug.Log("Рисование прекращено");
+        }
     }
 
-    void Clear()
+    public void Clear()
     {
         for (int x = 0; x < drawingTexture.width; x++)
             for (int y = 0; y < drawingTexture.height; y++)
@@ -84,5 +105,6 @@ public class DrawingBoard : MonoBehaviour
         RenderTexture.active = drawingTexture;
         Graphics.Blit(texture2D, drawingTexture);
         RenderTexture.active = null;
+        Debug.Log("Доска очищена");
     }
 }
