@@ -2,16 +2,28 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private StoryManager _sm;
+    [Header("Managers")]
+    [SerializeField] private AudioManager audioManager;
+    [SerializeField] private StoryManager storyManager;
+
+    [Header("UI Objects")]
+    [SerializeField] private GameObject startCanvas;
+
+    [Header("Objects")]
+    [SerializeField] private GameObject startPoint;
 
     private void Awake()
     {
-        _sm = GetComponent<StoryManager>();
+        startCanvas.SetActive(true);
+
+        storyManager.MovePlayer(startPoint.transform);
     }
 
-    private void Start()
+    public void StoryStart()
     {
         Debug.Log("—ценарий запущен");
-        _sm.StoryStart();
+        audioManager.Play(AudioType.ContinueButton);
+        storyManager.StoryStart();
+        startCanvas.SetActive(false);
     }
 }

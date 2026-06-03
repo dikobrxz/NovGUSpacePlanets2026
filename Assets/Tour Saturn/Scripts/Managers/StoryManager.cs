@@ -277,9 +277,9 @@ public class StoryManager : MonoBehaviour
 
         yield return audioManager.PlayAndWait(AudioType.Return);
 
-        yield return WaitForContinue("Вернуться", -1.1f);
-
         leftInteractor.enableFarCasting = true;
+
+        yield return WaitForContinue("Вернуться", -1.1f);
     }
 
     private IEnumerator RunQuiz()
@@ -333,14 +333,14 @@ public class StoryManager : MonoBehaviour
         Debug.Log($"Текущая стадия: {CurrentStage}");
     }
 
-    private void MovePlayer(Transform point)
+    public void MovePlayer(Transform point)
     {
         player.SetPositionAndRotation(point.position, point.rotation);
 
         Physics.SyncTransforms();
     }
 
-    private void HideAllObjects()
+    public void HideAllObjects()
     {
         saturn.SetActive(false);
         ship.SetActive(false);
@@ -374,7 +374,7 @@ public class StoryManager : MonoBehaviour
         Vector3 spawnPosition = playerCamera.position + forward * 0.35f;
 
         spawnPosition.y =
-            playerCamera.position.y - 0.2f;
+            playerCamera.position.y - 0.23f;
 
         transmitter.transform.position = spawnPosition;
 

@@ -77,3 +77,7 @@ crashlytics-build.properties
 # End of https://www.toptal.com/developers/gitignore/api/unity
 Assets/_RiverMarket/Models/Polytope Studio/Lowpoly_Characters/SRP/Polytope Studio/Polytope Studio/Lowpoly_Characters/SRP/PT_Peasants_Free_URP_10.10.1.unitypackage.meta
 Assets/_RiverMarket/Models/Polytope Studio/Lowpoly_Characters/SRP/Polytope Studio/Polytope Studio/Lowpoly_Characters/SRP/PT_Peasants_Free_URP_12.1.10.unitypackage.meta
+
+
+# HybridCLR generated files
+/HybridCLRData/
