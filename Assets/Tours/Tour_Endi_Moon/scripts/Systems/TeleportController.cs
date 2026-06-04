@@ -70,6 +70,10 @@ namespace MoonGame
             // Всегда ставим игрока на Spawn 1 при старте — без fade и звука
             if (spawn1 != null)
                 MoveRig(spawn1);
+
+            // Временно для теста
+            //if (story != null)
+            //    story.SetStage(GameState.Exploration);
         }
 
         private void OnDestroy()

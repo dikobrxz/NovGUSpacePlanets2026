@@ -2,16 +2,23 @@ using UnityEngine;
 
 namespace MoonGame
 {
-    /// <summary>
-    /// Лопата. Вешается на модель лопаты.
-    /// Единственная функция: при касании с SandPile регистрирует удар → кучка погружается,
-    /// затем артефакт появляется на поверхности.
-    /// Требует Collider с isTrigger = true на наконечнике лопаты.
-    /// </summary>
     public class DiggingTool : MonoBehaviour
     {
         [Header("Минимальный интервал между касаниями одного объекта (сек)")]
         [SerializeField] private float hitCooldown = 0.25f;
+
+        [Header("Частицы при ударе")]
+        [SerializeField] private ParticleSystem digParticles;
+
+        [Header("Звук копания")]
+        [SerializeField] private AudioSource digAudioSource;
+        [SerializeField] private AudioClip digClip;
+        [Range(0f, 1f)]
+        [SerializeField] private float digVolume = 0.4f;
+
+        [Header("Вибрация контроллера")]
+        [SerializeField] private float hapticAmplitude = 0.3f;
+        [SerializeField] private float hapticDuration = 0.1f;
 
         private readonly System.Collections.Generic.Dictionary<int, float> lastHitTime = new();
 
@@ -35,8 +42,34 @@ namespace MoonGame
             if (lastHitTime.TryGetValue(id, out float prev) && now - prev < hitCooldown) return;
 
             lastHitTime[id] = now;
+
+            PlayDigParticles(pile.transform.position);
+            PlayDigSound();
+            SendHaptic();
+
             pile.RegisterHit();
         }
-    }
 
+        private void PlayDigParticles(Vector3 position)
+        {
+            if (digParticles == null) return;
+            digParticles.transform.position = position;
+            digParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            digParticles.Play();
+        }
+
+        private void PlayDigSound()
+        {
+            if (digAudioSource == null || digClip == null) return;
+            digAudioSource.PlayOneShot(digClip, digVolume);
+        }
+
+        private void SendHaptic()
+        {
+            var controller = GetComponentInParent<
+                UnityEngine.XR.Interaction.Toolkit.XRBaseController>();
+            if (controller == null) return;
+            controller.SendHapticImpulse(hapticAmplitude, hapticDuration);
+        }
+    }
 }

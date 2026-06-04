@@ -36,8 +36,8 @@ namespace MoonGame
                 correctIndex = 0
             },
             new QuizQuestion {
-                text = "Луна — планета или нет?",
-                options = new[] { "Да", "Нет", "Луна — спутник Земли" },
+                text = "Чем является луна",
+                options = new[] { "Планета", "Звезда", "Луна — спутник Земли" },
                 correctIndex = 2
             },
             new QuizQuestion {
