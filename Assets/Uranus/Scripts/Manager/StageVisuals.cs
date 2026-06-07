@@ -34,7 +34,7 @@ public class StageVisuals : MonoBehaviour
 
     [Header("Audio")]
     public AudioSource voiceOver;
-    public AudioClip startClip;
+    public AudioClip introductionClip;
     public AudioClip landingClip;
     public AudioClip explorationClip;
     public AudioClip historicalClip;
@@ -112,6 +112,7 @@ public class StageVisuals : MonoBehaviour
             switch (newStage)
             {
                 case SceneState.Start: ShowStartStage(); break;
+                case SceneState.Introduction: ShowIntroductionStage(); break;
                 case SceneState.Landing: ShowLandingStage(); break;
                 case SceneState.Exploration: ShowExplorationStage(); break;
                 case SceneState.Historical: ShowHistoricalStage(); break;
@@ -190,7 +191,19 @@ public class StageVisuals : MonoBehaviour
                 parentGroup.blocksRaycasts = true;
             }
         }
-        PlayClip(startClip);
+    }
+
+    private void ShowIntroductionStage()
+    {
+        HideAll();
+        SetLocomotion(false);
+        spaceship.SetActive(true);
+        directionalLight.SetActive(true);
+        uranusPlanet.SetActive(true);
+        isPlanetRotating = true;
+        actionButton.SetActive(false);
+
+        PlayClip(introductionClip);
     }
 
     private void ShowLandingStage()
@@ -201,7 +214,6 @@ public class StageVisuals : MonoBehaviour
         directionalLight.SetActive(true);
         windParticles.Play();
         volCloudsObject.SetActive(true);
-        if (actionButton != null) actionButton.SetActive(false);
         PlayClip(landingClip);
     }
 
@@ -263,8 +275,8 @@ public class StageVisuals : MonoBehaviour
         uranusPlanet.SetActive(true);
         isPlanetRotating = true;
         volCloudsObject.SetActive(true);
-        if (actionButton != null) actionButton.SetActive(false);
-        if (quizCanvas != null) quizCanvas.SetActive(true);
+        actionButton.SetActive(false);
+        quizCanvas.SetActive(true);
         quizManager?.StartQuiz();
     }
 
@@ -288,7 +300,7 @@ public class StageVisuals : MonoBehaviour
         if (scenarioManager.GetCurrentState() == SceneState.Start)
         {
             scenarioManager.NextStage();
-            if (actionButton != null) actionButton.SetActive(false);
+            actionButton.SetActive(false);
         }
     }
 
@@ -306,7 +318,7 @@ public class StageVisuals : MonoBehaviour
         SetButtonText("Начать");
         currentStage = SceneState.Start;
         ShowStartStage();
-        if (quizCanvas != null) quizCanvas.SetActive(false);
+        quizCanvas.SetActive(false);
         if (quizManager?.quizCanvasGroup != null)
         {
             quizManager.quizCanvasGroup.alpha = 0f;

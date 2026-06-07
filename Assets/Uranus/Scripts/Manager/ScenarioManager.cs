@@ -3,6 +3,7 @@ using UnityEngine;
 public enum SceneState
 {
     Start,
+    Introduction,
     Landing,
     Exploration,
     Historical,
@@ -18,12 +19,12 @@ public class ScenarioManager : MonoBehaviour
     public float GetStageDuration(SceneState state)
     {
         switch (state)
-        {
-            // Длинна
+        {   //Длинна
             case SceneState.Start: return -1f;
-            case SceneState.Landing: return 10f;
-            case SceneState.Exploration: return 10f;
-            case SceneState.Historical: return 10f;
+            case SceneState.Introduction: return 4f;
+            case SceneState.Landing: return 5f;
+            case SceneState.Exploration: return 5f;
+            case SceneState.Historical: return 5f;
             case SceneState.Quest: return 4f;
             case SceneState.Return: return -1f;
             case SceneState.End: return -1f;
@@ -42,6 +43,9 @@ public class ScenarioManager : MonoBehaviour
         switch (currentState)
         {
             case SceneState.Start:
+                currentState = SceneState.Introduction;
+                break;
+            case SceneState.Introduction:
                 currentState = SceneState.Landing;
                 break;
             case SceneState.Landing:

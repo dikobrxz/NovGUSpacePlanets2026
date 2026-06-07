@@ -249,7 +249,7 @@ MonoBehaviour:
   quizManager: {fileID: 169215683}
   directionalLight: {fileID: 1261906282}
   voiceOver: {fileID: 169215682}
-  startClip: {fileID: 8300000, guid: af45775872f5d75458367f131e396dcd, type: 3}
+  introductionClip: {fileID: 8300000, guid: af45775872f5d75458367f131e396dcd, type: 3}
   landingClip: {fileID: 8300000, guid: 9575d87c00d7e0c42a591125ea5185c8, type: 3}
   explorationClip: {fileID: 8300000, guid: 6dc80cf9d1007c644ab26f09acfa7d74, type: 3}
   historicalClip: {fileID: 8300000, guid: f45918eb819edcf4a959dd6c1bd38fdd, type: 3}
@@ -2240,7 +2240,7 @@ ParticleSystem:
   m_GameObject: {fileID: 649361884}
   serializedVersion: 8
   lengthInSec: 5
-  simulationSpeed: 8.05
+  simulationSpeed: 5.7
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
@@ -2366,9 +2366,9 @@ ParticleSystem:
         m_RotationOrder: 4
     startSpeed:
       serializedVersion: 2
-      minMaxState: 3
-      scalar: 30
-      minScalar: 20
+      minMaxState: 0
+      scalar: 20
+      minScalar: 30
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -2421,7 +2421,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 0.83137256, g: 0.82638025, b: 0.6313726, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -2485,8 +2485,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 2.5
-      minScalar: 1.7
+      scalar: 4
+      minScalar: 2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -7042,9 +7042,6 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 43f321b6221ae3e4a98d3fc288ec759f, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1842726855}
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 43f321b6221ae3e4a98d3fc288ec759f, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 838431914}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43f321b6221ae3e4a98d3fc288ec759f, type: 3}
@@ -7378,7 +7375,6 @@ GameObject:
   - component: {fileID: 838431914}
   - component: {fileID: 838431919}
   - component: {fileID: 838431918}
-  - component: {fileID: 838431917}
   - component: {fileID: 838431916}
   - component: {fileID: 838431915}
   m_Layer: 0
@@ -7410,7 +7406,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 838431913}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f8b2cbd9cabdee4cb8c9b62c3c12659, type: 3}
   m_Name: 
@@ -7419,8 +7415,8 @@ MonoBehaviour:
   brushSize: 5
   brushColor: {r: 0.34531865, g: 0.693757, b: 0.754717, a: 1}
   brushTip: {fileID: 2142573467}
-  brushDistance: 0.1
-  canvasCollider: {fileID: 1842726860}
+  brushDistance: 100
+  canvasCollider: {fileID: 0}
 --- !u!65 &838431916
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7442,28 +7438,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1.0000002, z: 0.1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!64 &838431917
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 838431913}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &838431918
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7705,7 +7679,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c700eb4e91b392445ad7ec346b950b8d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 97.93
+      value: 93.47
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c700eb4e91b392445ad7ec346b950b8d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8677,7 +8651,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -88.24, y: 53.4}
+  m_AnchoredPosition: {x: -88.24, y: 51.44}
   m_SizeDelta: {x: 9.74, y: 5.05}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1384444940
@@ -10018,176 +9992,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 43f321b6221ae3e4a98d3fc288ec759f, type: 3}
   m_PrefabInstance: {fileID: 656006663}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1842726854
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1842726855}
-  - component: {fileID: 1842726860}
-  - component: {fileID: 1842726859}
-  - component: {fileID: 1842726858}
-  - component: {fileID: 1842726856}
-  m_Layer: 3
-  m_Name: Collider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1842726855
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1842726854}
-  m_LocalRotation: {x: -0.593897, y: 0.0006816983, z: 0.0005259048, w: 0.8045407}
-  m_LocalPosition: {x: 0, y: 0, z: 0.0132}
-  m_LocalScale: {x: 0.02, y: 0.03, z: 0.2713}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 656006664}
-  m_LocalEulerAnglesHint: {x: -72.868, y: 0.092, z: 0.007}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0, y: 0.01138}
-  m_SizeDelta: {x: 1, y: 1}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &1842726856
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1842726854}
-  m_CullTransparentMesh: 1
---- !u!114 &1842726858
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1842726854}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f8b2cbd9cabdee4cb8c9b62c3c12659, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DrawingBoard
-  drawingTexture: {fileID: 8400000, guid: e3b895f89cf9c0744ab908c216e1be56, type: 2}
-  brushSize: 5
-  brushColor: {r: 0.6415094, g: 0.25720897, b: 0.25720897, a: 1}
-  brushTip: {fileID: 2142573467}
-  brushDistance: 0.5
-  canvasCollider: {fileID: 1842726860}
---- !u!114 &1842726859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1842726854}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a35f6cfbfba9b548aaa00d52cfe8a50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.XR.Interaction.Toolkit::UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable
-  m_InteractionManager: {fileID: 0}
-  m_Colliders: []
-  m_InteractionLayers:
-    m_Bits: 1
-  m_DistanceCalculationMode: 1
-  m_SelectMode: 0
-  m_FocusMode: 1
-  m_CustomReticle: {fileID: 0}
-  m_AllowGazeInteraction: 0
-  m_AllowGazeSelect: 0
-  m_OverrideGazeTimeToSelect: 0
-  m_GazeTimeToSelect: 0.5
-  m_OverrideTimeToAutoDeselectGaze: 0
-  m_TimeToAutoDeselectGaze: 3
-  m_AllowGazeAssistance: 0
-  m_FirstHoverEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  m_LastHoverExited:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1842726854}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  m_HoverEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  m_HoverExited:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FirstSelectEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  m_LastSelectExited:
-    m_PersistentCalls:
-      m_Calls: []
-  m_SelectEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  m_SelectExited:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FirstFocusEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  m_LastFocusExited:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FocusEntered:
-    m_PersistentCalls:
-      m_Calls: []
-  m_FocusExited:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Activated:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Deactivated:
-    m_PersistentCalls:
-      m_Calls: []
-  m_StartingHoverFilters: []
-  m_StartingSelectFilters: []
-  m_StartingInteractionStrengthFilters: []
---- !u!65 &1842726860
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1842726854}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 0}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1858125582 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6140885551018592312, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
@@ -10644,13 +10448,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2023422496}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -86.83769, y: 525, z: 92}
-  m_LocalScale: {x: 10000, y: 60, z: 10000}
+  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
+  m_LocalPosition: {x: -74, y: -411, z: -1735}
+  m_LocalScale: {x: 1900, y: 1900, z: 1900}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1781596725}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
 --- !u!114 &2023422502
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10663,8 +10467,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49e65e9a0d7be1d49a1047c56cc4bcf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LazyClouds
-  LS_CloudTimeScale: 0.5
-  LS_CloudScale: 8.4
+  LS_CloudTimeScale: 0.2
+  LS_CloudScale: 1
   LS_CloudScattering: 0.7
   LS_CloudIntensity: 0.35
   LS_CloudSharpness: 1

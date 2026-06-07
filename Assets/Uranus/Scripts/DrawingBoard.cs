@@ -84,11 +84,12 @@ public class DrawingBoard : MonoBehaviour
         if (isOnCanvas && isHeld)
         {
             Vector3 localPoint = canvasCollider.transform.InverseTransformPoint(hit.point);
-
+            Debug.Log("LocalPoint "+ localPoint);
             float u = (localPoint.x - colliderCenter.x + colliderSize.x / 2f) / colliderSize.x;
             float v = (localPoint.y - colliderCenter.y + colliderSize.y / 2f) / colliderSize.y;
             v = 1f - v;
             Vector2 currentUV = new Vector2(u, v);
+
 
             if (currentUV.x < 0 || currentUV.x > 1 || currentUV.y < 0 || currentUV.y > 1)
             {
@@ -104,8 +105,10 @@ public class DrawingBoard : MonoBehaviour
             }
             else
             {
+                Debug.Log("isDrawing " + isDrawing);
                 if (Vector2.Distance(lastUV, currentUV) > 0.001f)
                 {
+                    Debug.Log("Начинаем рисовать");
                     DrawLine(lastUV, currentUV);
                     lastUV = currentUV;
                 }
@@ -136,7 +139,9 @@ public class DrawingBoard : MonoBehaviour
             float t = i / (float)steps;
             Vector2 point = Vector2.Lerp(fromPx, toPx, t);
             DrawPointAtPixel(point);
+            Debug.Log("Рисуем");
         }
+        
     }
 
     private void DrawPointAtUV(Vector2 uv)

@@ -21,6 +21,9 @@ public class LazyClouds : MonoBehaviour
         if (renderer != null)
         {
             cloudMaterial = renderer.material;
+
+            Color cloudColor = new Color(0.447f, 0.678f, 0.737f, 0.8f);
+            cloudMaterial.SetColor("_BaseColor", cloudColor);
         }
     }
 
@@ -32,9 +35,6 @@ public class LazyClouds : MonoBehaviour
 
         Vector2 offset = new Vector2(time * 0.1f, time * 0.05f);
         cloudMaterial.SetTextureOffset("_BaseMap", offset);
-
-        Color cloudColor = new Color(LS_CloudColor.x, LS_CloudColor.y, LS_CloudColor.z, 0.7f);
-        cloudMaterial.SetColor("_BaseColor", cloudColor);
 
         Vector2 tiling = new Vector2(LS_CloudScale, LS_CloudScale);
         cloudMaterial.SetTextureScale("_BaseMap", tiling);
