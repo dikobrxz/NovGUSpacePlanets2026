@@ -279,7 +279,7 @@ public class StoryManager : MonoBehaviour
 
         leftInteractor.enableFarCasting = true;
 
-        yield return WaitForContinue("Вернуться", -1.1f);
+        yield return WaitForContinue("Вернуться", -0.4f);
     }
 
     private IEnumerator RunQuiz()
@@ -335,7 +335,11 @@ public class StoryManager : MonoBehaviour
 
     public void MovePlayer(Transform point)
     {
-        player.SetPositionAndRotation(point.position, point.rotation);
+        Vector3 cameraOffset = playerCamera.position - player.position;
+        cameraOffset.y = 0f;
+
+        player.position = point.position - cameraOffset;
+        player.rotation = point.rotation;
 
         Physics.SyncTransforms();
     }

@@ -7,10 +7,11 @@ public class ContinueUIManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject panel;
     [SerializeField] private ContinueUIButton continueButton;
+    [SerializeField] private GameObject titanHint;
 
     [Header("Placement")]
     [SerializeField] private Transform canvasRoot;
-    [SerializeField] private float distance = 1.2f;
+    [SerializeField] private float distance = 0.001f;
     [SerializeField] private float heightOffset = -0.1f;
 
     public bool WasPressed { get; private set; }
@@ -67,5 +68,19 @@ public class ContinueUIManager : MonoBehaviour
 
         canvasRoot.rotation =
             Quaternion.LookRotation(-directionToCamera);
+    }
+
+    public void ShowMessage(string text)
+    {
+        panel.SetActive(true);
+        titanHint.SetActive(true);
+        continueButton.gameObject.SetActive(false);
+    }
+
+    public void HideMessage()
+    {
+        panel.SetActive(false);
+        titanHint.SetActive(false);
+        continueButton.gameObject.SetActive(true);
     }
 }

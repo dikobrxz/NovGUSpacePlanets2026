@@ -6,7 +6,7 @@ public class LookHintTrigger : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform playerCamera;
     [SerializeField] private Transform target;
-    [SerializeField] private UIManager uiManager;
+    [SerializeField] private ContinueUIManager continueUiManager;
 
     [Header("Hint Settings")]
     [SerializeField] private string hintText = "Обернитесь, чтобы увидеть спутник.";
@@ -27,12 +27,13 @@ public class LookHintTrigger : MonoBehaviour
 
             if (angle >= showIfAngleGreaterThan)
             {
-                uiManager.ShowHint(hintText);
+                continueUiManager.PlaceNearPlayer(playerCamera);
+                continueUiManager.ShowMessage(hintText);
             }
 
             if (angle <= hideIfAngleLessThan)
             {
-                uiManager.HideTextPanel();
+                continueUiManager.HideMessage();
                 yield break;
             }
 
