@@ -16,8 +16,9 @@ public class StoryManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private ContinueUIManager continueUI;
 
-    [Header("Player")]
+    [Header("PlayerMove")]
     [SerializeField] private Transform player;
+    [SerializeField] private GameObject locomotionObject;
 
     [Header("Checkpoints")]
     [SerializeField] private Transform startPoint;
@@ -257,6 +258,8 @@ public class StoryManager : MonoBehaviour
 
     private IEnumerator RunQuest()
     {
+        locomotionObject.SetActive(false);
+
         SetStage(Stage.Quest);
         MovePlayer(questPoint);
 
@@ -284,6 +287,8 @@ public class StoryManager : MonoBehaviour
 
     private IEnumerator RunQuiz()
     {
+        locomotionObject.SetActive(true);
+
         yield return screenFadeManager.FadeOut();
 
         SetStage(Stage.Quiz);

@@ -4070,6 +4070,7 @@ MonoBehaviour:
   quizManager: {fileID: 1151298531}
   continueUI: {fileID: 1669418356}
   player: {fileID: 148883422}
+  locomotionObject: {fileID: 1887269391}
   startPoint: {fileID: 1374714671}
   atmospherePoint: {fileID: 2074814318}
   observationPoint: {fileID: 96488945}
@@ -11373,6 +11374,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1884503325}
   m_CullTransparentMesh: 1
+--- !u!1 &1887269391 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5667465548851856616, guid: d6878e1999eb4b44a9f5a263af86c185, type: 3}
+  m_PrefabInstance: {fileID: 328525839}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1893748121
 GameObject:
   m_ObjectHideFlags: 0
