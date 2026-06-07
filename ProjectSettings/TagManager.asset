@@ -30,7 +30,7 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - "\u0430\u0430\u0430\u0430fff\u0430\u0430"
+  - Canvas
   - Water
   - UI
   - Spawner Contact

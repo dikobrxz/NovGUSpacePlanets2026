@@ -10,13 +10,15 @@ public class QuizManager : MonoBehaviour
     public TMP_Text questionText;
     public TMP_Text scoreText;
     public Button[] answerButtons;
-    public Button restartButton;
-    public Button endButton;               // EndButton на QuizCanvas
-    public CanvasGroup quizCanvasGroup;    // Canvas Group на QuizCanvas (для скрытия)
+    public Button actionButton;
+    public CanvasGroup quizCanvasGroup;
 
     [Header("Audio")]
     public AudioSource quizAudioSource;
-    public AudioClip[] resultAudioClips;  // 0=хорошо(3-4), 1=плохо(0-2), 2=отлично(5)
+    public AudioClip lowScoreClip;
+    public AudioClip mediumScoreClip;
+    public AudioClip highScoreClip;
+    public AudioClip finalMessageClip;
 
     [Header("Scene Control")]
     public StageVisuals stageVisuals;
@@ -39,93 +41,63 @@ public class QuizManager : MonoBehaviour
     void Start()
     {
         LoadQuestions();
-
-        // Полностью скрываем квиз в начале
         if (quizCanvasGroup != null)
         {
             quizCanvasGroup.alpha = 0f;
             quizCanvasGroup.interactable = false;
             quizCanvasGroup.blocksRaycasts = false;
         }
-        else if (quizCanvasGroup == null)
+        if (actionButton != null)
         {
-            // Если Canvas Group нет, просто отключаем Canvas
-            gameObject.SetActive(false);
+            actionButton.onClick.RemoveAllListeners();
+            actionButton.onClick.AddListener(OnActionButtonPressed);
         }
-
-        if (restartButton != null) restartButton.gameObject.SetActive(false);
-        if (endButton != null) endButton.gameObject.SetActive(false);
-
-        // Назначаем слушателей
-        if (restartButton != null)
-            restartButton.onClick.AddListener(RestartQuiz);
-
-        if (endButton != null)
-            endButton.onClick.AddListener(OnEndPressed);
-
         for (int i = 0; i < answerButtons.Length; i++)
         {
             int index = i;
             answerButtons[i].onClick.AddListener(() => OnAnswerSelected(index));
         }
-
-        if (stageVisuals == null)
-            stageVisuals = FindFirstObjectByType<StageVisuals>();
+        if (stageVisuals == null) stageVisuals = FindFirstObjectByType<StageVisuals>();
     }
 
-    void LoadQuestions()
+    private void LoadQuestions()
     {
         questions.Clear();
-
-        Question q1 = new Question();
-        q1.questionText = "Какой по размерам Уран?";
-        q1.answers[0] = "А) Самый большой в Солнечной системе";
-        q1.answers[1] = "Б) Второй по размерам";
-        q1.answers[2] = "В) Третий по размерам";
-        q1.answers[3] = "";
-        q1.correctAnswerIndex = 2;
-        q1.numberOfAnswers = 3;
-        questions.Add(q1);
-
-        Question q2 = new Question();
-        q2.questionText = "Сколько лететь до Урана?";
-        q2.answers[0] = "А) 1 год";
-        q2.answers[1] = "Б) 3 года";
-        q2.answers[2] = "В) 6,5 года";
-        q2.answers[3] = "Г) 8,5 года";
-        q2.correctAnswerIndex = 2;
-        q2.numberOfAnswers = 4;
-        questions.Add(q2);
-
-        Question q3 = new Question();
-        q3.questionText = "Из чего состоит Уран?";
-        q3.answers[0] = "А) Лёд";
-        q3.answers[1] = "Б) Земля";
-        q3.answers[2] = "В) Огонь";
-        q3.answers[3] = "Г) Газ";
-        q3.correctAnswerIndex = 0;
-        q3.numberOfAnswers = 4;
-        questions.Add(q3);
-
-        Question q4 = new Question();
-        q4.questionText = "Посещали ли люди планету?";
-        q4.answers[0] = "А) Да";
-        q4.answers[1] = "Б) Нет";
-        q4.answers[2] = "";
-        q4.answers[3] = "";
-        q4.correctAnswerIndex = 1;
-        q4.numberOfAnswers = 2;
-        questions.Add(q4);
-
-        Question q5 = new Question();
-        q5.questionText = "Есть ли жизнь на Уране?";
-        q5.answers[0] = "А) Да";
-        q5.answers[1] = "Б) Нет";
-        q5.answers[2] = "В) Когда-то была";
-        q5.answers[3] = "Г) Возможно, существует на его спутниках";
-        q5.correctAnswerIndex = 3;
-        q5.numberOfAnswers = 4;
-        questions.Add(q5);
+        questions.Add(new Question
+        {
+            questionText = "Какой по размерам Уран?",
+            answers = new[] { "А) Самый большой в Солнечной системе", "Б) Второй по размерам", "В) Третий по размерам", "" },
+            correctAnswerIndex = 2,
+            numberOfAnswers = 3
+        });
+        questions.Add(new Question
+        {
+            questionText = "Сколько лететь до Урана?",
+            answers = new[] { "А) 1 год", "Б) 3 года", "В) 6,5 года", "Г) 8,5 года" },
+            correctAnswerIndex = 2,
+            numberOfAnswers = 4
+        });
+        questions.Add(new Question
+        {
+            questionText = "Из чего состоит Уран?",
+            answers = new[] { "А) Лёд", "Б) Земля", "В) Огонь", "Г) Газ" },
+            correctAnswerIndex = 0,
+            numberOfAnswers = 4
+        });
+        questions.Add(new Question
+        {
+            questionText = "Посещали ли люди планету?",
+            answers = new[] { "А) Да", "Б) Нет", "", "" },
+            correctAnswerIndex = 1,
+            numberOfAnswers = 2
+        });
+        questions.Add(new Question
+        {
+            questionText = "Есть ли жизнь на Уране?",
+            answers = new[] { "А) Да", "Б) Нет", "В) Когда-то была", "Г) Возможно, существует на его спутниках" },
+            correctAnswerIndex = 3,
+            numberOfAnswers = 4
+        });
     }
 
     public void StartQuiz()
@@ -136,194 +108,126 @@ public class QuizManager : MonoBehaviour
             quizCanvasGroup.interactable = true;
             quizCanvasGroup.blocksRaycasts = true;
         }
-        else
-        {
-            gameObject.SetActive(true);
-        }
         currentQuestionIndex = 0;
         correctAnswers = 0;
         quizCompleted = false;
         isWaitingForAudio = false;
-
-        if (restartButton != null) restartButton.gameObject.SetActive(false);
-        if (endButton != null) endButton.gameObject.SetActive(false);
-
-        foreach (Button btn in answerButtons)
+        if (actionButton != null) actionButton.gameObject.SetActive(false);
+        foreach (var btn in answerButtons)
         {
             btn.gameObject.SetActive(true);
             btn.interactable = true;
         }
-
         UpdateScoreUI();
         ShowQuestion();
     }
 
-    void ShowQuestion()
+    private void ShowQuestion()
     {
         if (currentQuestionIndex >= questions.Count)
         {
             EndQuiz();
             return;
         }
-
-        Question q = questions[currentQuestionIndex];
+        var q = questions[currentQuestionIndex];
         questionText.text = q.questionText;
-
         for (int i = 0; i < answerButtons.Length; i++)
         {
             if (i < q.numberOfAnswers)
             {
                 answerButtons[i].gameObject.SetActive(true);
-                TMP_Text buttonText = answerButtons[i].GetComponentInChildren<TMP_Text>();
-                if (buttonText != null)
-                {
-                    buttonText.text = q.answers[i];
-                }
+                var btnText = answerButtons[i].GetComponentInChildren<TMP_Text>();
+                if (btnText != null) btnText.text = q.answers[i];
             }
-            else
-            {
-                answerButtons[i].gameObject.SetActive(false);
-            }
+            else answerButtons[i].gameObject.SetActive(false);
         }
     }
 
     public void OnAnswerSelected(int answerIndex)
     {
         if (quizCompleted || isWaitingForAudio) return;
-
-        Question q = questions[currentQuestionIndex];
-
-        if (answerIndex == q.correctAnswerIndex)
-        {
-            correctAnswers++;
-        }
-
+        if (answerIndex == questions[currentQuestionIndex].correctAnswerIndex) correctAnswers++;
         UpdateScoreUI();
         currentQuestionIndex++;
-
-        if (currentQuestionIndex < questions.Count)
-        {
-            ShowQuestion();
-        }
-        else
-        {
-            EndQuiz();
-        }
+        if (currentQuestionIndex < questions.Count) ShowQuestion();
+        else EndQuiz();
     }
 
-    void UpdateScoreUI()
+    private void UpdateScoreUI()
     {
-        if (scoreText != null)
-            scoreText.text = "Правильно: " + correctAnswers + " / " + questions.Count;
+        if (scoreText != null) scoreText.text = $"Правильно: {correctAnswers} / {questions.Count}";
     }
 
-    void EndQuiz()
+    private void EndQuiz()
     {
         quizCompleted = true;
+        foreach (var btn in answerButtons) btn.gameObject.SetActive(false);
 
-        foreach (Button btn in answerButtons)
-        {
-            btn.gameObject.SetActive(false);
-        }
+        bool showRestart = correctAnswers <= 2;
+        string buttonText = showRestart ? "Заново" : "Конец";
+        AudioClip clip = correctAnswers <= 2 ? lowScoreClip : (correctAnswers >= 5 ? highScoreClip : mediumScoreClip);
+        bool playFinal = correctAnswers >= 3;
 
-        int audioClipIndex = 0;
-        bool showRestartButton = false;
+        if (actionButton != null)
+        {
+            var tmpText = actionButton.GetComponentInChildren<TMP_Text>();
+            if (tmpText != null) tmpText.text = buttonText;
+            actionButton.gameObject.SetActive(true);
+        }
+        PlayResultAudio(clip, playFinal);
+    }
 
-        if (correctAnswers == 5)
-        {
-            audioClipIndex = 2;
-        }
-        else if (correctAnswers >= 3)
-        {
-            audioClipIndex = 0;
-        }
-        else
-        {
-            audioClipIndex = 1;
-            showRestartButton = true;
-        }
+    private void PlayResultAudio(AudioClip clip, bool playFinalMessage)
+    {
+        if (quizAudioSource == null) return;
+        isWaitingForAudio = true;
+        StartCoroutine(PlayResultRoutine(clip, playFinalMessage));
+    }
 
-        if (quizAudioSource != null && resultAudioClips != null && resultAudioClips.Length > audioClipIndex && resultAudioClips[audioClipIndex] != null)
+    private IEnumerator PlayResultRoutine(AudioClip resultClip, bool playFinalMessage)
+    {
+        if (resultClip != null)
         {
-            isWaitingForAudio = true;
-            quizAudioSource.clip = resultAudioClips[audioClipIndex];
+            quizAudioSource.Stop();
+            quizAudioSource.clip = resultClip;
             quizAudioSource.Play();
-            StartCoroutine(WaitForAudioAndFinish(quizAudioSource.clip.length, showRestartButton));
+            yield return new WaitForSeconds(resultClip.length);
         }
-        else
+        if (playFinalMessage && finalMessageClip != null)
         {
-            FinishQuiz(showRestartButton);
+            quizAudioSource.Stop();
+            quizAudioSource.clip = finalMessageClip;
+            quizAudioSource.Play();
+            yield return new WaitForSeconds(finalMessageClip.length);
         }
-    }
-
-    IEnumerator WaitForAudioAndFinish(float audioLength, bool showRestartButton)
-    {
-        yield return new WaitForSeconds(audioLength);
-        FinishQuiz(showRestartButton);
-    }
-
-    void FinishQuiz(bool showRestartButton)
-    {
         isWaitingForAudio = false;
-
-        if (showRestartButton)
-        {
-            if (restartButton != null) restartButton.gameObject.SetActive(true);
-            if (endButton != null) endButton.gameObject.SetActive(false);
-        }
-        else
-        {
-            if (endButton != null) endButton.gameObject.SetActive(true);
-            if (restartButton != null) restartButton.gameObject.SetActive(false);
-        }
     }
 
-    public void RestartQuiz()
+    private void OnActionButtonPressed()
     {
-        currentQuestionIndex = 0;
-        correctAnswers = 0;
-        quizCompleted = false;
-        isWaitingForAudio = false;
+        if (actionButton == null) return;
+        var buttonText = actionButton.GetComponentInChildren<TMP_Text>();
+        string label = buttonText != null ? buttonText.text : "";
 
-        if (restartButton != null) restartButton.gameObject.SetActive(false);
-        if (endButton != null) endButton.gameObject.SetActive(false);
-
-        foreach (Button btn in answerButtons)
+        if (label == "Заново")
         {
-            btn.gameObject.SetActive(true);
-            btn.interactable = true;
+            stageVisuals?.RestartScenario();
+            if (quizCanvasGroup != null)
+            {
+                quizCanvasGroup.alpha = 0f;
+                quizCanvasGroup.interactable = false;
+                quizCanvasGroup.blocksRaycasts = false;
+            }
         }
-
-        UpdateScoreUI();
-        ShowQuestion();
-    }
-
-    private void OnEndPressed()
-    {
-        Debug.Log("Завершение квиза");
-
-        if (quizCanvasGroup != null)
+        else if (label == "Конец")
         {
-            quizCanvasGroup.alpha = 0f;
-            quizCanvasGroup.interactable = false;
-            quizCanvasGroup.blocksRaycasts = false;
-        }
-        else
-        {
-            gameObject.SetActive(false);
-        }
-
-        if (stageVisuals != null)
-        {
-            stageVisuals.OnExitButtonPressed();
-        }
-        else
-        {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
+            if (quizCanvasGroup != null)
+            {
+                quizCanvasGroup.alpha = 0f;
+                quizCanvasGroup.interactable = false;
+                quizCanvasGroup.blocksRaycasts = false;
+            }
+            stageVisuals?.EndScenario();
         }
     }
 }

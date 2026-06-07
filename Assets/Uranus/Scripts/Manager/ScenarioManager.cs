@@ -19,8 +19,8 @@ public class ScenarioManager : MonoBehaviour
     {
         switch (state)
         {
-            //исправить длину
-            case SceneState.Start: return 9f; 
+            // Длинна
+            case SceneState.Start: return -1f;
             case SceneState.Landing: return 10f;
             case SceneState.Exploration: return 10f;
             case SceneState.Historical: return 10f;
@@ -72,6 +72,12 @@ public class ScenarioManager : MonoBehaviour
         {
             currentState = SceneState.End;
         }
+    }
+
+    public void RestartScenario()
+    {
+        currentState = SceneState.Start;
+        Debug.Log($"[ScenarioManager] Сценарий перезапущен! Этап: {currentState}");
     }
 
     public SceneState GetCurrentState() => currentState;

@@ -7,20 +7,22 @@ public class StageVisuals : MonoBehaviour
     [Header("Environment")]
     public GameObject uranusPlanet;
     public GameObject terrain;
-    public GameObject skySphere;
     public GameObject spaceship;
 
     [Header("Effects")]
     public ParticleSystem windParticles;
-    public ParticleSystem cloudParticles;
+
+    [Header("VolClouds")]
+    public GameObject volCloudsObject;
 
     [Header("Quest")]
     public GameObject drawingBoard;
     public GameObject markerCub;
+    public GameObject hints;
 
     [Header("UI")]
     public GameObject sendButton;
-    public GameObject exitButton;
+    public GameObject actionButton;
     public GameObject returnPlatform;
 
     [Header("Quiz")]
@@ -44,7 +46,6 @@ public class StageVisuals : MonoBehaviour
     private CharacterController characterController;
     private SceneState currentStage;
     private GameObject locomotionFolder;
-
     private float planetRotationSpeed = 5f;
     private bool isPlanetRotating = false;
 
@@ -61,11 +62,23 @@ public class StageVisuals : MonoBehaviour
         Transform locoTransform = xrOrigin.transform.Find("Locomotion");
         if (locoTransform != null) locomotionFolder = locoTransform.gameObject;
 
-        SetupPlanet();
+        uranusPlanet.transform.localScale = new Vector3(100f, 100f, 100f);
+        uranusPlanet.transform.rotation = Quaternion.Euler(0f, 0f, 25f);
 
         sendButton.SetActive(false);
-        exitButton.SetActive(false);
         returnPlatform.SetActive(false);
+        volCloudsObject.SetActive(false);
+
+        if (actionButton != null)
+        {
+            var btn = actionButton.GetComponent<UnityEngine.UI.Button>();
+            if (btn != null)
+            {
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(OnActionButtonPressed);
+            }
+            SetButtonText("Начать");
+        }
 
         HideAll();
         StartCoroutine(TeleportToStart());
@@ -73,10 +86,19 @@ public class StageVisuals : MonoBehaviour
         ShowStartStage();
     }
 
+    private void SetButtonText(string text)
+    {
+        if (actionButton != null)
+        {
+            var tmpText = actionButton.GetComponentInChildren<TMPro.TMP_Text>();
+            if (tmpText != null) tmpText.text = text;
+        }
+    }
+
     private IEnumerator TeleportToStart()
     {
         yield return null;
-        TeleportToPosition(startPosition, startRotation);
+        TeleportToPosition(startPosition, startRotation, false);
     }
 
     void Update()
@@ -86,198 +108,164 @@ public class StageVisuals : MonoBehaviour
         SceneState newStage = scenarioManager.GetCurrentState();
         if (currentStage != newStage)
         {
-            SceneState previousStage = currentStage;
             currentStage = newStage;
-            UpdateStageVisuals(newStage);
+            switch (newStage)
+            {
+                case SceneState.Start: ShowStartStage(); break;
+                case SceneState.Landing: ShowLandingStage(); break;
+                case SceneState.Exploration: ShowExplorationStage(); break;
+                case SceneState.Historical: ShowHistoricalStage(); break;
+                case SceneState.Quest: ShowQuestStage(); break;
+                case SceneState.Return: ShowReturnStage(); break;
+                case SceneState.End: ShowEndStage(); break;
+            }
         }
 
-        if (isPlanetRotating)
-        {
-            uranusPlanet.transform.Rotate(Vector3.up, planetRotationSpeed * Time.deltaTime);
-        }
-    }
-
-    private void UpdateStageVisuals(SceneState stage)
-    {
-        switch (stage)
-        {
-            case SceneState.Start: ShowStartStage(); break;
-            case SceneState.Landing: ShowLandingStage(); break;
-            case SceneState.Exploration: ShowExplorationStage(); break;
-            case SceneState.Historical: ShowHistoricalStage(); break;
-            case SceneState.Quest: ShowQuestStage(); break;
-            case SceneState.Return: ShowReturnStage(); break;
-            case SceneState.End: ShowEndStage(); break;
-        }
-    }
-
-    private void SetupPlanet()
-    {
-        uranusPlanet.transform.localScale = new Vector3(100f, 100f, 100f);
-        uranusPlanet.transform.rotation = Quaternion.Euler(0f, 0f, 25f);
+        if (isPlanetRotating) uranusPlanet.transform.Rotate(Vector3.up, planetRotationSpeed * Time.deltaTime);
     }
 
     private void HideAll()
     {
         uranusPlanet.SetActive(false);
         terrain.SetActive(false);
-        skySphere.SetActive(false);
         spaceship.SetActive(false);
         drawingBoard.SetActive(false);
         markerCub.SetActive(false);
         directionalLight.SetActive(false);
         returnPlatform.SetActive(false);
         sendButton.SetActive(false);
-        exitButton.SetActive(false);
+        quizCanvas.SetActive(false);
+        actionButton.SetActive(false);
         windParticles.Stop();
-        cloudParticles.Stop();
         isPlanetRotating = false;
+        volCloudsObject.SetActive(false);
+        hints.SetActive(false);
     }
 
-    private void DisableLocomotion()
+    private void SetLocomotion(bool enabled)
     {
-        characterController.enabled = false;
-        if (locomotionFolder != null) locomotionFolder.SetActive(false);
+        if (characterController != null)
+        {
+            characterController.enabled = enabled;
+            characterController.detectCollisions = enabled;
+        }
+        if (locomotionFolder != null) locomotionFolder.SetActive(enabled);
     }
 
-    private void EnableLocomotion()
+    private void TeleportToPosition(Vector3 position, Quaternion rotation, bool enableLocomotionAfter = true)
     {
-        characterController.enabled = true;
-        if (locomotionFolder != null) locomotionFolder.SetActive(true);
-    }
+        SetLocomotion(false);
 
-    private void TeleportToPosition(Vector3 position, Quaternion rotation)
-    {
-        DisableLocomotion();
-
-        Transform cameraOffset = xrOrigin.GetComponentInChildren<Camera>().transform.parent;
+        var cameraOffset = xrOrigin.GetComponentInChildren<Camera>().transform.parent;
         float cameraYOffset = xrOrigin.CameraYOffset;
 
-        xrOrigin.transform.position = position;
-        xrOrigin.transform.rotation = rotation;
-        cameraOffset.position = position;
-        cameraOffset.rotation = rotation;
-
+        xrOrigin.transform.SetPositionAndRotation(position, rotation);
+        cameraOffset.SetPositionAndRotation(position, rotation);
         cameraOffset.localPosition = new Vector3(0, 1.7f, 0);
         xrOrigin.CameraYOffset = 1.7f;
 
-        EnableLocomotion();
+        if (enableLocomotionAfter) SetLocomotion(true);
     }
 
     private void ShowStartStage()
     {
         HideAll();
-        DisableLocomotion();
-
+        SetLocomotion(false);
         spaceship.SetActive(true);
-        skySphere.SetActive(true);
         directionalLight.SetActive(true);
         uranusPlanet.SetActive(true);
         isPlanetRotating = true;
 
+        if (actionButton != null)
+        {
+            SetButtonText("Начать");
+            actionButton.SetActive(true);
+            var parentCanvas = actionButton.GetComponentInParent<Canvas>();
+            if (parentCanvas != null) parentCanvas.gameObject.SetActive(true);
+            var parentGroup = actionButton.GetComponentInParent<CanvasGroup>();
+            if (parentGroup != null)
+            {
+                parentGroup.alpha = 1f;
+                parentGroup.interactable = true;
+                parentGroup.blocksRaycasts = true;
+            }
+        }
         PlayClip(startClip);
     }
 
     private void ShowLandingStage()
     {
         HideAll();
-        TeleportToPosition(landingPosition, startRotation);
-        EnableLocomotion();
-
+        TeleportToPosition(landingPosition, startRotation, true);
         terrain.SetActive(true);
-        skySphere.SetActive(true);
         directionalLight.SetActive(true);
         windParticles.Play();
-        cloudParticles.Play();
-
+        volCloudsObject.SetActive(true);
+        if (actionButton != null) actionButton.SetActive(false);
         PlayClip(landingClip);
     }
 
     private void ShowExplorationStage()
     {
         HideAll();
-        EnableLocomotion();
-
+        SetLocomotion(true);
         terrain.SetActive(true);
-        skySphere.SetActive(true);
         directionalLight.SetActive(true);
         windParticles.Play();
-
+        volCloudsObject.SetActive(true);
         PlayClip(explorationClip);
     }
 
     private void ShowHistoricalStage()
     {
         HideAll();
-        EnableLocomotion();
-
+        SetLocomotion(true);
         terrain.SetActive(true);
-        skySphere.SetActive(true);
         directionalLight.SetActive(true);
         windParticles.Play();
-
+        volCloudsObject.SetActive(true);
         PlayClip(historicalClip);
     }
 
     private void ShowQuestStage()
     {
         HideAll();
-        EnableLocomotion();
-
+        SetLocomotion(true);
         terrain.SetActive(true);
-        skySphere.SetActive(true);
         directionalLight.SetActive(true);
         drawingBoard.SetActive(true);
         markerCub.SetActive(true);
         sendButton.SetActive(true);
-
+        hints.SetActive(true);
+        windParticles.Play();
+        volCloudsObject.SetActive(true);
         PlayClip(questClip);
     }
 
     private void ShowReturnStage()
     {
         HideAll();
-        EnableLocomotion();
-
+        SetLocomotion(true);
         terrain.SetActive(true);
-        skySphere.SetActive(true);
         directionalLight.SetActive(true);
         returnPlatform.SetActive(true);
-
+        windParticles.Play();
+        volCloudsObject.SetActive(true);
         PlayClip(returnClip);
     }
 
     private void ShowEndStage()
     {
         HideAll();
-        EnableLocomotion();
-
+        SetLocomotion(false);
         spaceship.SetActive(true);
-        skySphere.SetActive(true);
         directionalLight.SetActive(true);
         uranusPlanet.SetActive(true);
         isPlanetRotating = true;
-        exitButton.SetActive(true);
-
-        if (quizCanvas != null)
-        {
-            quizCanvas.SetActive(true);
-        }
-        if (quizManager != null)
-        {
-            quizManager.StartQuiz();
-        }
-    }
-
-    public void TeleportPlayerToShip()
-    {
-        if (currentStage != SceneState.Return) return;
-
-        TeleportToPosition(startPosition, startRotation);
-        returnPlatform.SetActive(false);
-
-        GameManager gm = FindFirstObjectByType<GameManager>();
-        gm?.OnPlayerReturnedToShip();
+        volCloudsObject.SetActive(true);
+        if (actionButton != null) actionButton.SetActive(false);
+        if (quizCanvas != null) quizCanvas.SetActive(true);
+        quizManager?.StartQuiz();
     }
 
     private void PlayClip(AudioClip clip)
@@ -291,13 +279,44 @@ public class StageVisuals : MonoBehaviour
     public void OnSendButtonPressed()
     {
         if (scenarioManager.GetCurrentState() != SceneState.Quest) return;
-
-        GameManager gm = FindFirstObjectByType<GameManager>();
-        gm?.OnSendDrawingButtonPressed();
+        FindFirstObjectByType<GameManager>()?.OnSendDrawingButtonPressed();
         sendButton.SetActive(false);
     }
 
-    public void OnExitButtonPressed()
+    public void OnActionButtonPressed()
+    {
+        if (scenarioManager.GetCurrentState() == SceneState.Start)
+        {
+            scenarioManager.NextStage();
+            if (actionButton != null) actionButton.SetActive(false);
+        }
+    }
+
+    public void TeleportPlayerToShip()
+    {
+        if (currentStage != SceneState.Return) return;
+        TeleportToPosition(startPosition, startRotation, true);
+        returnPlatform.SetActive(false);
+        FindFirstObjectByType<GameManager>()?.OnPlayerReturnedToShip();
+    }
+
+    public void RestartScenario()
+    {
+        scenarioManager.RestartScenario();
+        SetButtonText("Начать");
+        currentStage = SceneState.Start;
+        ShowStartStage();
+        if (quizCanvas != null) quizCanvas.SetActive(false);
+        if (quizManager?.quizCanvasGroup != null)
+        {
+            quizManager.quizCanvasGroup.alpha = 0f;
+            quizManager.quizCanvasGroup.interactable = false;
+            quizManager.quizCanvasGroup.blocksRaycasts = false;
+        }
+        TeleportToPosition(startPosition, startRotation, false);
+    }
+
+    public void EndScenario()
     {
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
