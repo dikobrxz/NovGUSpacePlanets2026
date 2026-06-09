@@ -39,9 +39,7 @@ public class ContinueUIManager : MonoBehaviour
         WasPressed = true;
     }
 
-    public void PlaceNearPlayer(
-    Transform playerCamera,
-    float sideOffset = 0f)
+    public void PlaceNearPlayer(Transform playerCamera, float sideOffset = 0f, float  customDistance = -1f)
     {
         Vector3 forward = playerCamera.forward;
         forward.y = 0f;
@@ -51,18 +49,15 @@ public class ContinueUIManager : MonoBehaviour
         right.y = 0f;
         right.Normalize();
 
-        Vector3 position =
-            playerCamera.position +
-            forward * distance +
-            right * sideOffset;
+        float usedDistance = customDistance > 0f ? customDistance : distance;
 
-        position.y =
-            playerCamera.position.y + heightOffset;
+        Vector3 position = playerCamera.position + forward * usedDistance + right * sideOffset;
+
+        position.y = playerCamera.position.y + heightOffset;
 
         canvasRoot.position = position;
 
-        Vector3 directionToCamera =
-            playerCamera.position - canvasRoot.position;
+        Vector3 directionToCamera = playerCamera.position - canvasRoot.position;
 
         directionToCamera.y = 0f;
 

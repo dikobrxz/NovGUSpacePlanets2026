@@ -282,7 +282,7 @@ public class StoryManager : MonoBehaviour
 
         leftInteractor.enableFarCasting = true;
 
-        yield return WaitForContinue("Вернуться", -0.4f);
+        yield return WaitForContinue("Вернуться", 0f, 0.30f);
     }
 
     private IEnumerator RunQuiz()
@@ -361,11 +361,11 @@ public class StoryManager : MonoBehaviour
         stormClouds.SetActive(false);
     }
 
-    private IEnumerator WaitForContinue(string buttonText, float sideOffset = 0f)
+    private IEnumerator WaitForContinue(string buttonText, float sideOffset = 0f, float customDistance = -1f)
     {
         yield return new WaitForSeconds(1.5f);
 
-        continueUI.PlaceNearPlayer(playerCamera, sideOffset);
+        continueUI.PlaceNearPlayer(playerCamera, sideOffset, customDistance);
         continueUI.Show(buttonText);
 
         yield return new WaitUntil(() => continueUI.WasPressed);
@@ -380,10 +380,9 @@ public class StoryManager : MonoBehaviour
         forward.y = 0f;
         forward.Normalize();
 
-        Vector3 spawnPosition = playerCamera.position + forward * 0.35f;
+        Vector3 spawnPosition = playerCamera.position + forward * 0.4f;
 
-        spawnPosition.y =
-            playerCamera.position.y - 0.23f;
+        spawnPosition.y = playerCamera.position.y - 0.23f;
 
         transmitter.transform.position = spawnPosition;
 

@@ -155,8 +155,7 @@ public class QuizManager : MonoBehaviour
             wrongAnswers++;
             selectedButton.SetWrong();
 
-            if (question.CorrectAnswerIndex >= 0 &&
-                question.CorrectAnswerIndex < answerButtons.Length)
+            if (question.CorrectAnswerIndex >= 0 && question.CorrectAnswerIndex < answerButtons.Length)
             {
                 answerButtons[question.CorrectAnswerIndex].SetCorrect();
             }

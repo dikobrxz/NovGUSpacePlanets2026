@@ -61,8 +61,6 @@ public class ToggleLever : MonoBehaviour
                     audioSource.PlayOneShot(switchOffClip);
             }
         }
-
-        Debug.Log($"{gameObject.name}: переключатель {(isUp ? "вверх" : "вниз")}");
     }
 
     private void SetTargetRotation()

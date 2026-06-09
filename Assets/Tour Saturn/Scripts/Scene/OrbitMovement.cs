@@ -17,15 +17,12 @@ public class OrbitMovement : MonoBehaviour
     {
         if (points == null || points.Length == 0)
         {
-            Debug.LogWarning($"{gameObject.name}: точки маршрута не назначены");
             return;
         }
 
         transform.position = points[0].position;
         currentPointIndex = 1;
         isMoving = true;
-
-        Debug.Log($"{gameObject.name}: движение запущено");
     }
 
     public void StopMovement()
