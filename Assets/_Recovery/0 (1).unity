@@ -867,6 +867,166 @@ Transform:
   - {fileID: 1009424713}
   m_Father: {fileID: 1391826803}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &89492832
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 89492833}
+  - component: {fileID: 89492835}
+  - component: {fileID: 89492834}
+  m_Layer: 0
+  m_Name: TourVoiceManager (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &89492833
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89492832}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2029159182}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &89492834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89492832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45d2b179d3ca2c649ba33394c1afe644, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TourVoiceManager
+  tourManager: {fileID: 341193186}
+  shipIntroClip: {fileID: 8300000, guid: be403c1e2ca933f4e90929ca1073b532, type: 3}
+  elementColumnsClip: {fileID: 8300000, guid: 96f67fc7d530ae04c9649029e31fb995, type: 3}
+  matchingQuestClip: {fileID: 0}
+  quizClip: {fileID: 8300000, guid: 2fc379eb0b47883449193ac8197e8694, type: 3}
+  endClip: {fileID: 8300000, guid: 7c7f9e3758b1b3e469af65a012c90af6, type: 3}
+  airElementClip: {fileID: 8300000, guid: 1c3231adfcbd4464388801e8412f2346, type: 3}
+  waterElementClip: {fileID: 8300000, guid: 6f9c36f1807f1e843a56c94b87293b28, type: 3}
+  fireElementClip: {fileID: 8300000, guid: de6b51c333233f2469486e1ea62e7e97, type: 3}
+  earthElementClip: {fileID: 8300000, guid: f97d290453993724b96ca85e9e04030b, type: 3}
+  wrongAnswerClip: {fileID: 8300000, guid: 2a3b5b993154f5d4795ad34f7ce715fd, type: 3}
+  quizResultLowClip: {fileID: 8300000, guid: ae5654f843e722c4eaf05dbd8dec557d, type: 3}
+  quizResultGoodClip: {fileID: 8300000, guid: 02907324e54f1e04a8a5096aba5105f0, type: 3}
+  quizResultPerfectClip: {fileID: 8300000, guid: b0e3ccae8551db349a5eabbec45c46fd, type: 3}
+  nextAdventureClip: {fileID: 8300000, guid: 948ddd9607d5cff429adc35b99842136, type: 3}
+  firstVoiceDelay: 0.5
+  stopPreviousVoice: 1
+  showDebugLogs: 1
+--- !u!82 &89492835
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89492832}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &121229987
 GameObject:
   m_ObjectHideFlags: 0
@@ -60941,7 +61101,7 @@ MonoBehaviour:
   - {fileID: 796760330}
   autoFindSlotsIfMissing: 1
   tourManager: {fileID: 341193186}
-  delayBeforeNextStage: 35
+  delayBeforeNextStage: 2
   waitForVoiceBeforeQuiz: 1
   extraDelayAfterVoice: 0.5
   completedHintMessage: "\u0412\u0441\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u044B
@@ -76585,6 +76745,7 @@ Transform:
   - {fileID: 1304486382}
   - {fileID: 905073862}
   - {fileID: 605886937}
+  - {fileID: 89492833}
   - {fileID: 1237221794}
   m_Father: {fileID: 1391826803}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
