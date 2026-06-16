@@ -30,6 +30,47 @@ public class QuizManager : MonoBehaviour
     [SerializeField] private TMP_Text correctAnswersText;
     [SerializeField] private TMP_Text wrongAnswersText;
 
+    [Header("First Question Texts")]
+    [TextArea]
+    [SerializeField] private string firstQuestionText;
+    [SerializeField] private string firstQuestionFirstAnswerText;
+    [SerializeField] private string firstQuestionSecondAnswerText;
+    [SerializeField] private string firstQuestionThirdAnswerText;
+
+    [Header("Second Question Texts")]
+    [TextArea]
+    [SerializeField] private string secondQuestionText;
+    [SerializeField] private string secondQuestionFirstAnswerText;
+    [SerializeField] private string secondQuestionSecondAnswerText;
+    [SerializeField] private string secondQuestionThirdAnswerText;
+    [SerializeField] private string secondQuestionFourthAnswerText;
+
+    [Header("Third Question Texts")]
+    [TextArea]
+    [SerializeField] private string thirdQuestionText;
+    [SerializeField] private string thirdQuestionFirstAnswerText;
+    [SerializeField] private string thirdQuestionSecondAnswerText;
+    [SerializeField] private string thirdQuestionThirdAnswerText;
+    [SerializeField] private string thirdQuestionFourthAnswerText;
+
+    [Header("Fourth Question Texts")]
+    [TextArea]
+    [SerializeField] private string fourthQuestionText;
+    [SerializeField] private string fourthQuestionFirstAnswerText;
+    [SerializeField] private string fourthQuestionSecondAnswerText;
+
+    [Header("Fifth Question Texts")]
+    [TextArea]
+    [SerializeField] private string fifthQuestionText;
+    [SerializeField] private string fifthQuestionFirstAnswerText;
+    [SerializeField] private string fifthQuestionSecondAnswerText;
+    [SerializeField] private string fifthQuestionThirdAnswerText;
+    [SerializeField] private string fifthQuestionFourthAnswerText;
+
+    [Header("Result Score Texts")]
+    [SerializeField] private string correctText;
+    [SerializeField] private string wrongText;
+
     [Header("Audio")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip resultsClip;
@@ -53,32 +94,32 @@ public class QuizManager : MonoBehaviour
         questions = new QuizQuestion[]
         {
             new QuizQuestion(
-                "Какой по размерам Сатурн?",
-                new string[] { "Самый большой в Солнечной системе", "Второй по размерам", "Третий по размерам" },
+                firstQuestionText,
+                new string[] { firstQuestionFirstAnswerText, firstQuestionSecondAnswerText, firstQuestionThirdAnswerText },
                 1
             ),
 
             new QuizQuestion(
-                "Как называется один из самых известных спутников Сатурна?",
-                new string[] { "Меркурий", "Титан", "Луна", "Сатурн" },
+                secondQuestionText,
+                new string[] { secondQuestionFirstAnswerText, secondQuestionSecondAnswerText, secondQuestionThirdAnswerText, secondQuestionFourthAnswerText },
                 1
             ),
 
             new QuizQuestion(
-                "На какой планете дуют очень сильные ветра?",
-                new string[] { "Юпитер", "Сатурн", "Земля", "Марс" },
+                thirdQuestionText,
+                new string[] { thirdQuestionFirstAnswerText, thirdQuestionSecondAnswerText, thirdQuestionThirdAnswerText, thirdQuestionFourthAnswerText },
                 1
             ),
 
             new QuizQuestion(
-                "Посещали ли люди планету?",
-                new string[] { "Да", "Нет" },
+                fourthQuestionText,
+                new string[] { fourthQuestionFirstAnswerText, fourthQuestionSecondAnswerText },
                 1
             ),
 
             new QuizQuestion(
-                "Есть ли жизнь на Сатурне?",
-                new string[] { "Да", "Нет", "Когда-то была", "Возможно, существует на его спутниках" },
+                fifthQuestionText,
+                new string[] { fifthQuestionFirstAnswerText, fifthQuestionSecondAnswerText, fifthQuestionThirdAnswerText, fifthQuestionFourthAnswerText },
                 1
             )
         };
@@ -178,8 +219,8 @@ public class QuizManager : MonoBehaviour
 
     private void UpdateScoreUI()
     {
-        correctAnswersText.text = $"Правильно: {correctAnswers}";
-        wrongAnswersText.text = $"Ошибки: {wrongAnswers}";
+        correctAnswersText.text = correctText + correctAnswers;
+        wrongAnswersText.text = wrongText + wrongAnswers;
     }
 
     private void FinishQuiz()
@@ -192,6 +233,6 @@ public class QuizManager : MonoBehaviour
 
         OnQuizFinished?.Invoke();
 
-        Debug.Log($"Квиз завершён. Правильных ответов: {correctAnswers}");
+        Debug.Log($"Quiz Finished. Correct answers count: {correctAnswers}");
     }
 }

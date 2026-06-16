@@ -19,8 +19,11 @@ public class TransmitterQuest : MonoBehaviour
     [SerializeField] private GameObject hintPanel;
     [SerializeField] private TMP_Text hintText;
 
-    private string rotateHint = "Поверните левый и правый переключатели до значений 2004 и 2017, чтобы настроить частоту передатчика.";
-    private string sendHint = "Частота настроена. Нажмите кнопку, чтобы отправить данные.";
+    [Header("Hint Texts")]
+    [TextArea]
+    [SerializeField] private string rotateHint;
+    [TextArea]
+    [SerializeField] private string sendHint;
 
     public bool IsCompleted { get; private set; }
 
@@ -57,7 +60,7 @@ public class TransmitterQuest : MonoBehaviour
         {
             signalPlayed = true;
             audioManager.Play(AudioType.SuccessSignal);
-            Debug.Log("Передатчик настроен. Можно отправлять данные.");
+            Debug.Log("Transmitter configured. Data can be sent");
         }
 
         if (!isCorrect)
@@ -74,11 +77,11 @@ public class TransmitterQuest : MonoBehaviour
         firstLever.CurrentValue == firstTargetValue &&
         secondLever.CurrentValue == secondTargetValue;
 
-        Debug.Log($"Левый: {firstLever.CurrentValue}, правый: {secondLever.CurrentValue}");
+        Debug.Log($"Left lever: {firstLever.CurrentValue}, Right lever: {secondLever.CurrentValue}");
 
         if (!isCorrect)
         {
-            Debug.Log("Передатчик ещё не настроен. Данные не отправлены.");
+            Debug.Log("Transmitter isn't configured yet. Data not sent.");
             return;
         }
 
@@ -93,7 +96,7 @@ public class TransmitterQuest : MonoBehaviour
 
         OnQuestCompleted?.Invoke();
 
-        Debug.Log("Данные отправлены на Кассини");
+        Debug.Log("Data sent to Cassini");
     }
 
     private void ShowHint(string text)

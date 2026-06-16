@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
 
     public void StoryStart()
     {
-        Debug.Log("—ценарий запущен");
+        Debug.Log("Scenario Start");
         audioManager.Play(AudioType.ContinueButton);
         storyManager.StoryStart();
         startCanvas.SetActive(false);

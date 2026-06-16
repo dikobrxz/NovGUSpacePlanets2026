@@ -9,7 +9,8 @@ public class LookHintTrigger : MonoBehaviour
     [SerializeField] private ContinueUIManager continueUiManager;
 
     [Header("Hint Settings")]
-    [SerializeField] private string hintText = "Обернитесь, чтобы увидеть спутник.";
+    [TextArea]
+    [SerializeField] private string hintText;
     [SerializeField] private float showIfAngleGreaterThan = 70f;
     [SerializeField] private float hideIfAngleLessThan = 45f;
 

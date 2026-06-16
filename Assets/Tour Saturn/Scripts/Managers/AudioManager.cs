@@ -28,6 +28,32 @@ public class AudioManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private UIManager uiManager;
 
+    [Header("Text")]
+    [TextArea]
+    [SerializeField] private string startText;
+    [TextArea]
+    [SerializeField] private string atmosphereFirstText;
+    [TextArea]
+    [SerializeField] private string atmosphereSecondText;
+    [TextArea]
+    [SerializeField] private string observationFirstText;
+    [TextArea]
+    [SerializeField] private string observationSecondText;
+    [TextArea]
+    [SerializeField] private string researchText;
+    [TextArea]
+    [SerializeField] private string questText;
+    [TextArea]
+    [SerializeField] private string returnText;
+    [TextArea]
+    [SerializeField] private string quizGoodText;
+    [TextArea]
+    [SerializeField] private string quizBadText;
+    [TextArea]
+    [SerializeField] private string quizPerfectText;
+    [TextArea]
+    [SerializeField] private string endText;
+
     [Header("Voice Clips")]
     [SerializeField] private AudioClip startClip;
     [SerializeField] private AudioClip atmosphereClip;
@@ -103,27 +129,19 @@ public class AudioManager : MonoBehaviour
     {
         if (type == AudioType.Atmosphere)
         {
-            uiManager.ShowSubtitles(
-                "Сатурн назван в честь римского бога земледелия. В основном он состоит из водорода с примесями гелия, а также следами воды, метана, аммиака и более тяжёлых элементов."
-            );
+            uiManager.ShowSubtitles(atmosphereFirstText);
 
             yield return new WaitForSeconds(clipLength * 0.6f);
 
-            uiManager.ShowSubtitles(
-                "По строению Сатурн, как и Юпитер, является газовым гигантом. При этом ветра на нём в несколько раз сильнее. Человек не смог бы прожить здесь и доли секунды."
-            );
+            uiManager.ShowSubtitles(atmosphereSecondText);
         }
         else if (type == AudioType.Observation)
         {
-            uiManager.ShowSubtitles(
-                "Сатурн отличается от других планет прежде всего своими кольцами. По одной из теорий, в далёком прошлом рядом с ним произошло крупное столкновение,"
-            );
+            uiManager.ShowSubtitles(observationFirstText);
 
             yield return new WaitForSeconds(clipLength / 2f);
 
-            uiManager.ShowSubtitles(
-                "после которого и сформировалась система колец и множество спутников. Один из самых известных спутников Сатурна — Титан, который по размерам даже больше Меркурия."
-            );
+            uiManager.ShowSubtitles(observationSecondText);
         }
         else
         {
@@ -138,29 +156,21 @@ public class AudioManager : MonoBehaviour
     {
         return type switch
         {
-            AudioType.Start =>
-                "Сегодня, дорогой исследователь, ты познакомишься с шестой планетой от Солнца и второй по величине после Юпитера.",
+            AudioType.Start => startText,
 
-            AudioType.Research =>
-                "Титан — один из самых интересных объектов Солнечной системы. В период с 2004 по 2017 год Сатурн и его спутники изучал аппарат Кассини.",
+            AudioType.Research => researchText,
 
-            AudioType.Quest =>
-                "Давай возьмём передатчик и попробуем настроиться на частоту космического аппарата, чтобы передать данные с планеты — годы её изучения аппаратом „Кассини“",
+            AudioType.Quest => questText,
 
-            AudioType.Return =>
-                "Благодаря тебе мы отправили эти данные учёным. Теперь мы можем вернуться на корабль.",
+            AudioType.Return => returnText,
 
-            AudioType.QuizBad =>
-                "Спасибо, юный друг! Думаю, нам стоит ещё раз посетить Сатурн, чтобы узнать немного больше.",
+            AudioType.QuizBad => quizBadText,
 
-            AudioType.QuizGood =>
-                "Спасибо, наш юный исследователь! Твоих знаний уже достаточно, чтобы помочь учёным организовать новую миссию по исследованию Сатурна.",
+            AudioType.QuizGood => quizGoodText,
 
-            AudioType.QuizPerfect =>
-                "Это невероятный успех нашего с тобой исследования Сатурна! Твои знания помогут человечеству узнать больше о нашей Солнечной системе.",
+            AudioType.QuizPerfect => quizPerfectText,
 
-            AudioType.End =>
-                "Ну что ж, отправимся в новое приключение.",
+            AudioType.End => endText,
 
             _ => ""
         };

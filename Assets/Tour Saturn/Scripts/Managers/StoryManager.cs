@@ -16,6 +16,11 @@ public class StoryManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private ContinueUIManager continueUI;
 
+    [Header("Continue Buttons Text")]
+    [SerializeField] private string startText;
+    [SerializeField] private string continueText;
+    [SerializeField] private string returnText;
+
     [Header("PlayerMove")]
     [SerializeField] private Transform player;
     [SerializeField] private GameObject locomotionObject;
@@ -181,7 +186,7 @@ public class StoryManager : MonoBehaviour
         yield return RunQuiz();
         yield return RunEnd();
 
-        Debug.Log("Сценарий завершён");
+        Debug.Log("Scenario Ended");
     }
 
     private IEnumerator RunStart()
@@ -196,7 +201,7 @@ public class StoryManager : MonoBehaviour
 
         yield return audioManager.PlayAndWait(AudioType.Start);
 
-        yield return WaitForContinue("Начать");
+        yield return WaitForContinue(startText);
 
         yield return screenFadeManager.FadeOut();
     }
@@ -216,7 +221,7 @@ public class StoryManager : MonoBehaviour
 
         yield return audioManager.PlayAndWait(AudioType.Atmosphere);
 
-        yield return WaitForContinue("Продолжить");
+        yield return WaitForContinue(continueText);
     }
 
     private IEnumerator RunObservation()
@@ -239,7 +244,7 @@ public class StoryManager : MonoBehaviour
 
         yield return StartCoroutine(titanLookHint.CheckLookDirection());
 
-        yield return WaitForContinue("Продолжить");
+        yield return WaitForContinue(continueText);
     }
 
     private IEnumerator RunResearchHistory()
@@ -253,7 +258,7 @@ public class StoryManager : MonoBehaviour
 
         yield return audioManager.PlayAndWait(AudioType.Research);
 
-        yield return WaitForContinue("Продолжить");
+        yield return WaitForContinue(continueText);
     }
 
     private IEnumerator RunQuest()
@@ -282,7 +287,7 @@ public class StoryManager : MonoBehaviour
 
         leftInteractor.enableFarCasting = true;
 
-        yield return WaitForContinue("Вернуться", 0f, 0.30f);
+        yield return WaitForContinue(returnText, 0f, 0.30f);
     }
 
     private IEnumerator RunQuiz()
@@ -335,7 +340,7 @@ public class StoryManager : MonoBehaviour
     private void SetStage(Stage stage)
     {
         CurrentStage = stage;
-        Debug.Log($"Текущая стадия: {CurrentStage}");
+        Debug.Log($"Current stage: {CurrentStage}");
     }
 
     public void MovePlayer(Transform point)
