@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Controls the Earth quiz stage.
 /// Shows visual instructions, questions, answer buttons,
-/// checks answers, counts score, and moves the tour to the final stage.
+/// checks answers, counts score, and starts the final return to the ship.
 /// </summary>
 public class EarthQuizManager : MonoBehaviour
 {
@@ -52,6 +52,16 @@ public class EarthQuizManager : MonoBehaviour
     [SerializeField] private EarthTourManager tourManager;
     [SerializeField] private float delayAfterAnswer = 1.5f;
     [SerializeField] private float delayBeforeEndStage = 2f;
+
+    [Header("Final Ship Return")]
+    [SerializeField] private MainSceneEntryController entryController;
+    [SerializeField] private LoadPlanetIntroButton startButton;
+    [SerializeField] private bool returnToShipBeforeFinalVoice = true;
+    [SerializeField] private bool hideStartButtonDuringFinalVoice = true;
+    [SerializeField] private bool reloadSceneAfterFinalVoice = true;
+    [SerializeField] private float delayAfterQuizResultVoice = 0.5f;
+    [SerializeField] private float delayAfterReturnToShip = 0.5f;
+    [SerializeField] private float delayBeforeSceneReload = 1f;
 
     [Header("Debug")]
     [SerializeField] private bool allowKeyboardDebug = true;
@@ -147,25 +157,28 @@ public class EarthQuizManager : MonoBehaviour
         if (feedbackText != null)
             feedbackText.text = "";
 
-        for (int i = 0; i < answerButtons.Length; i++)
+        if (answerButtons != null)
         {
-            Button button = answerButtons[i];
+            for (int i = 0; i < answerButtons.Length; i++)
+            {
+                Button button = answerButtons[i];
 
-            if (button == null)
-                continue;
+                if (button == null)
+                    continue;
 
-            bool hasAnswer =
-                question.answers != null &&
-                i < question.answers.Length &&
-                !string.IsNullOrWhiteSpace(question.answers[i]);
+                bool hasAnswer =
+                    question.answers != null &&
+                    i < question.answers.Length &&
+                    !string.IsNullOrWhiteSpace(question.answers[i]);
 
-            button.gameObject.SetActive(hasAnswer);
-            button.interactable = true;
+                button.gameObject.SetActive(hasAnswer);
+                button.interactable = true;
 
-            TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
+                TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
 
-            if (buttonText != null && hasAnswer)
-                buttonText.text = $"{i + 1}. {question.answers[i]}";
+                if (buttonText != null && hasAnswer)
+                    buttonText.text = $"{i + 1}. {question.answers[i]}";
+            }
         }
 
         answerLocked = false;
@@ -198,10 +211,13 @@ public class EarthQuizManager : MonoBehaviour
                 feedbackText.text = $"Неверно. {question.explanation}";
         }
 
-        foreach (Button button in answerButtons)
+        if (answerButtons != null)
         {
-            if (button != null)
-                button.interactable = false;
+            foreach (Button button in answerButtons)
+            {
+                if (button != null)
+                    button.interactable = false;
+            }
         }
 
         StartCoroutine(NextQuestionRoutine());
@@ -247,31 +263,58 @@ public class EarthQuizManager : MonoBehaviour
         if (feedbackText != null)
             feedbackText.text = $"Результат: {score}/{questions.Length}";
 
-        foreach (Button button in answerButtons)
+        if (answerButtons != null)
         {
-            if (button != null)
-                button.gameObject.SetActive(false);
+            foreach (Button button in answerButtons)
+            {
+                if (button != null)
+                    button.gameObject.SetActive(false);
+            }
         }
 
         Debug.Log($"Earth quiz completed. Score: {score}/{questions.Length}");
 
-        float waitTime = delayBeforeEndStage;
-
         if (TourVoiceManager.Instance != null)
         {
             TourVoiceManager.Instance.PlayQuizResultVoice(score, questions.Length);
-
-            float voiceDuration = TourVoiceManager.Instance.GetQuizResultSequenceDuration(score, questions.Length);
-            waitTime = Mathf.Max(waitTime, voiceDuration + 0.5f);
+            yield return TourVoiceManager.Instance.WaitUntilIdle();
         }
         else
         {
             Debug.LogWarning("EarthQuizManager: TourVoiceManager was not found. Quiz result voice was not played.");
+            yield return new WaitForSeconds(delayBeforeEndStage);
         }
 
-        yield return new WaitForSeconds(waitTime);
+        if (delayAfterQuizResultVoice > 0f)
+            yield return new WaitForSeconds(delayAfterQuizResultVoice);
 
-        if (tourManager != null)
-            tourManager.SetStage(EarthTourStage.End);
+        if (!returnToShipBeforeFinalVoice)
+        {
+            if (tourManager != null)
+                tourManager.SetStage(EarthTourStage.End);
+
+            yield break;
+        }
+
+        if (entryController == null)
+            entryController = MainSceneEntryController.Instance;
+
+        if (entryController == null)
+        {
+            Debug.LogWarning("EarthQuizManager: EntryController is not assigned. Cannot return player to ship.");
+
+            if (tourManager != null)
+                tourManager.SetStage(EarthTourStage.End);
+
+            yield break;
+        }
+
+        entryController.StartFinalReturnToShip(
+            tourManager,
+            startButton,
+            hideStartButtonDuringFinalVoice,
+            reloadSceneAfterFinalVoice,
+            delayAfterReturnToShip,
+            delayBeforeSceneReload);
     }
 }

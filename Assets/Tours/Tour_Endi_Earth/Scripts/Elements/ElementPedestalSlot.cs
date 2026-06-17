@@ -156,7 +156,7 @@ public class ElementPedestalSlot : MonoBehaviour
         TourVoiceManager voiceManager = TourVoiceManager.Instance;
 
         if (voiceManager == null)
-            voiceManager = FindObjectOfType<TourVoiceManager>();
+            voiceManager = FindFirstObjectByType<TourVoiceManager>();
 
         if (voiceManager != null)
         {
@@ -180,7 +180,7 @@ public class ElementPedestalSlot : MonoBehaviour
         HintManager hintManager = HintManager.Instance;
 
         if (hintManager == null)
-            hintManager = FindObjectOfType<HintManager>();
+            hintManager = FindFirstObjectByType<HintManager>();
 
         if (hintManager != null)
         {
@@ -203,7 +203,7 @@ public class ElementPedestalSlot : MonoBehaviour
         TourVoiceManager voiceManager = TourVoiceManager.Instance;
 
         if (voiceManager == null)
-            voiceManager = FindObjectOfType<TourVoiceManager>();
+            voiceManager = FindFirstObjectByType<TourVoiceManager>();
 
         if (voiceManager != null)
         {
@@ -223,7 +223,7 @@ public class ElementPedestalSlot : MonoBehaviour
         ElementQuestManager questManager = ElementQuestManager.Instance;
 
         if (questManager == null)
-            questManager = FindObjectOfType<ElementQuestManager>();
+            questManager = FindFirstObjectByType<ElementQuestManager>();
 
         if (questManager != null)
         {

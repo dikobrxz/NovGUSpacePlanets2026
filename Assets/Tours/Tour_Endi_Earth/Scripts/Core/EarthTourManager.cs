@@ -15,6 +15,7 @@ public class EarthTourManager : MonoBehaviour
 
     [Header("Stage Groups")]
     [SerializeField] private GameObject shipIntroGroup;
+    [SerializeField] private GameObject planetIntroGroup;
     [SerializeField] private GameObject surfaceIntroGroup;
     [SerializeField] private GameObject elementColumnsGroup;
     [SerializeField] private GameObject matchingQuestGroup;
@@ -24,6 +25,7 @@ public class EarthTourManager : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool allowKeyboardDebug = true;
     [SerializeField] private Key nextStageKey = Key.N;
+    [SerializeField] private bool showDebugLogs = true;
 
     [Header("Events")]
     public UnityEvent<EarthTourStage> onStageChanged;
@@ -43,7 +45,9 @@ public class EarthTourManager : MonoBehaviour
 
         if (Keyboard.current[nextStageKey].wasPressedThisFrame)
         {
-            Debug.Log("Debug next stage key pressed.");
+            if (showDebugLogs)
+                Debug.Log("Debug next stage key pressed.");
+
             GoToNextStage();
         }
     }
@@ -58,6 +62,11 @@ public class EarthTourManager : MonoBehaviour
         {
             case EarthTourStage.ShipIntro:
                 SetActive(shipIntroGroup, true);
+                break;
+
+            case EarthTourStage.PlanetIntro:
+                SetActive(shipIntroGroup, true);
+                SetActive(planetIntroGroup, true);
                 break;
 
             case EarthTourStage.SurfaceIntro:
@@ -83,7 +92,9 @@ public class EarthTourManager : MonoBehaviour
         }
 
         onStageChanged?.Invoke(currentStage);
-        Debug.Log($"Earth tour stage changed to: {currentStage}");
+
+        if (showDebugLogs)
+            Debug.Log($"Earth tour stage changed to: {currentStage}");
     }
 
     [ContextMenu("Go To Next Stage")]
@@ -92,7 +103,11 @@ public class EarthTourManager : MonoBehaviour
         switch (currentStage)
         {
             case EarthTourStage.ShipIntro:
-                SetStage(EarthTourStage.SurfaceIntro);
+                SetStage(EarthTourStage.PlanetIntro);
+                break;
+
+            case EarthTourStage.PlanetIntro:
+                SetStage(EarthTourStage.ElementColumns);
                 break;
 
             case EarthTourStage.SurfaceIntro:
@@ -112,50 +127,16 @@ public class EarthTourManager : MonoBehaviour
                 break;
 
             case EarthTourStage.End:
-                Debug.Log("Earth tour is already completed.");
+                if (showDebugLogs)
+                    Debug.Log("Earth tour is already completed.");
                 break;
         }
-    }
-
-    [ContextMenu("Set Stage Ship Intro")]
-    private void DebugSetShipIntro()
-    {
-        SetStage(EarthTourStage.ShipIntro);
-    }
-
-    [ContextMenu("Set Stage Surface Intro")]
-    private void DebugSetSurfaceIntro()
-    {
-        SetStage(EarthTourStage.SurfaceIntro);
-    }
-
-    [ContextMenu("Set Stage Element Columns")]
-    private void DebugSetElementColumns()
-    {
-        SetStage(EarthTourStage.ElementColumns);
-    }
-
-    [ContextMenu("Set Stage Matching Quest")]
-    private void DebugSetMatchingQuest()
-    {
-        SetStage(EarthTourStage.MatchingQuest);
-    }
-
-    [ContextMenu("Set Stage Quiz")]
-    private void DebugSetQuiz()
-    {
-        SetStage(EarthTourStage.Quiz);
-    }
-
-    [ContextMenu("Set Stage End")]
-    private void DebugSetEnd()
-    {
-        SetStage(EarthTourStage.End);
     }
 
     private void DisableAllStageGroups()
     {
         SetActive(shipIntroGroup, false);
+        SetActive(planetIntroGroup, false);
         SetActive(surfaceIntroGroup, false);
         SetActive(elementColumnsGroup, false);
         SetActive(matchingQuestGroup, false);

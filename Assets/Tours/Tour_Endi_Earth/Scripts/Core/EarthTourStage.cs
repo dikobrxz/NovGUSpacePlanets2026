@@ -4,6 +4,7 @@
 public enum EarthTourStage
 {
     ShipIntro,
+    PlanetIntro,
     SurfaceIntro,
     ElementColumns,
     MatchingQuest,

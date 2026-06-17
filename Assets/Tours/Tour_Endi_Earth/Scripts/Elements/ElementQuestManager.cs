@@ -4,6 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Tracks all elemental pedestal slots and moves the tour to the quiz stage
 /// when every element is placed correctly.
+/// This version waits for the narrator queue before starting the quiz.
 /// </summary>
 public class ElementQuestManager : MonoBehaviour
 {
@@ -17,14 +18,13 @@ public class ElementQuestManager : MonoBehaviour
     [SerializeField] private EarthTourManager tourManager;
 
     [Header("Quiz Transition")]
-    [SerializeField] private float delayBeforeNextStage = 2f;
-    [SerializeField] private bool waitForVoiceBeforeQuiz = true;
-    [SerializeField] private float extraDelayAfterVoice = 0.5f;
+    [SerializeField] private float minimumDelayBeforeNextStage = 2f;
+    [SerializeField] private bool waitForNarratorBeforeQuiz = true;
+    [SerializeField] private float extraDelayAfterNarrator = 0.5f;
     [SerializeField] private string completedHintMessage = "Все элементы установлены. Повернитесь к викторине.";
 
     [Header("Optional Effects")]
     [SerializeField] private ParticleSystem questCompletedEffect;
-    [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip questCompletedClip;
 
     [Header("Debug")]
@@ -70,7 +70,7 @@ public class ElementQuestManager : MonoBehaviour
     [ContextMenu("Refresh Slots From Scene")]
     private void RefreshSlotsFromSceneContext()
     {
-        slots = FindObjectsOfType<ElementPedestalSlot>(true);
+        slots = FindObjectsByType<ElementPedestalSlot>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         Debug.Log($"ElementQuestManager: found {slots.Length} slots in scene.");
     }
 
@@ -94,6 +94,31 @@ public class ElementQuestManager : MonoBehaviour
         StartCoroutine(CompleteQuestRoutine());
     }
 
+    private IEnumerator CompleteQuestRoutine()
+    {
+        if (showDebugLogs)
+            Debug.Log("All elemental slots completed. Quiz will start after narrator finishes.");
+
+        ShowCompletedHint();
+        PlayEffect(questCompletedEffect);
+
+        if (TourVoiceManager.Instance != null && questCompletedClip != null)
+            TourVoiceManager.Instance.EnqueueVoice(questCompletedClip, "element quest completed");
+
+        yield return new WaitForSeconds(minimumDelayBeforeNextStage);
+
+        if (waitForNarratorBeforeQuiz && TourVoiceManager.Instance != null)
+        {
+            yield return TourVoiceManager.Instance.WaitUntilIdle();
+            yield return new WaitForSeconds(extraDelayAfterNarrator);
+        }
+
+        if (tourManager != null)
+            tourManager.SetStage(EarthTourStage.Quiz);
+        else
+            Debug.LogWarning("ElementQuestManager: TourManager is not assigned.");
+    }
+
     private void AutoFindSlotsIfNeeded()
     {
         if (!autoFindSlotsIfMissing)
@@ -102,7 +127,7 @@ public class ElementQuestManager : MonoBehaviour
         if (slots != null && slots.Length > 0 && !HasEmptySlotReferences())
             return;
 
-        ElementPedestalSlot[] foundSlots = FindObjectsOfType<ElementPedestalSlot>(true);
+        ElementPedestalSlot[] foundSlots = FindObjectsByType<ElementPedestalSlot>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
         if (foundSlots == null || foundSlots.Length == 0)
         {
@@ -156,34 +181,6 @@ public class ElementQuestManager : MonoBehaviour
         return true;
     }
 
-    private IEnumerator CompleteQuestRoutine()
-    {
-        if (showDebugLogs)
-            Debug.Log("All elemental slots completed. Quiz will start soon.");
-
-        ShowCompletedHint();
-        PlayEffect(questCompletedEffect);
-
-        float waitTime = delayBeforeNextStage;
-
-        if (audioSource != null && questCompletedClip != null)
-        {
-            audioSource.Stop();
-            audioSource.clip = questCompletedClip;
-            audioSource.Play();
-
-            if (waitForVoiceBeforeQuiz)
-                waitTime = Mathf.Max(delayBeforeNextStage, questCompletedClip.length + extraDelayAfterVoice);
-        }
-
-        yield return new WaitForSeconds(waitTime);
-
-        if (tourManager != null)
-            tourManager.SetStage(EarthTourStage.Quiz);
-        else
-            Debug.LogWarning("ElementQuestManager: TourManager is not assigned.");
-    }
-
     private void ShowCompletedHint()
     {
         if (string.IsNullOrWhiteSpace(completedHintMessage))
@@ -192,7 +189,7 @@ public class ElementQuestManager : MonoBehaviour
         HintManager hintManager = HintManager.Instance;
 
         if (hintManager == null)
-            hintManager = FindObjectOfType<HintManager>();
+            hintManager = FindFirstObjectByType<HintManager>();
 
         if (hintManager != null)
             hintManager.ShowCustomMessage(completedHintMessage);

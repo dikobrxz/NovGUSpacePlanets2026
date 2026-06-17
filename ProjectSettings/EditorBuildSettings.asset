@@ -8,7 +8,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 55daccc09a3b69647bbab145b54a3ab3
-  - enabled: 1
+  - enabled: 0
     path: Assets/Tours/Tour_Endi_Earth/Scenes/Scene_Earth_Intro.unity
     guid: 34f0ceea5acc53b4c80630a587123aca
   - enabled: 1

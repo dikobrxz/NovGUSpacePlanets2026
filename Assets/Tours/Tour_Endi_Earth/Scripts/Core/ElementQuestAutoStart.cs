@@ -24,7 +24,6 @@ public class ElementQuestAutoStart : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
 
-    private bool isWaiting;
     private bool activated;
     private float timer;
 
@@ -38,12 +37,10 @@ public class ElementQuestAutoStart : MonoBehaviour
 
         if (tourManager.CurrentStage != EarthTourStage.ElementColumns)
         {
-            isWaiting = false;
-            timer = 0f;
+                timer = 0f;
             return;
         }
 
-        isWaiting = true;
 
         Vector3 cameraPosition = xrOrigin.Camera.transform.position;
         float distance = Vector3.Distance(cameraPosition, tablePoint.position);

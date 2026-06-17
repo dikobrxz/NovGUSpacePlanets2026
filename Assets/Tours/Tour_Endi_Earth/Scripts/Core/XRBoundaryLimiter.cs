@@ -3,13 +3,16 @@ using Unity.XR.CoreUtils;
 
 /// <summary>
 /// Ограничивает перемещение XR-игрока внутри прямоугольной исследовательской зоны.
-/// Проверяет позицию камеры игрока, а не только XR Origin, потому что в VR камера
-/// может иметь смещение относительно корня XR Origin.
+/// Ограничение работает только на островных этапах тура.
+/// В корабле оно отключается, чтобы финальный телепорт не возвращал игрока обратно на остров.
 /// </summary>
 public class XRBoundaryLimiter : MonoBehaviour
 {
     [Header("XR")]
     [SerializeField] private XROrigin xrOrigin;
+
+    [Header("Tour")]
+    [SerializeField] private EarthTourManager tourManager;
 
     [Header("Zone")]
     [SerializeField] private Transform zoneCenter;
@@ -22,11 +25,24 @@ public class XRBoundaryLimiter : MonoBehaviour
     private void Reset()
     {
         xrOrigin = FindFirstObjectByType<XROrigin>();
+        tourManager = FindFirstObjectByType<EarthTourManager>();
         zoneCenter = transform;
+    }
+
+    private void Awake()
+    {
+        if (xrOrigin == null)
+            xrOrigin = FindFirstObjectByType<XROrigin>();
+
+        if (tourManager == null)
+            tourManager = FindFirstObjectByType<EarthTourManager>();
     }
 
     private void LateUpdate()
     {
+        if (!ShouldLimitPlayer())
+            return;
+
         if (xrOrigin == null || xrOrigin.Camera == null)
             return;
 
@@ -50,8 +66,27 @@ public class XRBoundaryLimiter : MonoBehaviour
         correction.y = 0f;
 
         if (correction.sqrMagnitude > 0.0001f)
-        {
             xrOrigin.transform.position += correction;
+    }
+
+    private bool ShouldLimitPlayer()
+    {
+        if (tourManager == null)
+            return true;
+
+        switch (tourManager.CurrentStage)
+        {
+            case EarthTourStage.ElementColumns:
+            case EarthTourStage.MatchingQuest:
+            case EarthTourStage.Quiz:
+                return true;
+
+            case EarthTourStage.ShipIntro:
+            case EarthTourStage.PlanetIntro:
+            case EarthTourStage.SurfaceIntro:
+            case EarthTourStage.End:
+            default:
+                return false;
         }
     }
 

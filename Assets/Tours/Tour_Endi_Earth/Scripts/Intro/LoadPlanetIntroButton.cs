@@ -1,29 +1,36 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 /// <summary>
 /// Physical VR button in the ship room.
-/// Shows black panel and loads the planet intro scene.
+/// In the single-scene version it does not load another scene.
+/// It switches the tour to PlanetIntro stage.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(XRSimpleInteractable))]
 public class LoadPlanetIntroButton : MonoBehaviour
 {
-    [SerializeField] private string planetIntroSceneName = "SCN_Earth_PlanetIntro";
+    [Header("Tour")]
+    [SerializeField] private EarthTourManager tourManager;
 
     [Header("Transition")]
     [SerializeField] private GameObject blackTransitionPanel;
-    [SerializeField] private float delayBeforeLoad = 0.7f;
+    [SerializeField] private float delayBeforePlanetIntro = 0.7f;
+
+    [Header("Visibility")]
+    [SerializeField] private GameObject visibleRoot;
 
     private XRSimpleInteractable interactable;
+    private Collider buttonCollider;
     private bool wasPressed;
+    private bool isLocked;
 
     private void Awake()
     {
         interactable = GetComponent<XRSimpleInteractable>();
+        buttonCollider = GetComponent<Collider>();
 
         interactable.activated.AddListener(OnActivated);
         interactable.selectEntered.AddListener(OnSelected);
@@ -50,7 +57,7 @@ public class LoadPlanetIntroButton : MonoBehaviour
 
     private void PressButton()
     {
-        if (wasPressed)
+        if (isLocked || wasPressed)
             return;
 
         wasPressed = true;
@@ -58,16 +65,59 @@ public class LoadPlanetIntroButton : MonoBehaviour
         if (GameAudioManager.Instance != null)
             GameAudioManager.Instance.PlayButtonClick();
 
-        StartCoroutine(LoadSceneRoutine());
+        if (TourVoiceManager.Instance != null)
+            TourVoiceManager.Instance.StopAllVoice();
+
+        StartCoroutine(StartPlanetIntroRoutine());
     }
 
-    private IEnumerator LoadSceneRoutine()
+    private IEnumerator StartPlanetIntroRoutine()
     {
+        SetLocked(true);
+
         if (blackTransitionPanel != null)
             blackTransitionPanel.SetActive(true);
 
-        yield return new WaitForSeconds(delayBeforeLoad);
+        yield return new WaitForSeconds(delayBeforePlanetIntro);
 
-        SceneManager.LoadScene(planetIntroSceneName);
+        if (tourManager != null)
+            tourManager.SetStage(EarthTourStage.PlanetIntro);
+        else
+            Debug.LogWarning("LoadPlanetIntroButton: TourManager is not assigned.");
+
+        if (blackTransitionPanel != null)
+            blackTransitionPanel.SetActive(false);
+    }
+
+    public void SetLocked(bool locked)
+    {
+        isLocked = locked;
+
+        if (interactable != null)
+            interactable.enabled = !locked;
+
+        if (buttonCollider != null)
+            buttonCollider.enabled = !locked;
+    }
+
+    public void SetButtonVisible(bool visible)
+    {
+        if (visibleRoot != null)
+        {
+            visibleRoot.SetActive(visible);
+            return;
+        }
+
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+
+        foreach (Renderer renderer in renderers)
+            renderer.enabled = visible;
+    }
+
+    public void ResetButton()
+    {
+        wasPressed = false;
+        SetLocked(false);
+        SetButtonVisible(true);
     }
 }
