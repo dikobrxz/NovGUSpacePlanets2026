@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: a19ac383421ab744aab3a3953c18a427
   m_currentHash:
     serializedVersion: 2
-    Hash: 00000000000000000000000000000000
+    Hash: 7264f7fad8e06cb5cd15a65389da9984
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 1
   m_BundleLocalCatalog: 0
@@ -63,6 +63,8 @@ MonoBehaviour:
   m_GroupAssets:
   - {fileID: 11400000, guid: 575474d47030ba9418bd6216b9313667, type: 2}
   - {fileID: 11400000, guid: 19ba61a61877da549afd8ebd9c18ba99, type: 2}
+  - {fileID: 11400000, guid: 368e990dcea7f894eb36f22fd1d9c194, type: 2}
+  - {fileID: 11400000, guid: 366391887875ea542a2ec8aa90bef4a1, type: 2}
   - {fileID: 11400000, guid: 12a1b815edf943346ad06f170bc37cb3, type: 2}
   m_BuildSettings:
     m_LogResourceManagerExceptions: 1
@@ -78,11 +80,11 @@ MonoBehaviour:
       - m_Id: 08b9d6500d24a9f4480e3434452fba34
         m_Value: oculus
       - m_Id: 73bc017e46d0f6f48a7d42300baf195e
-        m_Value: '{AddressablesUuidPath}/[GroupName]-[DeviceType]/[BuildTarget]'
+        m_Value: https://api-scenes-equipments.iwater-crm.online/files/5ed5beba-70bb-411a-8cf5-95187664deb0/oculus/Tour_Endi_Saturn/Android
       - m_Id: 7c9329451e4a0c741958f623ae27d0e4
         m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
       - m_Id: 7e339607f411df8458224e14dbf8aef0
-        m_Value: 'ServerData/[GroupName]-[DeviceType]/[BuildTarget]'
+        m_Value: ServerData/Tour_Endi_Saturn/Android
       - m_Id: b7671aa1e9df66c4c8ffaf91f65ee447
         m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
       - m_Id: da10f80c7c050f9408408415553e0bd5
@@ -113,6 +115,8 @@ MonoBehaviour:
   m_LabelTable:
     m_LabelNames:
     - default
+    - Tour_Endi_Saturn
+    - Tour_Endi_Saturn.dll
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: ae3ff7e907ddfcf4488c6d9d90f3b0c4, type: 2}
