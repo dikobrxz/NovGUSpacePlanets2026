@@ -1,0 +1,16 @@
+{
+    "name": "Samples.DI",
+    "rootNamespace": "",
+    "references": [
+        "GUID:38f00c3f2e7f50b4e985abbdd0cacc82"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
