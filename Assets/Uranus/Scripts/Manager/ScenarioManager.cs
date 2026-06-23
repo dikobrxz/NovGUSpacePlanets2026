@@ -19,13 +19,13 @@ public class ScenarioManager : MonoBehaviour
     public float GetStageDuration(SceneState state)
     {
         switch (state)
-        {   //Длинна
+        {
             case SceneState.Start: return -1f;
-            case SceneState.Introduction: return 4f;
-            case SceneState.Landing: return 5f;
-            case SceneState.Exploration: return 5f;
-            case SceneState.Historical: return 5f;
-            case SceneState.Quest: return 4f;
+            case SceneState.Introduction: return 6f;
+            case SceneState.Landing: return 15f;
+            case SceneState.Exploration: return 14f;
+            case SceneState.Historical: return 20f;
+            case SceneState.Quest: return 3f;
             case SceneState.Return: return -1f;
             case SceneState.End: return -1f;
             default: return 10f;

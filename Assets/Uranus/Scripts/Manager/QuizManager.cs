@@ -6,28 +6,32 @@ using System.Collections.Generic;
 
 public class QuizManager : MonoBehaviour
 {
-    [Header("UI Elements")]
+    [Header("UI")]
     public TMP_Text questionText;
-    public TMP_Text scoreText;
     public Button[] answerButtons;
     public Button actionButton;
     public CanvasGroup quizCanvasGroup;
+    public TMP_Text finalMessageText;
 
     [Header("Audio")]
     public AudioSource quizAudioSource;
+    public AudioClip correctAnswerClip;
+    public AudioClip wrongAnswerClip;
     public AudioClip lowScoreClip;
     public AudioClip mediumScoreClip;
     public AudioClip highScoreClip;
     public AudioClip finalMessageClip;
 
     [Header("Scene Control")]
-    public StageVisuals stageVisuals;
+    [SerializeField] private StageVisuals stageVisuals;
+    [SerializeField] private ScenarioManager scenarioManager;
 
     private List<Question> questions = new List<Question>();
-    private int currentQuestionIndex = 0;
-    private int correctAnswers = 0;
-    private bool quizCompleted = false;
-    private bool isWaitingForAudio = false;
+    private int currentIndex;
+    private int correctCount;
+    private bool completed;
+    private bool waitingAudio;
+    private bool waitingResult;
 
     [System.Serializable]
     public class Question
@@ -41,23 +45,22 @@ public class QuizManager : MonoBehaviour
     void Start()
     {
         LoadQuestions();
-        if (quizCanvasGroup != null)
-        {
-            quizCanvasGroup.alpha = 0f;
-            quizCanvasGroup.interactable = false;
-            quizCanvasGroup.blocksRaycasts = false;
-        }
-        if (actionButton != null)
-        {
-            actionButton.onClick.RemoveAllListeners();
-            actionButton.onClick.AddListener(OnActionButtonPressed);
-        }
+        quizCanvasGroup.alpha = 0f;
+        quizCanvasGroup.interactable = false;
+        quizCanvasGroup.blocksRaycasts = false;
+        finalMessageText.gameObject.SetActive(false);
+        actionButton.onClick.RemoveAllListeners();
+        actionButton.onClick.AddListener(OnActionButtonPressed);
+        actionButton.gameObject.SetActive(false);
+
         for (int i = 0; i < answerButtons.Length; i++)
         {
             int index = i;
             answerButtons[i].onClick.AddListener(() => OnAnswerSelected(index));
         }
+
         if (stageVisuals == null) stageVisuals = FindFirstObjectByType<StageVisuals>();
+        if (scenarioManager == null) scenarioManager = FindFirstObjectByType<ScenarioManager>();
     }
 
     private void LoadQuestions()
@@ -102,90 +105,127 @@ public class QuizManager : MonoBehaviour
 
     public void StartQuiz()
     {
-        if (quizCanvasGroup != null)
-        {
-            quizCanvasGroup.alpha = 1f;
-            quizCanvasGroup.interactable = true;
-            quizCanvasGroup.blocksRaycasts = true;
-        }
-        currentQuestionIndex = 0;
-        correctAnswers = 0;
-        quizCompleted = false;
-        isWaitingForAudio = false;
-        if (actionButton != null) actionButton.gameObject.SetActive(false);
+        quizCanvasGroup.alpha = 1f;
+        quizCanvasGroup.interactable = true;
+        quizCanvasGroup.blocksRaycasts = true;
+
+        currentIndex = 0;
+        correctCount = 0;
+        completed = false;
+        waitingAudio = false;
+        waitingResult = false;
+
+        actionButton.gameObject.SetActive(false);
+        finalMessageText.gameObject.SetActive(false);
+
         foreach (var btn in answerButtons)
         {
             btn.gameObject.SetActive(true);
             btn.interactable = true;
         }
-        UpdateScoreUI();
+
         ShowQuestion();
     }
 
     private void ShowQuestion()
     {
-        if (currentQuestionIndex >= questions.Count)
+        if (currentIndex >= questions.Count)
         {
-            EndQuiz();
+            StartCoroutine(FinishWithDelay());
             return;
         }
-        var q = questions[currentQuestionIndex];
+
+        Question q = questions[currentIndex];
         questionText.text = q.questionText;
+
         for (int i = 0; i < answerButtons.Length; i++)
         {
-            if (i < q.numberOfAnswers)
+            bool active = i < q.numberOfAnswers;
+            answerButtons[i].gameObject.SetActive(active);
+            if (active)
             {
-                answerButtons[i].gameObject.SetActive(true);
-                var btnText = answerButtons[i].GetComponentInChildren<TMP_Text>();
+                TMP_Text btnText = answerButtons[i].GetComponentInChildren<TMP_Text>();
                 if (btnText != null) btnText.text = q.answers[i];
             }
-            else answerButtons[i].gameObject.SetActive(false);
         }
     }
 
     public void OnAnswerSelected(int answerIndex)
     {
-        if (quizCompleted || isWaitingForAudio) return;
-        if (answerIndex == questions[currentQuestionIndex].correctAnswerIndex) correctAnswers++;
-        UpdateScoreUI();
-        currentQuestionIndex++;
-        if (currentQuestionIndex < questions.Count) ShowQuestion();
-        else EndQuiz();
+        if (completed || waitingAudio || waitingResult) return;
+
+        bool correct = answerIndex == questions[currentIndex].correctAnswerIndex;
+        if (correct) correctCount++;
+
+        PlaySound(correct ? correctAnswerClip : wrongAnswerClip);
+
+        currentIndex++;
+
+        if (currentIndex < questions.Count)
+        {
+            ShowQuestion();
+        }
+        else
+        {
+            StartCoroutine(FinishWithDelay());
+        }
     }
 
-    private void UpdateScoreUI()
+    private IEnumerator FinishWithDelay()
     {
-        if (scoreText != null) scoreText.text = $"Правильно: {correctAnswers} / {questions.Count}";
+        waitingResult = true;
+
+        questionText.text = "";
+        foreach (var btn in answerButtons) btn.gameObject.SetActive(false);
+
+        yield return new WaitForSeconds(0.5f);
+
+        waitingResult = false;
+        EndQuiz();
     }
 
     private void EndQuiz()
     {
-        quizCompleted = true;
-        foreach (var btn in answerButtons) btn.gameObject.SetActive(false);
+        completed = true;
 
-        bool showRestart = correctAnswers <= 2;
-        string buttonText = showRestart ? "Заново" : "Конец";
-        AudioClip clip = correctAnswers <= 2 ? lowScoreClip : (correctAnswers >= 5 ? highScoreClip : mediumScoreClip);
-        bool playFinal = correctAnswers >= 3;
+        bool lowScore = correctCount <= 2;
+        bool goodScore = correctCount >= 3;
+        bool perfectScore = correctCount >= 5;
 
-        if (actionButton != null)
+        AudioClip resultClip = lowScore ? lowScoreClip : (perfectScore ? highScoreClip : mediumScoreClip);
+        bool playFinal = goodScore;
+
+        if (lowScore)
         {
-            var tmpText = actionButton.GetComponentInChildren<TMP_Text>();
-            if (tmpText != null) tmpText.text = buttonText;
-            actionButton.gameObject.SetActive(true);
+            SetupActionButton("Заново");
+            finalMessageText.gameObject.SetActive(false);
         }
-        PlayResultAudio(clip, playFinal);
+        else
+        {
+            actionButton.gameObject.SetActive(false);
+            finalMessageText.text = "Конец";
+            finalMessageText.gameObject.SetActive(true);
+        }
+
+        StartCoroutine(PlayResultSequence(resultClip, playFinal));
     }
 
-    private void PlayResultAudio(AudioClip clip, bool playFinalMessage)
+    private void SetupActionButton(string text)
     {
-        if (quizAudioSource == null) return;
-        isWaitingForAudio = true;
-        StartCoroutine(PlayResultRoutine(clip, playFinalMessage));
+        Button btn = actionButton.GetComponent<Button>();
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(OnActionButtonPressed);
+
+        TMP_Text label = actionButton.GetComponentInChildren<TMP_Text>();
+        if (label != null) label.text = text;
+
+        actionButton.gameObject.SetActive(true);
     }
 
-    private IEnumerator PlayResultRoutine(AudioClip resultClip, bool playFinalMessage)
+    private IEnumerator PlayResultSequence(AudioClip resultClip, bool playFinal)
     {
+        waitingAudio = true;
+
         if (resultClip != null)
         {
             quizAudioSource.Stop();
@@ -193,41 +233,36 @@ public class QuizManager : MonoBehaviour
             quizAudioSource.Play();
             yield return new WaitForSeconds(resultClip.length);
         }
-        if (playFinalMessage && finalMessageClip != null)
+
+        if (playFinal && finalMessageClip != null)
         {
+            yield return new WaitForSeconds(1f);
             quizAudioSource.Stop();
             quizAudioSource.clip = finalMessageClip;
             quizAudioSource.Play();
             yield return new WaitForSeconds(finalMessageClip.length);
         }
-        isWaitingForAudio = false;
+
+        waitingAudio = false;
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip != null) quizAudioSource.PlayOneShot(clip);
     }
 
     private void OnActionButtonPressed()
     {
-        if (actionButton == null) return;
-        var buttonText = actionButton.GetComponentInChildren<TMP_Text>();
-        string label = buttonText != null ? buttonText.text : "";
+        TMP_Text label = actionButton.GetComponentInChildren<TMP_Text>();
+        if (label == null) return;
 
-        if (label == "Заново")
+        if (label.text == "Заново")
         {
             stageVisuals?.RestartScenario();
-            if (quizCanvasGroup != null)
-            {
-                quizCanvasGroup.alpha = 0f;
-                quizCanvasGroup.interactable = false;
-                quizCanvasGroup.blocksRaycasts = false;
-            }
-        }
-        else if (label == "Конец")
-        {
-            if (quizCanvasGroup != null)
-            {
-                quizCanvasGroup.alpha = 0f;
-                quizCanvasGroup.interactable = false;
-                quizCanvasGroup.blocksRaycasts = false;
-            }
-            stageVisuals?.EndScenario();
+            quizCanvasGroup.alpha = 0f;
+            quizCanvasGroup.interactable = false;
+            quizCanvasGroup.blocksRaycasts = false;
+            finalMessageText.gameObject.SetActive(false);
         }
     }
 }

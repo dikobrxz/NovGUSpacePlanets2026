@@ -1,9 +1,14 @@
+using System.Collections;
+using TMPro;
 using Unity.XR.CoreUtils;
 using UnityEngine;
-using System.Collections;
+using UnityEngine.UI;
 
 public class StageVisuals : MonoBehaviour
 {
+    [Header("Managers")]
+    [SerializeField] private ScenarioManager scenarioManager;
+
     [Header("Environment")]
     public GameObject uranusPlanet;
     public GameObject terrain;
@@ -11,6 +16,11 @@ public class StageVisuals : MonoBehaviour
 
     [Header("Effects")]
     public ParticleSystem windParticles;
+
+    [Header("Wind Audio")]
+    public AudioSource windAudioSource;
+    public AudioClip windClip;
+    public float windVolume = 0.35f;
 
     [Header("VolClouds")]
     public GameObject volCloudsObject;
@@ -41,44 +51,32 @@ public class StageVisuals : MonoBehaviour
     public AudioClip questClip;
     public AudioClip returnClip;
 
-    private ScenarioManager scenarioManager;
     private XROrigin xrOrigin;
     private CharacterController characterController;
     private SceneState currentStage;
     private GameObject locomotionFolder;
-    private float planetRotationSpeed = 5f;
-    private bool isPlanetRotating = false;
+    private bool isPlanetRotating;
 
-    private readonly Vector3 startPosition = new Vector3(-4f, 100f, -15f);
-    private readonly Vector3 landingPosition = new Vector3(83f, 74f, -90f);
+    private readonly Vector3 startPosition = new Vector3(-3.1f, 100f, -15f);
+    private readonly Vector3 landingPosition = new Vector3(9f, 96.5f, -146f);
     private readonly Quaternion startRotation = Quaternion.identity;
 
     void Start()
     {
-        scenarioManager = GetComponent<ScenarioManager>();
         xrOrigin = FindFirstObjectByType<XROrigin>();
         characterController = xrOrigin.GetComponent<CharacterController>();
 
-        Transform locoTransform = xrOrigin.transform.Find("Locomotion");
-        if (locoTransform != null) locomotionFolder = locoTransform.gameObject;
+        Transform loco = xrOrigin.transform.Find("Locomotion");
+        if (loco != null) locomotionFolder = loco.gameObject;
 
-        uranusPlanet.transform.localScale = new Vector3(100f, 100f, 100f);
+        uranusPlanet.transform.localScale = Vector3.one * 100f;
         uranusPlanet.transform.rotation = Quaternion.Euler(0f, 0f, 25f);
 
         sendButton.SetActive(false);
         returnPlatform.SetActive(false);
         volCloudsObject.SetActive(false);
 
-        if (actionButton != null)
-        {
-            var btn = actionButton.GetComponent<UnityEngine.UI.Button>();
-            if (btn != null)
-            {
-                btn.onClick.RemoveAllListeners();
-                btn.onClick.AddListener(OnActionButtonPressed);
-            }
-            SetButtonText("Начать");
-        }
+        SetupActionButton("Начать", OnActionButtonPressed);
 
         HideAll();
         StartCoroutine(TeleportToStart());
@@ -86,12 +84,28 @@ public class StageVisuals : MonoBehaviour
         ShowStartStage();
     }
 
-    private void SetButtonText(string text)
+    private void SetupActionButton(string text, UnityEngine.Events.UnityAction callback)
     {
-        if (actionButton != null)
+        if (actionButton == null) return;
+
+        Button btn = actionButton.GetComponent<Button>();
+        btn.onClick.RemoveAllListeners();
+        btn.onClick.AddListener(callback);
+
+        TMP_Text label = actionButton.GetComponentInChildren<TMP_Text>();
+        if (label != null) label.text = text;
+
+        actionButton.SetActive(true);
+
+        Canvas canvas = actionButton.GetComponentInParent<Canvas>();
+        if (canvas != null) canvas.gameObject.SetActive(true);
+
+        CanvasGroup group = actionButton.GetComponentInParent<CanvasGroup>();
+        if (group != null)
         {
-            var tmpText = actionButton.GetComponentInChildren<TMPro.TMP_Text>();
-            if (tmpText != null) tmpText.text = text;
+            group.alpha = 1f;
+            group.interactable = true;
+            group.blocksRaycasts = true;
         }
     }
 
@@ -109,20 +123,26 @@ public class StageVisuals : MonoBehaviour
         if (currentStage != newStage)
         {
             currentStage = newStage;
-            switch (newStage)
-            {
-                case SceneState.Start: ShowStartStage(); break;
-                case SceneState.Introduction: ShowIntroductionStage(); break;
-                case SceneState.Landing: ShowLandingStage(); break;
-                case SceneState.Exploration: ShowExplorationStage(); break;
-                case SceneState.Historical: ShowHistoricalStage(); break;
-                case SceneState.Quest: ShowQuestStage(); break;
-                case SceneState.Return: ShowReturnStage(); break;
-                case SceneState.End: ShowEndStage(); break;
-            }
+            UpdateStage(newStage);
         }
 
-        if (isPlanetRotating) uranusPlanet.transform.Rotate(Vector3.up, planetRotationSpeed * Time.deltaTime);
+        if (isPlanetRotating)
+            uranusPlanet.transform.Rotate(Vector3.up, 5f * Time.deltaTime);
+    }
+
+    private void UpdateStage(SceneState stage)
+    {
+        switch (stage)
+        {
+            case SceneState.Start: ShowStartStage(); break;
+            case SceneState.Introduction: ShowIntroductionStage(); break;
+            case SceneState.Landing: ShowLandingStage(); break;
+            case SceneState.Exploration: ShowExplorationStage(); break;
+            case SceneState.Historical: ShowHistoricalStage(); break;
+            case SceneState.Quest: ShowQuestStage(); break;
+            case SceneState.Return: ShowReturnStage(); break;
+            case SceneState.End: ShowEndStage(); break;
+        }
     }
 
     private void HideAll()
@@ -153,44 +173,33 @@ public class StageVisuals : MonoBehaviour
         if (locomotionFolder != null) locomotionFolder.SetActive(enabled);
     }
 
-    private void TeleportToPosition(Vector3 position, Quaternion rotation, bool enableLocomotionAfter = true)
+    private void TeleportToPosition(Vector3 position, Quaternion rotation, bool enableLoco = true)
     {
         SetLocomotion(false);
 
-        var cameraOffset = xrOrigin.GetComponentInChildren<Camera>().transform.parent;
-        float cameraYOffset = xrOrigin.CameraYOffset;
+        Transform offset = xrOrigin.GetComponentInChildren<Camera>().transform.parent;
+        float yOffset = xrOrigin.CameraYOffset;
 
         xrOrigin.transform.SetPositionAndRotation(position, rotation);
-        cameraOffset.SetPositionAndRotation(position, rotation);
-        cameraOffset.localPosition = new Vector3(0, 1.7f, 0);
+        offset.SetPositionAndRotation(position, rotation);
+        offset.localPosition = new Vector3(0, 1.7f, 0);
         xrOrigin.CameraYOffset = 1.7f;
 
-        if (enableLocomotionAfter) SetLocomotion(true);
+        if (enableLoco) SetLocomotion(true);
     }
 
     private void ShowStartStage()
     {
         HideAll();
         SetLocomotion(false);
+
         spaceship.SetActive(true);
         directionalLight.SetActive(true);
         uranusPlanet.SetActive(true);
         isPlanetRotating = true;
 
-        if (actionButton != null)
-        {
-            SetButtonText("Начать");
-            actionButton.SetActive(true);
-            var parentCanvas = actionButton.GetComponentInParent<Canvas>();
-            if (parentCanvas != null) parentCanvas.gameObject.SetActive(true);
-            var parentGroup = actionButton.GetComponentInParent<CanvasGroup>();
-            if (parentGroup != null)
-            {
-                parentGroup.alpha = 1f;
-                parentGroup.interactable = true;
-                parentGroup.blocksRaycasts = true;
-            }
-        }
+        SetupActionButton("Начать", OnActionButtonPressed);
+        SetWindAudio(false);
     }
 
     private void ShowIntroductionStage()
@@ -202,7 +211,6 @@ public class StageVisuals : MonoBehaviour
         uranusPlanet.SetActive(true);
         isPlanetRotating = true;
         actionButton.SetActive(false);
-
         PlayClip(introductionClip);
     }
 
@@ -210,6 +218,7 @@ public class StageVisuals : MonoBehaviour
     {
         HideAll();
         TeleportToPosition(landingPosition, startRotation, true);
+        SetWindAudio(true);
         terrain.SetActive(true);
         directionalLight.SetActive(true);
         windParticles.Play();
@@ -273,10 +282,11 @@ public class StageVisuals : MonoBehaviour
         spaceship.SetActive(true);
         directionalLight.SetActive(true);
         uranusPlanet.SetActive(true);
-        isPlanetRotating = true;
         volCloudsObject.SetActive(true);
+        isPlanetRotating = true;
         actionButton.SetActive(false);
         quizCanvas.SetActive(true);
+        SetWindAudio(false);
         quizManager?.StartQuiz();
     }
 
@@ -286,6 +296,23 @@ public class StageVisuals : MonoBehaviour
         voiceOver.Stop();
         voiceOver.clip = clip;
         voiceOver.Play();
+    }
+
+    private void SetWindAudio(bool enable)
+    {
+        if (windAudioSource == null) return;
+
+        if (enable && !windAudioSource.isPlaying && windClip != null)
+        {
+            windAudioSource.clip = windClip;
+            windAudioSource.volume = windVolume;
+            windAudioSource.loop = true;
+            windAudioSource.Play();
+        }
+        else if (!enable && windAudioSource.isPlaying)
+        {
+            windAudioSource.Stop();
+        }
     }
 
     public void OnSendButtonPressed()
@@ -315,16 +342,18 @@ public class StageVisuals : MonoBehaviour
     public void RestartScenario()
     {
         scenarioManager.RestartScenario();
-        SetButtonText("Начать");
         currentStage = SceneState.Start;
         ShowStartStage();
+        SetWindAudio(false);
         quizCanvas.SetActive(false);
+
         if (quizManager?.quizCanvasGroup != null)
         {
             quizManager.quizCanvasGroup.alpha = 0f;
             quizManager.quizCanvasGroup.interactable = false;
             quizManager.quizCanvasGroup.blocksRaycasts = false;
         }
+
         TeleportToPosition(startPosition, startRotation, false);
     }
 

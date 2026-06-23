@@ -1,146 +1,234 @@
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class DrawingPlane : MonoBehaviour
 {
     [Header("References")]
-    public RenderTexture drawingTexture;
-    public Transform brushTip;
+    [SerializeField] private RenderTexture drawingTexture;
+    [SerializeField] private Transform brushTip;
 
     [Header("Settings")]
-    public int brushSize = 8;
-    public Color brushColor = Color.red;
+    [SerializeField] private int brushSize = 20;
+    [SerializeField] private Color brushColor = Color.red;
 
-    [Header("Plane Size (укажите реальные размеры)")]
-    public float planeWidth = 3.15f;
-    public float planeHeight = 3.0f;
+    [Header("Audio")]
+    [SerializeField] private AudioSource drawingAudioSource;
+    [SerializeField] private AudioClip drawingClip;
+    
+    [SerializeField] private float minDistanceForSound = 1f;
 
     private Texture2D texture2D;
-    private Vector2 lastPos;
-    private bool drawing = false;
+    private Vector2 lastUV;
+    private bool isDrawing;
+    private Collider canvasCollider;
+    private XRGrabInteractable grab;
+    private bool isInitialized = false;
+    private float distanceSinceLastSound = 0f;
 
-    void Start()
+    private float width;
+    private float height;
+
+    private void Start()
     {
+        canvasCollider = GetComponent<Collider>();
+
         if (drawingTexture == null)
         {
-            Debug.LogError("DrawingTexture не назначен!");
+            Debug.LogError("[DrawingPlane] drawingTexture РЅРµ РЅР°Р·РЅР°С‡РµРЅ!");
             return;
         }
 
         if (brushTip == null)
         {
-            Debug.LogError("Brush Tip не назначен! Перетащите Tip в инспекторе");
+            Debug.LogError("[DrawingPlane] brushTip РЅРµ РЅР°Р·РЅР°С‡РµРЅ!");
             return;
         }
 
-        texture2D = new Texture2D(drawingTexture.width, drawingTexture.height);
+        if (canvasCollider == null)
+        {
+            Debug.LogError("[DrawingPlane] Collider РЅРµ РЅР°Р№РґРµРЅ!");
+            return;
+        }
+
+        CalculatePlaneSize();
+
+        texture2D = new Texture2D(1024, 1024, TextureFormat.RGBA32, false);
+        grab = brushTip.GetComponentInParent<XRGrabInteractable>();
+
         ClearTexture();
-        Debug.Log("Инициализация завершена. Размер плоскости: " + planeWidth + " x " + planeHeight);
+        isInitialized = true;
     }
 
-    void OnTriggerStay(Collider other)
+    private void CalculatePlaneSize()
     {
-        if (other.transform == brushTip)
+        Renderer renderer = GetComponent<Renderer>();
+        if (renderer != null)
         {
-            Vector3 localPoint = transform.InverseTransformPoint(other.transform.position);
-
-            float u = localPoint.x / planeWidth + 0.5f;
-            float v = localPoint.z / planeHeight + 0.5f;
-
-            v = 1f - v;
-
-            float texX = u * drawingTexture.width;
-            float texY = v * drawingTexture.height;
-
-            Debug.Log("localPoint: " + localPoint);
-            Debug.Log("UV: u=" + u + ", v=" + v);
-
-            if (u < 0 || u > 1 || v < 0 || v > 1)
-            {
-                Debug.LogWarning("UV вне доски! u=" + u + ", v=" + v);
-                return;
-            }
-
-            Vector2 currentPos = new Vector2(texX, texY);
-
-            if (!drawing)
-            {
-                lastPos = currentPos;
-                drawing = true;
-            }
-
-            DrawLine(lastPos, currentPos);
-            lastPos = currentPos;
+            Vector3 size = renderer.bounds.size;
+            width = size.x * 0.182f;
+            height = size.y * 0.127f;
+            return;
         }
     }
 
-    void DrawLine(Vector2 from, Vector2 to)
+    private void Update()
     {
-        float distance = Vector2.Distance(from, to);
-        if (distance < 0.1f)
+        if (!isInitialized) return;
+        if (drawingTexture == null || texture2D == null || brushTip == null) return;
+
+        if (!IsTouchingCanvas(out Vector3 hitPoint))
         {
-            DrawPoint(to);
+            if (isDrawing)
+            {
+                isDrawing = false;
+                distanceSinceLastSound = 0f;
+            }
             return;
         }
 
-        for (float t = 0; t <= distance; t += 0.5f)
+        bool isHeld = grab != null ? grab.isSelected : true;
+        if (!isHeld)
         {
-            Vector2 point = Vector2.Lerp(from, to, t / distance);
-            DrawPoint(point);
+            if (isDrawing)
+            {
+                isDrawing = false;
+                distanceSinceLastSound = 0f;
+            }
+            return;
+        }
+
+        Vector2 uv = WorldPointToUV(hitPoint);
+
+        if (!isDrawing)
+        {
+            lastUV = uv;
+            isDrawing = true;
+            distanceSinceLastSound = 0f;
+            DrawPoint(uv);
+            PlayDrawingSound();
+            return;
+        }
+
+        float distance = Vector2.Distance(lastUV, uv);
+        if (distance > 0.01f)
+        {
+            DrawLine(lastUV, uv);
+            lastUV = uv;
+
+            distanceSinceLastSound += distance;
+            if (distanceSinceLastSound > minDistanceForSound)
+            {
+                PlayDrawingSound();
+                distanceSinceLastSound = 0f;
+            }
         }
     }
 
-    void DrawPoint(Vector2 point)
+    private bool IsTouchingCanvas(out Vector3 hitPoint)
     {
-        int centerX = Mathf.RoundToInt(point.x);
-        int centerY = Mathf.RoundToInt(point.y);
+        Ray ray = new Ray(brushTip.position, brushTip.forward);
+        bool hit = Physics.Raycast(ray, out RaycastHit info, 0.5f);
+        hitPoint = hit ? info.point : Vector3.zero;
+        return hit && info.collider == canvasCollider;
+    }
 
-        for (int x = -brushSize; x <= brushSize; x++)
+    private Vector2 WorldPointToUV(Vector3 worldPoint)
+    {
+        Vector3 local = transform.InverseTransformPoint(worldPoint);
+        float u = (local.x + width * 0.5f) / width;
+        float v = (local.y + height * 0.5f) / height;
+        return new Vector2(u, v);
+    }
+
+    private void DrawLine(Vector2 from, Vector2 to)
+    {
+        Vector2 fromPx = from * 1024;
+        Vector2 toPx = to * 1024;
+        float distance = Vector2.Distance(fromPx, toPx);
+        int steps = Mathf.Max(2, Mathf.CeilToInt(distance / 2f));
+
+        for (int i = 0; i <= steps; i++)
         {
-            for (int y = -brushSize; y <= brushSize; y++)
-            {
-                if (x * x + y * y <= brushSize * brushSize)
-                {
-                    int px = centerX + x;
-                    int py = centerY + y;
+            float t = i / (float)steps;
+            Vector2 pixel = Vector2.Lerp(fromPx, toPx, t);
+            int x = Mathf.RoundToInt(pixel.x);
+            int y = Mathf.RoundToInt(pixel.y);
 
-                    if (px >= 0 && px < drawingTexture.width && py >= 0 && py < drawingTexture.height)
-                    {
-                        texture2D.SetPixel(px, py, brushColor);
-                    }
+            x = Mathf.Clamp(x, 0, 1023);
+            y = Mathf.Clamp(y, 0, 1023);
+
+            DrawPoint(x, y);
+        }
+    }
+
+    private void DrawPoint(Vector2 uv)
+    {
+        int x = Mathf.RoundToInt(uv.x * 1024);
+        int y = Mathf.RoundToInt(uv.y * 1024);
+
+        x = Mathf.Clamp(x, 0, 1023);
+        y = Mathf.Clamp(y, 0, 1023);
+
+        DrawPoint(x, y);
+    }
+
+    private void DrawPoint(int x, int y)
+    {
+        if (texture2D == null || drawingTexture == null) return;
+        if (x < 0 || x >= 1024 || y < 0 || y >= 1024) return;
+
+        int radius = brushSize;
+
+        for (int dx = -radius; dx <= radius; dx++)
+        {
+            for (int dy = -radius; dy <= radius; dy++)
+            {
+                if (dx * dx + dy * dy > radius * radius) continue;
+
+                int px = x + dx;
+                int py = y + dy;
+                if (px >= 0 && px < 1024 && py >= 0 && py < 1024)
+                {
+                    texture2D.SetPixel(px, py, brushColor);
                 }
             }
         }
 
-        ApplyTexture();
-    }
-
-    void ApplyTexture()
-    {
         texture2D.Apply();
+
         RenderTexture.active = drawingTexture;
         Graphics.Blit(texture2D, drawingTexture);
         RenderTexture.active = null;
     }
 
-    void OnTriggerExit(Collider other)
+    private void PlayDrawingSound()
     {
-        if (other.transform == brushTip)
+        if (drawingAudioSource == null || drawingClip == null) return;
+
+        drawingAudioSource.volume = 1;
+        drawingAudioSource.PlayOneShot(drawingClip);
+    }
+
+    private void ClearTexture()
+    {
+        if (texture2D == null) return;
+
+        for (int x = 0; x < 1024; x++)
+            for (int y = 0; y < 1024; y++)
+                texture2D.SetPixel(x, y, Color.white);
+
+        texture2D.Apply();
+
+        if (drawingTexture != null)
         {
-            drawing = false;
-            Debug.Log("Рисование прекращено");
+            RenderTexture.active = drawingTexture;
+            Graphics.Blit(texture2D, drawingTexture);
+            RenderTexture.active = null;
         }
     }
 
-    void ClearTexture()
-    {
-        for (int x = 0; x < drawingTexture.width; x++)
-        {
-            for (int y = 0; y < drawingTexture.height; y++)
-            {
-                texture2D.SetPixel(x, y, Color.white);
-            }
-        }
-        ApplyTexture();
-        Debug.Log("Текстура очищена");
-    }
+    public void Clear() => ClearTexture();
+    public void SetBrushColor(Color color) => brushColor = color;
+    public void SetBrushSize(int size) => brushSize = Mathf.Clamp(size, 2, 50);
 }
