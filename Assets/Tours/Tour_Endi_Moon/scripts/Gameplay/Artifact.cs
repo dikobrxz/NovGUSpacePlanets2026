@@ -4,12 +4,6 @@ using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 namespace MoonGame
 {
-    /// <summary>
-    /// Артефакт, спрятанный в кучке земли.
-    /// После откапывания остаётся лежать на месте,
-    /// пока игрок сам не возьмёт его в руку.
-    /// После укладки в ящик — полностью блокируется (см. ArtifactBox).
-    /// </summary>
     [RequireComponent(typeof(Collider))]
     public class Artifact : MonoBehaviour
     {
@@ -45,8 +39,10 @@ namespace MoonGame
             rb = GetComponent<Rigidbody>();
             if (rb != null)
             {
+                // Гравитация выключена до откопки — чтобы не падал под землю
+                // isKinematic НЕ ставим — иначе XR Grab не сможет притянуть к руке
                 rb.useGravity = false;
-                rb.isKinematic = true;
+                rb.isKinematic = false;
             }
         }
 
@@ -73,13 +69,13 @@ namespace MoonGame
             EnablePhysics();
         }
 
-        /// <summary>Вызывается из SandPile, когда кучка полностью откопана.</summary>
         public void Uncover(Vector3 spawnPosition)
         {
             if (IsUncovered || IsStored) return;
             IsUncovered = true;
 
             gameObject.SetActive(true);
+            GetComponent<ItemBounds>()?.UpdateReturnPosition();
             transform.position = spawnPosition;
 
             riseStartPos = spawnPosition;
@@ -89,23 +85,21 @@ namespace MoonGame
 
             Debug.Log($"[Artifact:{type}] откопан на позиции {spawnPosition}.");
 
+            if (GameManager.Instance?.Audio != null)
+                GameManager.Instance.Audio.PlayArtifactFoundClip(type);
+
             if (GameManager.Instance?.Quest != null)
                 GameManager.Instance.Quest.RegisterUncovered(type);
 
-            if (GameManager.Instance?.Audio != null)
-                GameManager.Instance.Audio.PlayArtifactFoundClip(type);
+            
         }
 
-        /// <summary>
-        /// Вызывается из ArtifactBox при фиксации артефакта в коробке.
-        /// </summary>
         public void MarkStored()
         {
             IsStored = true;
             IsUncovered = true;
         }
 
-        /// <summary>Включает стандартную гравитацию Unity.</summary>
         private void EnablePhysics()
         {
             if (rb == null) return;

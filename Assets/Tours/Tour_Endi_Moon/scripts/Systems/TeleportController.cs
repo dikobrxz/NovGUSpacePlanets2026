@@ -68,12 +68,12 @@ namespace MoonGame
             }
 
             // Всегда ставим игрока на Spawn 1 при старте — без fade и звука
-            if (spawn1 != null)
-                MoveRig(spawn1);
-
+           // if (spawn1 != null)
+            //    MoveRig(spawn1);
+            
             // Временно для теста
-            //if (story != null)
-            //    story.SetStage(GameState.Exploration);
+            if (story != null)
+                story.SetStage(GameState.Return);
         }
 
         private void OnDestroy()
@@ -92,12 +92,12 @@ namespace MoonGame
             switch (state)
             {
                 // Spawn 1 → Spawn 2: второй монолог
-                case GameState.Monologue when spawn2 != null:
+                case GameState.Landing when spawn2 != null:
                     StartCoroutine(DoTeleport(spawn2, afterTeleport: null));
                     break;
 
                 // Spawn 2 → Spawn 3: раскопки
-                case GameState.Exploration when spawn3 != null:
+                case GameState.Monologue when spawn3 != null:
                     StartCoroutine(DoTeleport(spawn3, afterTeleport: null));
                     break;
 

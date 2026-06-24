@@ -41,9 +41,9 @@ namespace MoonGame
             if (story != null)
                 story.OnStateChanged += HandleStateChanged;
 
-            // Если игра уже на Intro при старте — запускаем вручную
-            if (story != null && story.GetCurrentStage() == GameState.Intro)
-                HandleStateChanged(GameState.Intro);
+            // НЕ запускаем Intro вручную при старте сцены.
+            // Сценарий стартует только после нажатия кнопки «Начать»
+            // (GameManager.BeginStory → SetStageForce(Intro) → событие OnStateChanged).
         }
 
         private void OnDestroy()
@@ -87,11 +87,9 @@ namespace MoonGame
 
         private IEnumerator RunLandingSequence()
         {
-            // Ждём окончания первого монолога (озвучка о Луне, clipLanding)
             float duration = audioManager != null ? audioManager.GetLandingClipDuration() : 55f;
             yield return new WaitForSeconds(duration + 1f);
 
-            // TeleportController услышит Monologue и сделает fade + телепорт на Spawn 2
             if (story != null && story.GetCurrentStage() == GameState.Landing)
                 story.SetStage(GameState.Monologue);
         }
@@ -100,14 +98,11 @@ namespace MoonGame
 
         private IEnumerator RunMonologueSequence()
         {
-            // Небольшая пауза после fade-in (пока звук телепорта стихает)
             yield return new WaitForSeconds(postMonologueFadePause);
 
-            // Ждём окончания второго монолога (clipMonologue из AudioManager)
             float duration = audioManager != null ? audioManager.GetMonologueClipDuration() : 40f;
             yield return new WaitForSeconds(duration + 1f);
 
-            // TeleportController услышит Exploration и сделает fade + телепорт на Spawn 3
             if (story != null && story.GetCurrentStage() == GameState.Monologue)
                 story.SetStage(GameState.Exploration);
         }

@@ -1,2 +1,18 @@
 fileFormatVersion: 2
 guid: 73ebccb44b0442e4dafb26e8704e9d7a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - root: {instanceID: 0}
+  - questionText: {instanceID: 0}
+  - resultPanel: {instanceID: 0}
+  - resultText: {instanceID: 0}
+  - audioSource: {instanceID: 0}
+  - correctClip: {fileID: 8300000, guid: 81940db152485d040abf251a168545de, type: 3}
+  - wrongClip: {fileID: 8300000, guid: b1d9558225cde1648a67f9582b0d17a1, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

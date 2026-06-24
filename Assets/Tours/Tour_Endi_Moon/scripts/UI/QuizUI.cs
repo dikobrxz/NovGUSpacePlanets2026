@@ -1,30 +1,39 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace MoonGame
 {
-    /// <summary>
-    /// World-Space UI квиза. Показывает текст вопроса и до 4 кнопок-вариантов.
-    /// Кнопки нажимаются лучом от XR-контроллера (XR Ray Interactor + Canvas
-    /// с TrackedDeviceGraphicRaycaster).
-    /// </summary>
     public class QuizUI : MonoBehaviour
     {
-        [Header("Корневой Canvas (включается на этапе квиза)")]
+        [Header("Корневой Canvas")]
         [SerializeField] private GameObject root;
 
         [Header("Текстовое поле вопроса")]
         [SerializeField] private TMP_Text questionText;
 
-        [Header("4 кнопки вариантов (А, Б, В, Г). Лишние скроются автоматически.")]
+        [Header("Кнопки вариантов (до 4)")]
         [SerializeField] private Button[] optionButtons;
         [SerializeField] private TMP_Text[] optionLabels;
 
         [Header("Финальный экран")]
         [SerializeField] private GameObject resultPanel;
         [SerializeField] private TMP_Text resultText;
+
+        [Header("Цвета ответов")]
+        [SerializeField] private Color correctColor   = new Color(0.2f, 0.8f, 0.2f);
+        [SerializeField] private Color wrongColor     = new Color(0.9f, 0.2f, 0.2f);
+        [SerializeField] private Color defaultColor   = Color.white;
+
+        [Header("Задержка перед следующим вопросом (сек)")]
+        [SerializeField] private float feedbackDelay = 1.5f;
+
+        [Header("Звуки")]
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioClip correctClip;
+        [SerializeField] private AudioClip wrongClip;
 
         private Action<int> currentCallback;
 
@@ -33,7 +42,6 @@ namespace MoonGame
             if (root != null) root.SetActive(visible);
         }
 
-        /// <summary>Показывает вопрос и привязывает колбэк к кнопкам.</summary>
         public void ShowQuestion(QuizQuestion q, Action<int> onAnswer)
         {
             if (resultPanel != null) resultPanel.SetActive(false);
@@ -43,37 +51,64 @@ namespace MoonGame
             if (questionText != null)
                 questionText.text = q.text;
 
-            if (optionButtons == null || optionButtons.Length == 0)
-            {
-                Debug.LogError("[QuizUI] optionButtons не заполнены в инспекторе!");
-                return;
-            }
-
             for (int i = 0; i < optionButtons.Length; i++)
             {
-                if (optionButtons[i] == null)
-                {
-                    Debug.LogError($"[QuizUI] optionButtons[{i}] == null. Проверь ссылки в инспекторе.");
-                    continue;
-                }
+                if (optionButtons[i] == null) continue;
 
                 bool active = i < q.options.Length;
                 optionButtons[i].gameObject.SetActive(active);
-
                 if (!active) continue;
+
+                // Сброс цвета
+                optionButtons[i].image.color = defaultColor;
+                optionButtons[i].interactable = true;
 
                 if (optionLabels != null && i < optionLabels.Length && optionLabels[i] != null)
                     optionLabels[i].text = q.options[i];
-                else
-                    Debug.LogWarning($"[QuizUI] optionLabels[{i}] не задан — текст кнопки не обновлён.");
 
                 int captured = i;
                 optionButtons[i].onClick.RemoveAllListeners();
-                optionButtons[i].onClick.AddListener(() => currentCallback?.Invoke(captured));
+                optionButtons[i].onClick.AddListener(() => OnButtonClicked(captured, q.correctIndex));
             }
         }
 
-        /// <summary>Показывает финальный экран с результатом и итоговой репликой.</summary>
+        private void OnButtonClicked(int chosenIndex, int correctIndex)
+        {
+            // Блокируем все кнопки чтобы не нажали дважды
+            foreach (var b in optionButtons)
+                if (b != null) b.interactable = false;
+
+            StartCoroutine(ShowFeedback(chosenIndex, correctIndex));
+        }
+
+        private IEnumerator ShowFeedback(int chosenIndex, int correctIndex)
+        {
+            bool isCorrect = chosenIndex == correctIndex;
+
+            // Подсветка выбранной кнопки
+            if (chosenIndex < optionButtons.Length && optionButtons[chosenIndex] != null)
+                optionButtons[chosenIndex].image.color = isCorrect ? correctColor : wrongColor;
+
+            // Если ответ неверный — ещё подсветить правильный зелёным
+            if (!isCorrect && correctIndex < optionButtons.Length && optionButtons[correctIndex] != null)
+                optionButtons[correctIndex].image.color = correctColor;
+
+            // Звук
+            if (audioSource != null)
+            {
+                var clip = isCorrect ? correctClip : wrongClip;
+                if (clip != null) audioSource.PlayOneShot(clip);
+            }
+
+            yield return new WaitForSeconds(feedbackDelay);
+
+            // Сброс цветов
+            foreach (var b in optionButtons)
+                if (b != null) b.image.color = defaultColor;
+
+            currentCallback?.Invoke(chosenIndex);
+        }
+
         public void ShowResult(int correct, int total)
         {
             if (resultPanel != null) resultPanel.SetActive(true);

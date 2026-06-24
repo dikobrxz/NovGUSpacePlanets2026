@@ -8,11 +8,11 @@ namespace MoonGame
     /// Менеджер озвучки. Проигрывает голос за кадром на каждом этапе сценария.
     /// Реплики ставятся в очередь и никогда не перебивают друг друга.
     ///
-    /// Маршрут озвучки:
+    /// Маршрут озвучки (порядок задаётся порядком этапов в enum GameState):
     ///   Intro     — clipIntro      (Spawn 1, внутри корабля)
-    ///   Landing   — clipLanding    (Spawn 1, первый монолог о Луне)
+    ///   Landing   — clipLanding    (первый монолог о Луне)
     ///   Monologue — clipMonologue  (Spawn 2, второй монолог)
-    ///   Exploration — clipExplorationIntro + clipExplorationFacts
+    ///   Exploration — clipExplorationIntro
     ///   Collecting  — clipCollecting
     ///   End         — clipEnd* + clipNextAdventure
     /// </summary>
@@ -25,7 +25,7 @@ namespace MoonGame
         [Tooltip("«Сегодня, дорогой исследователь, ты познакомишься с небесным телом — Луной.»")]
         [SerializeField] private AudioClip clipIntro;
 
-        [Header("Landing — Spawn 1, первый монолог о Луне")]
+        [Header("Landing — первый монолог о Луне")]
         [Tooltip("«Луна — самый близкий к Земле объект...»")]
         [SerializeField] private AudioClip clipLanding;
 
@@ -36,9 +36,6 @@ namespace MoonGame
         [Header("Exploration — начало раскопок (Spawn 3)")]
         [Tooltip("«Давай исследуем поверхность Луны и найдём доказательства пребывания здесь человека»")]
         [SerializeField] private AudioClip clipExplorationIntro;
-
-        [Tooltip("Факты во время поиска: про кратеры, атмосферу, приливы")]
-        [SerializeField] private AudioClip clipExplorationFacts;
 
         [Header("Артефакты — реплики при находке")]
         [Tooltip("При находке ботинка")]
@@ -113,7 +110,6 @@ namespace MoonGame
 
                 case GameState.Exploration:
                     Enqueue(clipExplorationIntro);
-                    Enqueue(clipExplorationFacts);
                     break;
 
                 case GameState.Collecting:
@@ -131,8 +127,8 @@ namespace MoonGame
         {
             switch (type)
             {
-                case ArtifactType.Boot:     Enqueue(clipBootFound);     break;
-                case ArtifactType.Metal:    Enqueue(clipMetalFound);    break;
+                case ArtifactType.Boot: Enqueue(clipBootFound); break;
+                case ArtifactType.Metal: Enqueue(clipMetalFound); break;
                 case ArtifactType.Notebook: Enqueue(clipNotebookFound); break;
             }
         }
@@ -148,7 +144,6 @@ namespace MoonGame
 
         // ─── Очередь воспроизведения ─────────────────────────────────────────────
 
-        /// <summary>Добавляет клип в очередь. Если очередь была пуста — запускает воспроизведение.</summary>
         private void Enqueue(AudioClip clip)
         {
             if (clip == null) return;
