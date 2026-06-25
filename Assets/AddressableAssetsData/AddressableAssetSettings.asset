@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: a19ac383421ab744aab3a3953c18a427
   m_currentHash:
     serializedVersion: 2
-    Hash: 7264f7fad8e06cb5cd15a65389da9984
+    Hash: 21ad21ed8192d0af6b66712ac18482e2
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 1
   m_BundleLocalCatalog: 0
@@ -80,7 +80,7 @@ MonoBehaviour:
       - m_Id: 08b9d6500d24a9f4480e3434452fba34
         m_Value: oculus
       - m_Id: 73bc017e46d0f6f48a7d42300baf195e
-        m_Value: https://api-scenes-equipments.iwater-crm.online/files/5ed5beba-70bb-411a-8cf5-95187664deb0/oculus/Tour_Endi_Saturn/Android
+        m_Value: '{AddressablesUuid}/Tour_Endi_Saturn/Android'
       - m_Id: 7c9329451e4a0c741958f623ae27d0e4
         m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
       - m_Id: 7e339607f411df8458224e14dbf8aef0

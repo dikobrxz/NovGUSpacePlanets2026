@@ -16,7 +16,7 @@ MonoBehaviour:
   m_GUID: a51d4cf810c59504782f4be19e4b888b
   m_SerializeEntries:
   - m_GUID: 76448964736b3b649a28e432ba204b43
-    m_Address: Tour_Endi_Saturn.dll
+    m_Address: Tour_Endi_Saturn
     m_ReadOnly: 0
     m_SerializedLabels:
     - Tour_Endi_Saturn.dll
