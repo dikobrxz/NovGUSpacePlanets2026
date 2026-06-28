@@ -70,7 +70,7 @@ public class StageVisuals : MonoBehaviour
         characterController = xrOrigin.GetComponent<CharacterController>();
 
         Transform loco = xrOrigin.transform.Find("Locomotion");
-        if (loco != null) locomotionFolder = loco.gameObject;
+        locomotionFolder = loco.gameObject;
 
         uranusPlanet.transform.localScale = Vector3.one * 100f;
         uranusPlanet.transform.rotation = Quaternion.Euler(0f, 0f, 25f);
@@ -96,12 +96,12 @@ public class StageVisuals : MonoBehaviour
         btn.onClick.AddListener(callback);
 
         TMP_Text label = actionButton.GetComponentInChildren<TMP_Text>();
-        if (label != null) label.text = text;
+        label.text = text;
 
         actionButton.SetActive(true);
 
         Canvas canvas = actionButton.GetComponentInParent<Canvas>();
-        if (canvas != null) canvas.gameObject.SetActive(true);
+        canvas.gameObject.SetActive(true);
 
         CanvasGroup group = actionButton.GetComponentInParent<CanvasGroup>();
         if (group != null)

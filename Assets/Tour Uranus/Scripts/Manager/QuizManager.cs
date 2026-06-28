@@ -12,6 +12,7 @@ public class QuizManager : MonoBehaviour
     public Button actionButton;
     public CanvasGroup quizCanvasGroup;
     public TMP_Text finalMessageText;
+    public TMP_Text resultText;
 
     [Header("First Question Texts")]
     [TextArea]
@@ -163,6 +164,7 @@ public class QuizManager : MonoBehaviour
 
         actionButton.gameObject.SetActive(false);
         finalMessageText.gameObject.SetActive(false);
+        resultText.gameObject.SetActive(false);
 
         foreach (var btn in answerButtons)
         {
@@ -241,6 +243,9 @@ public class QuizManager : MonoBehaviour
         AudioClip resultClip = lowScore ? lowScoreClip : (perfectScore ? highScoreClip : mediumScoreClip);
         bool playFinal = goodScore;
 
+        resultText.text = $"Правильно {correctCount} из 5";
+        resultText.gameObject.SetActive(true);
+
         if (lowScore)
         {
             SetupActionButton(restartButtonLabel);
@@ -263,7 +268,7 @@ public class QuizManager : MonoBehaviour
         btn.onClick.AddListener(OnActionButtonPressed);
 
         TMP_Text label = actionButton.GetComponentInChildren<TMP_Text>();
-        if (label != null) label.text = text;
+        label.text = text;
 
         actionButton.gameObject.SetActive(true);
     }
@@ -272,15 +277,12 @@ public class QuizManager : MonoBehaviour
     {
         waitingAudio = true;
 
-        if (resultClip != null)
-        {
-            quizAudioSource.Stop();
-            quizAudioSource.clip = resultClip;
-            quizAudioSource.Play();
-            yield return new WaitForSeconds(resultClip.length);
-        }
+        quizAudioSource.Stop();
+        quizAudioSource.clip = resultClip;
+        quizAudioSource.Play();
+        yield return new WaitForSeconds(resultClip.length);
 
-        if (playFinal && finalMessageClip != null)
+        if (playFinal)
         {
             yield return new WaitForSeconds(1f);
             quizAudioSource.Stop();
@@ -294,7 +296,7 @@ public class QuizManager : MonoBehaviour
 
     private void PlaySound(AudioClip clip)
     {
-        if (clip != null) quizAudioSource.PlayOneShot(clip);
+        quizAudioSource.PlayOneShot(clip);
     }
 
     private void OnActionButtonPressed()
@@ -304,11 +306,13 @@ public class QuizManager : MonoBehaviour
 
         if (label.text == restartButtonLabel)
         {
-            stageVisuals?.RestartScenario();
+            resultText.gameObject.SetActive(false);
             quizCanvasGroup.alpha = 0f;
             quizCanvasGroup.interactable = false;
             quizCanvasGroup.blocksRaycasts = false;
             finalMessageText.gameObject.SetActive(false);
+
+            stageVisuals?.RestartScenario();
         }
     }
 }
