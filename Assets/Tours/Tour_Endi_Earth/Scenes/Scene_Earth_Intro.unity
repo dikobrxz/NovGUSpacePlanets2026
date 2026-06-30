@@ -131,21 +131,25 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -20
       objectReference: {fileID: 0}
+    - target: {fileID: 2238456280539873213, guid: 82003f6346dcf014db162541b2567eb1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5070992218037743878, guid: 82003f6346dcf014db162541b2567eb1, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5070992218037743878, guid: 82003f6346dcf014db162541b2567eb1, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5070992218037743878, guid: 82003f6346dcf014db162541b2567eb1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 5070992218037743878, guid: 82003f6346dcf014db162541b2567eb1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -720
       objectReference: {fileID: 0}
     - target: {fileID: 5309613038621279217, guid: 82003f6346dcf014db162541b2567eb1, type: 3}
       propertyPath: m_LocalPosition.x
@@ -233,19 +237,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9060386353897344758, guid: 82003f6346dcf014db162541b2567eb1, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9060386353897344758, guid: 82003f6346dcf014db162541b2567eb1, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9060386353897344758, guid: 82003f6346dcf014db162541b2567eb1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 9060386353897344758, guid: 82003f6346dcf014db162541b2567eb1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

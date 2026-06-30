@@ -1,14 +1,17 @@
 using UnityEngine;
 
-/// <summary>
-/// Simple object rotation for intro objects, such as the Earth globe.
-/// </summary>
-public class RotateObject : MonoBehaviour
+namespace Tour_Endi_Earth
 {
-    [SerializeField] private Vector3 rotationSpeed = new Vector3(0f, 15f, 0f);
-
-    private void Update()
+    /// <summary>
+    /// Simple object rotation for intro objects, such as the Earth globe.
+    /// </summary>
+    public class RotateObject : MonoBehaviour
     {
-        transform.Rotate(rotationSpeed * Time.deltaTime, Space.World);
+        [SerializeField] private Vector3 rotationSpeed = new Vector3(0f, 15f, 0f);
+
+        private void Update()
+        {
+            transform.Rotate(rotationSpeed * Time.deltaTime, Space.World);
+        }
     }
 }

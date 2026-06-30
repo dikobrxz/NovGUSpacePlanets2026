@@ -1,75 +1,78 @@
 using UnityEngine;
 using Unity.XR.CoreUtils;
 
-/// <summary>
-/// Starts the element matching quest when the player enters
-/// the table trigger zone.
-/// </summary>
-[RequireComponent(typeof(BoxCollider))]
-public class ElementQuestTriggerZone : MonoBehaviour
+namespace Tour_Endi_Earth
 {
-    [Header("Tour")]
-    [SerializeField] private EarthTourManager tourManager;
-
-    [Header("Player")]
-    [SerializeField] private XROrigin xrOrigin;
-
-    [Header("Settings")]
-    [SerializeField] private float activationDelay = 0.5f;
-
-    [Header("Debug")]
-    [SerializeField] private bool showDebugLogs = true;
-
-    private BoxCollider boxCollider;
-    private bool activated;
-    private float timer;
-
-    private void Awake()
+    /// <summary>
+    /// Starts the element matching quest when the player enters
+    /// the table trigger zone.
+    /// </summary>
+    [RequireComponent(typeof(BoxCollider))]
+    public class ElementQuestTriggerZone : MonoBehaviour
     {
-        boxCollider = GetComponent<BoxCollider>();
-        boxCollider.isTrigger = true;
-    }
+        [Header("Tour")]
+        [SerializeField] private EarthTourManager tourManager;
 
-    private void Update()
-    {
-        if (activated)
-            return;
+        [Header("Player")]
+        [SerializeField] private XROrigin xrOrigin;
 
-        if (tourManager == null || xrOrigin == null || boxCollider == null)
-            return;
+        [Header("Settings")]
+        [SerializeField] private float activationDelay = 0.5f;
 
-        if (tourManager.CurrentStage != EarthTourStage.ElementColumns)
+        [Header("Debug")]
+        [SerializeField] private bool showDebugLogs = true;
+
+        private BoxCollider boxCollider;
+        private bool activated;
+        private float timer;
+
+        private void Awake()
         {
-            timer = 0f;
-            return;
+            boxCollider = GetComponent<BoxCollider>();
+            boxCollider.isTrigger = true;
         }
 
-        Vector3 playerHeadPosition = xrOrigin.Camera.transform.position;
-
-        bool playerInsideZone = boxCollider.bounds.Contains(playerHeadPosition);
-
-        if (!playerInsideZone)
+        private void Update()
         {
-            timer = 0f;
-            return;
+            if (activated)
+                return;
+
+            if (tourManager == null || xrOrigin == null || boxCollider == null)
+                return;
+
+            if (tourManager.CurrentStage != EarthTourStage.ElementColumns)
+            {
+                timer = 0f;
+                return;
+            }
+
+            Vector3 playerHeadPosition = xrOrigin.Camera.transform.position;
+
+            bool playerInsideZone = boxCollider.bounds.Contains(playerHeadPosition);
+
+            if (!playerInsideZone)
+            {
+                timer = 0f;
+                return;
+            }
+
+            timer += Time.deltaTime;
+
+            if (timer >= activationDelay)
+                StartMatchingQuest();
         }
 
-        timer += Time.deltaTime;
+        private void StartMatchingQuest()
+        {
+            if (activated)
+                return;
 
-        if (timer >= activationDelay)
-            StartMatchingQuest();
-    }
+            activated = true;
 
-    private void StartMatchingQuest()
-    {
-        if (activated)
-            return;
+            if (showDebugLogs)
+                Debug.Log("Element quest started: player entered table trigger zone.");
 
-        activated = true;
-
-        if (showDebugLogs)
-            Debug.Log("Element quest started: player entered table trigger zone.");
-
-        tourManager.SetStage(EarthTourStage.MatchingQuest);
+            tourManager.SetStage(EarthTourStage.MatchingQuest);
+        }
     }
 }

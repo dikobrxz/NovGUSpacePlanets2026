@@ -1,102 +1,105 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// Controls the planet intro inside the main scene.
-/// Plays intro narration, then moves the player to the island and starts the element stage.
-/// </summary>
-public class PlanetIntroController : MonoBehaviour
+namespace Tour_Endi_Earth
 {
-    [Header("Tour")]
-    [SerializeField] private EarthTourManager tourManager;
-    [SerializeField] private MainSceneEntryController entryController;
-
-    [Header("Visual")]
-    [SerializeField] private GameObject blackTransitionPanel;
-    [SerializeField] private float blackScreenAfterStart = 0.2f;
-    [SerializeField] private float blackScreenBeforeIsland = 0.5f;
-
-    [Header("Voice Clips")]
-    [SerializeField] private AudioClip mainIntroClip;
-    [SerializeField] private AudioClip planetCutsceneClip;
-
-    [Header("Timing")]
-    [SerializeField] private float delayAfterVoice = 1f;
-
-    [Header("Debug")]
-    [SerializeField] private bool showDebugLogs = true;
-
-    private Coroutine routine;
-
-    private void OnEnable()
+    /// <summary>
+    /// Controls the planet intro inside the main scene.
+    /// Plays intro narration, then moves the player to the island and starts the element stage.
+    /// </summary>
+    public class PlanetIntroController : MonoBehaviour
     {
-        if (routine != null)
-            StopCoroutine(routine);
+        [Header("Tour")]
+        [SerializeField] private EarthTourManager tourManager;
+        [SerializeField] private MainSceneEntryController entryController;
 
-        routine = StartCoroutine(PlanetIntroRoutine());
-    }
+        [Header("Visual")]
+        [SerializeField] private GameObject blackTransitionPanel;
+        [SerializeField] private float blackScreenAfterStart = 0.2f;
+        [SerializeField] private float blackScreenBeforeIsland = 0.5f;
 
-    private void OnDisable()
-    {
-        if (routine != null)
+        [Header("Voice Clips")]
+        [SerializeField] private AudioClip mainIntroClip;
+        [SerializeField] private AudioClip planetCutsceneClip;
+
+        [Header("Timing")]
+        [SerializeField] private float delayAfterVoice = 1f;
+
+        [Header("Debug")]
+        [SerializeField] private bool showDebugLogs = true;
+
+        private Coroutine routine;
+
+        private void OnEnable()
         {
-            StopCoroutine(routine);
-            routine = null;
-        }
-    }
+            if (routine != null)
+                StopCoroutine(routine);
 
-    private IEnumerator PlanetIntroRoutine()
-    {
-        if (blackTransitionPanel != null)
-            blackTransitionPanel.SetActive(true);
-
-        yield return new WaitForSeconds(blackScreenAfterStart);
-
-        if (blackTransitionPanel != null)
-            blackTransitionPanel.SetActive(false);
-
-        if (TourVoiceManager.Instance != null)
-        {
-            yield return TourVoiceManager.Instance.PlaySequenceAndWait(
-                new AudioClip[] { mainIntroClip, planetCutsceneClip },
-                "planet intro",
-                true
-            );
-        }
-        else
-        {
-            float fallback = 0f;
-
-            if (mainIntroClip != null)
-                fallback += mainIntroClip.length;
-
-            if (planetCutsceneClip != null)
-                fallback += planetCutsceneClip.length;
-
-            yield return new WaitForSeconds(fallback);
+            routine = StartCoroutine(PlanetIntroRoutine());
         }
 
-        yield return new WaitForSeconds(delayAfterVoice);
+        private void OnDisable()
+        {
+            if (routine != null)
+            {
+                StopCoroutine(routine);
+                routine = null;
+            }
+        }
 
-        if (blackTransitionPanel != null)
-            blackTransitionPanel.SetActive(true);
+        private IEnumerator PlanetIntroRoutine()
+        {
+            if (blackTransitionPanel != null)
+                blackTransitionPanel.SetActive(true);
 
-        yield return new WaitForSeconds(blackScreenBeforeIsland);
+            yield return new WaitForSeconds(blackScreenAfterStart);
 
-        if (entryController == null)
-            entryController = MainSceneEntryController.Instance;
+            if (blackTransitionPanel != null)
+                blackTransitionPanel.SetActive(false);
 
-        if (entryController != null)
-            entryController.MovePlayerToIsland();
-        else if (showDebugLogs)
-            Debug.LogWarning("PlanetIntroController: EntryController is not assigned.");
+            if (TourVoiceManager.Instance != null)
+            {
+                yield return TourVoiceManager.Instance.PlaySequenceAndWait(
+                    new AudioClip[] { mainIntroClip, planetCutsceneClip },
+                    "planet intro",
+                    true
+                );
+            }
+            else
+            {
+                float fallback = 0f;
 
-        if (tourManager != null)
-            tourManager.SetStage(EarthTourStage.ElementColumns);
-        else if (showDebugLogs)
-            Debug.LogWarning("PlanetIntroController: TourManager is not assigned.");
+                if (mainIntroClip != null)
+                    fallback += mainIntroClip.length;
 
-        if (blackTransitionPanel != null)
-            blackTransitionPanel.SetActive(false);
+                if (planetCutsceneClip != null)
+                    fallback += planetCutsceneClip.length;
+
+                yield return new WaitForSeconds(fallback);
+            }
+
+            yield return new WaitForSeconds(delayAfterVoice);
+
+            if (blackTransitionPanel != null)
+                blackTransitionPanel.SetActive(true);
+
+            yield return new WaitForSeconds(blackScreenBeforeIsland);
+
+            if (entryController == null)
+                entryController = MainSceneEntryController.Instance;
+
+            if (entryController != null)
+                entryController.MovePlayerToIsland();
+            else if (showDebugLogs)
+                Debug.LogWarning("PlanetIntroController: EntryController is not assigned.");
+
+            if (tourManager != null)
+                tourManager.SetStage(EarthTourStage.ElementColumns);
+            else if (showDebugLogs)
+                Debug.LogWarning("PlanetIntroController: TourManager is not assigned.");
+
+            if (blackTransitionPanel != null)
+                blackTransitionPanel.SetActive(false);
+        }
     }
 }

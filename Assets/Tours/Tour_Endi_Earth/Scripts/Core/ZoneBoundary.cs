@@ -1,84 +1,87 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// Keeps the XR player inside the exploration zone.
-/// Works only during island gameplay stages.
-/// It is disabled during ship intro and final return to ship.
-/// </summary>
-public class ZoneBoundary : MonoBehaviour
+namespace Tour_Endi_Earth
 {
-    [Header("Player")]
-    [SerializeField] private Transform xrOrigin;
-    [SerializeField] private Transform respawnPoint;
-
-    [Header("Tour")]
-    [SerializeField] private EarthTourManager tourManager;
-
-    [Header("Return Settings")]
-    [SerializeField] private float returnDelay = 0.25f;
-
-    [Header("Optional")]
-    [SerializeField] private AudioSource warningAudio;
-
-    private bool isReturning;
-
-    private void Awake()
+    /// <summary>
+    /// Keeps the XR player inside the exploration zone.
+    /// Works only during island gameplay stages.
+    /// It is disabled during ship intro and final return to ship.
+    /// </summary>
+    public class ZoneBoundary : MonoBehaviour
     {
-        if (tourManager == null)
-            tourManager = FindFirstObjectByType<EarthTourManager>();
-    }
+        [Header("Player")]
+        [SerializeField] private Transform xrOrigin;
+        [SerializeField] private Transform respawnPoint;
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (!ShouldControlPlayer())
-            return;
+        [Header("Tour")]
+        [SerializeField] private EarthTourManager tourManager;
 
-        if (isReturning)
-            return;
+        [Header("Return Settings")]
+        [SerializeField] private float returnDelay = 0.25f;
 
-        if (!other.CompareTag("Player"))
-            return;
+        [Header("Optional")]
+        [SerializeField] private AudioSource warningAudio;
 
-        StartCoroutine(ReturnPlayerToZone());
-    }
+        private bool isReturning;
 
-    private IEnumerator ReturnPlayerToZone()
-    {
-        isReturning = true;
-
-        if (warningAudio != null)
-            warningAudio.Play();
-
-        yield return new WaitForSeconds(returnDelay);
-
-        if (ShouldControlPlayer() && xrOrigin != null && respawnPoint != null)
+        private void Awake()
         {
-            xrOrigin.position = respawnPoint.position;
-            xrOrigin.rotation = respawnPoint.rotation;
+            if (tourManager == null)
+                tourManager = FindFirstObjectByType<EarthTourManager>();
         }
 
-        isReturning = false;
-    }
-
-    private bool ShouldControlPlayer()
-    {
-        if (tourManager == null)
-            return true;
-
-        switch (tourManager.CurrentStage)
+        private void OnTriggerExit(Collider other)
         {
-            case EarthTourStage.ElementColumns:
-            case EarthTourStage.MatchingQuest:
-            case EarthTourStage.Quiz:
+            if (!ShouldControlPlayer())
+                return;
+
+            if (isReturning)
+                return;
+
+            if (!other.CompareTag("Player"))
+                return;
+
+            StartCoroutine(ReturnPlayerToZone());
+        }
+
+        private IEnumerator ReturnPlayerToZone()
+        {
+            isReturning = true;
+
+            if (warningAudio != null)
+                warningAudio.Play();
+
+            yield return new WaitForSeconds(returnDelay);
+
+            if (ShouldControlPlayer() && xrOrigin != null && respawnPoint != null)
+            {
+                xrOrigin.position = respawnPoint.position;
+                xrOrigin.rotation = respawnPoint.rotation;
+            }
+
+            isReturning = false;
+        }
+
+        private bool ShouldControlPlayer()
+        {
+            if (tourManager == null)
                 return true;
 
-            case EarthTourStage.ShipIntro:
-            case EarthTourStage.PlanetIntro:
-            case EarthTourStage.SurfaceIntro:
-            case EarthTourStage.End:
-            default:
-                return false;
+            switch (tourManager.CurrentStage)
+            {
+                case EarthTourStage.ElementColumns:
+                case EarthTourStage.MatchingQuest:
+                case EarthTourStage.Quiz:
+                    return true;
+
+                case EarthTourStage.ShipIntro:
+                case EarthTourStage.PlanetIntro:
+                case EarthTourStage.SurfaceIntro:
+                case EarthTourStage.End:
+                default:
+                    return false;
+            }
         }
     }
 }

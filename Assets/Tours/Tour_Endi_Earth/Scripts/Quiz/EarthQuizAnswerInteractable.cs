@@ -4,138 +4,141 @@ using UnityEngine.UI;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
-/// <summary>
-/// Physical XR hitbox for quiz answer.
-/// It makes quiz buttons stable for VR ray interaction.
-/// </summary>
-[RequireComponent(typeof(BoxCollider))]
-[RequireComponent(typeof(XRSimpleInteractable))]
-public class EarthQuizAnswerInteractable : MonoBehaviour
+namespace Tour_Endi_Earth
 {
-    [Header("Quiz")]
-    [SerializeField] private EarthQuizManager quizManager;
-    [SerializeField] private int answerIndex;
-
-    [Header("Visual Target")]
-    [SerializeField] private Image targetButtonImage;
-    [SerializeField] private Renderer targetButtonRenderer;
-    [SerializeField] private Transform visualTransform;
-
-    [Header("Colors")]
-    [SerializeField] private Color normalColor = Color.white;
-    [SerializeField] private Color hoverColor = new Color(1f, 0.85f, 0.25f);
-    [SerializeField] private Color correctColor = new Color(0.25f, 1f, 0.35f);
-    [SerializeField] private Color wrongColor = new Color(1f, 0.25f, 0.25f);
-
-    [Header("Animation")]
-    [SerializeField] private float hoverScale = 1.05f;
-    [SerializeField] private float resultDuration = 0.7f;
-
-    private XRSimpleInteractable interactable;
-    private Vector3 defaultScale;
-    private bool isPressed;
-
-    private void Awake()
+    /// <summary>
+    /// Physical XR hitbox for quiz answer.
+    /// It makes quiz buttons stable for VR ray interaction.
+    /// </summary>
+    [RequireComponent(typeof(BoxCollider))]
+    [RequireComponent(typeof(XRSimpleInteractable))]
+    public class EarthQuizAnswerInteractable : MonoBehaviour
     {
-        interactable = GetComponent<XRSimpleInteractable>();
+        [Header("Quiz")]
+        [SerializeField] private EarthQuizManager quizManager;
+        [SerializeField] private int answerIndex;
 
-        interactable.hoverEntered.AddListener(OnHoverEntered);
-        interactable.hoverExited.AddListener(OnHoverExited);
-        interactable.activated.AddListener(OnActivated);
-        interactable.selectEntered.AddListener(OnSelected);
+        [Header("Visual Target")]
+        [SerializeField] private Image targetButtonImage;
+        [SerializeField] private Renderer targetButtonRenderer;
+        [SerializeField] private Transform visualTransform;
 
-        if (visualTransform != null)
-            defaultScale = visualTransform.localScale;
+        [Header("Colors")]
+        [SerializeField] private Color normalColor = Color.white;
+        [SerializeField] private Color hoverColor = new Color(1f, 0.85f, 0.25f);
+        [SerializeField] private Color correctColor = new Color(0.25f, 1f, 0.35f);
+        [SerializeField] private Color wrongColor = new Color(1f, 0.25f, 0.25f);
 
-        SetVisualColor(normalColor);
-    }
+        [Header("Animation")]
+        [SerializeField] private float hoverScale = 1.05f;
+        [SerializeField] private float resultDuration = 0.7f;
 
-    private void OnDestroy()
-    {
-        if (interactable == null)
-            return;
+        private XRSimpleInteractable interactable;
+        private Vector3 defaultScale;
+        private bool isPressed;
 
-        interactable.hoverEntered.RemoveListener(OnHoverEntered);
-        interactable.hoverExited.RemoveListener(OnHoverExited);
-        interactable.activated.RemoveListener(OnActivated);
-        interactable.selectEntered.RemoveListener(OnSelected);
-    }
-
-    private void OnHoverEntered(HoverEnterEventArgs args)
-    {
-        if (isPressed)
-            return;
-
-        SetVisualColor(hoverColor);
-
-        if (visualTransform != null)
-            visualTransform.localScale = defaultScale * hoverScale;
-    }
-
-    private void OnHoverExited(HoverExitEventArgs args)
-    {
-        if (isPressed)
-            return;
-
-        SetVisualColor(normalColor);
-
-        if (visualTransform != null)
-            visualTransform.localScale = defaultScale;
-    }
-
-    private void OnActivated(ActivateEventArgs args)
-    {
-        PressAnswer();
-    }
-
-    private void OnSelected(SelectEnterEventArgs args)
-    {
-        PressAnswer();
-    }
-
-    private void PressAnswer()
-    {
-        if (isPressed)
-            return;
-
-        if (quizManager == null)
+        private void Awake()
         {
-            Debug.LogWarning($"{name}: QuizManager is not assigned.");
-            return;
+            interactable = GetComponent<XRSimpleInteractable>();
+
+            interactable.hoverEntered.AddListener(OnHoverEntered);
+            interactable.hoverExited.AddListener(OnHoverExited);
+            interactable.activated.AddListener(OnActivated);
+            interactable.selectEntered.AddListener(OnSelected);
+
+            if (visualTransform != null)
+                defaultScale = visualTransform.localScale;
+
+            SetVisualColor(normalColor);
         }
 
-        if (GameAudioManager.Instance != null)
-            GameAudioManager.Instance.PlayButtonClick();
+        private void OnDestroy()
+        {
+            if (interactable == null)
+                return;
 
-        isPressed = true;
+            interactable.hoverEntered.RemoveListener(OnHoverEntered);
+            interactable.hoverExited.RemoveListener(OnHoverExited);
+            interactable.activated.RemoveListener(OnActivated);
+            interactable.selectEntered.RemoveListener(OnSelected);
+        }
 
-        bool isCorrect = quizManager.IsCurrentAnswerCorrect(answerIndex);
+        private void OnHoverEntered(HoverEnterEventArgs args)
+        {
+            if (isPressed)
+                return;
 
-        SetVisualColor(isCorrect ? correctColor : wrongColor);
+            SetVisualColor(hoverColor);
 
-        StartCoroutine(AnswerRoutine());
-    }
+            if (visualTransform != null)
+                visualTransform.localScale = defaultScale * hoverScale;
+        }
 
-    private IEnumerator AnswerRoutine()
-    {
-        yield return new WaitForSeconds(resultDuration);
+        private void OnHoverExited(HoverExitEventArgs args)
+        {
+            if (isPressed)
+                return;
 
-        quizManager.SelectAnswer(answerIndex);
+            SetVisualColor(normalColor);
 
-        SetVisualColor(normalColor);
+            if (visualTransform != null)
+                visualTransform.localScale = defaultScale;
+        }
 
-        if (visualTransform != null)
-            visualTransform.localScale = defaultScale;
+        private void OnActivated(ActivateEventArgs args)
+        {
+            PressAnswer();
+        }
 
-        isPressed = false;
-    }
+        private void OnSelected(SelectEnterEventArgs args)
+        {
+            PressAnswer();
+        }
 
-    private void SetVisualColor(Color color)
-    {
-        if (targetButtonImage != null)
-            targetButtonImage.color = color;
+        private void PressAnswer()
+        {
+            if (isPressed)
+                return;
 
-        if (targetButtonRenderer != null)
-            targetButtonRenderer.material.color = color;
+            if (quizManager == null)
+            {
+                Debug.LogWarning($"{name}: QuizManager is not assigned.");
+                return;
+            }
+
+            if (GameAudioManager.Instance != null)
+                GameAudioManager.Instance.PlayButtonClick();
+
+            isPressed = true;
+
+            bool isCorrect = quizManager.IsCurrentAnswerCorrect(answerIndex);
+
+            SetVisualColor(isCorrect ? correctColor : wrongColor);
+
+            StartCoroutine(AnswerRoutine());
+        }
+
+        private IEnumerator AnswerRoutine()
+        {
+            yield return new WaitForSeconds(resultDuration);
+
+            quizManager.SelectAnswer(answerIndex);
+
+            SetVisualColor(normalColor);
+
+            if (visualTransform != null)
+                visualTransform.localScale = defaultScale;
+
+            isPressed = false;
+        }
+
+        private void SetVisualColor(Color color)
+        {
+            if (targetButtonImage != null)
+                targetButtonImage.color = color;
+
+            if (targetButtonRenderer != null)
+                targetButtonRenderer.material.color = color;
+        }
     }
 }

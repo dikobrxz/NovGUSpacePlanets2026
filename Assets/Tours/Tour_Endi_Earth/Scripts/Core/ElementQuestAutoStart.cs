@@ -1,75 +1,78 @@
 using UnityEngine;
 using Unity.XR.CoreUtils;
 
-/// <summary>
-/// Automatically switches from ElementColumns stage to MatchingQuest
-/// when the player comes close to the element table.
-/// </summary>
-public class ElementQuestAutoStart : MonoBehaviour
+namespace Tour_Endi_Earth
 {
-    [Header("Tour")]
-    [SerializeField] private EarthTourManager tourManager;
-
-    [Header("Player")]
-    [SerializeField] private XROrigin xrOrigin;
-
-    [Header("Target")]
-    [SerializeField] private Transform tablePoint;
-    [SerializeField] private float activationDistance = 2.5f;
-
-    [Header("Fallback")]
-    [SerializeField] private bool useFallbackTimer = true;
-    [SerializeField] private float fallbackDelay = 8f;
-
-    [Header("Debug")]
-    [SerializeField] private bool showDebugLogs = true;
-
-    private bool activated;
-    private float timer;
-
-    private void Update()
+    /// <summary>
+    /// Automatically switches from ElementColumns stage to MatchingQuest
+    /// when the player comes close to the element table.
+    /// </summary>
+    public class ElementQuestAutoStart : MonoBehaviour
     {
-        if (tourManager == null || xrOrigin == null || tablePoint == null)
-            return;
+        [Header("Tour")]
+        [SerializeField] private EarthTourManager tourManager;
 
-        if (activated)
-            return;
+        [Header("Player")]
+        [SerializeField] private XROrigin xrOrigin;
 
-        if (tourManager.CurrentStage != EarthTourStage.ElementColumns)
+        [Header("Target")]
+        [SerializeField] private Transform tablePoint;
+        [SerializeField] private float activationDistance = 2.5f;
+
+        [Header("Fallback")]
+        [SerializeField] private bool useFallbackTimer = true;
+        [SerializeField] private float fallbackDelay = 8f;
+
+        [Header("Debug")]
+        [SerializeField] private bool showDebugLogs = true;
+
+        private bool activated;
+        private float timer;
+
+        private void Update()
         {
-                timer = 0f;
-            return;
+            if (tourManager == null || xrOrigin == null || tablePoint == null)
+                return;
+
+            if (activated)
+                return;
+
+            if (tourManager.CurrentStage != EarthTourStage.ElementColumns)
+            {
+                    timer = 0f;
+                return;
+            }
+
+
+            Vector3 cameraPosition = xrOrigin.Camera.transform.position;
+            float distance = Vector3.Distance(cameraPosition, tablePoint.position);
+
+            if (distance <= activationDistance)
+            {
+                StartMatchingQuest("player approached the table");
+                return;
+            }
+
+            if (useFallbackTimer)
+            {
+                timer += Time.deltaTime;
+
+                if (timer >= fallbackDelay)
+                    StartMatchingQuest("fallback timer");
+            }
         }
 
-
-        Vector3 cameraPosition = xrOrigin.Camera.transform.position;
-        float distance = Vector3.Distance(cameraPosition, tablePoint.position);
-
-        if (distance <= activationDistance)
+        private void StartMatchingQuest(string reason)
         {
-            StartMatchingQuest("player approached the table");
-            return;
+            if (activated)
+                return;
+
+            activated = true;
+
+            if (showDebugLogs)
+                Debug.Log($"Element quest started automatically: {reason}");
+
+            tourManager.SetStage(EarthTourStage.MatchingQuest);
         }
-
-        if (useFallbackTimer)
-        {
-            timer += Time.deltaTime;
-
-            if (timer >= fallbackDelay)
-                StartMatchingQuest("fallback timer");
-        }
-    }
-
-    private void StartMatchingQuest(string reason)
-    {
-        if (activated)
-            return;
-
-        activated = true;
-
-        if (showDebugLogs)
-            Debug.Log($"Element quest started automatically: {reason}");
-
-        tourManager.SetStage(EarthTourStage.MatchingQuest);
     }
 }

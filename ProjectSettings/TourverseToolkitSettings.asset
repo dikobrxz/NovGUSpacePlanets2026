@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &1
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9439cb161fb1a524491ebaff2621b087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: TourverseToolkit.Editor::TourverseToolkit.Editor.TourverseSettings
+  toursList:
+  - tourName: Tour_Endi_Earth
+    tourScene: {fileID: 102900000, guid: 46beb38feaa52364f8970154abc9349d, type: 3}
+    tourAssembly: {fileID: 5897886265953266890, guid: cba69a3b447d5074bbf057ba34d23fcf, type: 3}
+    tourAddressablesUuid: 
+  generateHybrid: 0
+  generateOnceObject: 0
+  onceObjectName: 
