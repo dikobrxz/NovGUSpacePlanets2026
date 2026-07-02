@@ -14,18 +14,6 @@ namespace Tour_Endi_Earth
     {
         public static TourVoiceManager Instance { get; private set; }
 
-        private struct VoiceRequest
-        {
-            public AudioClip Clip;
-            public string Reason;
-
-            public VoiceRequest(AudioClip clip, string reason)
-            {
-                Clip = clip;
-                Reason = reason;
-            }
-        }
-
         [Header("Tour")]
         [SerializeField] private EarthTourManager tourManager;
 
@@ -65,7 +53,7 @@ namespace Tour_Endi_Earth
         [SerializeField] private float firstVoiceDelay = 0.5f;
         [SerializeField] private bool showDebugLogs = true;
 
-        private readonly Queue<VoiceRequest> voiceQueue = new Queue<VoiceRequest>();
+        private readonly VoiceRequestQueue voiceQueue = new VoiceRequestQueue();
 
         private AudioSource audioSource;
         private EarthTourStage lastStage;
@@ -430,7 +418,7 @@ namespace Tour_Endi_Earth
             if (request.Clip == null)
                 return;
 
-            Queue<VoiceRequest> reorderedQueue = new Queue<VoiceRequest>();
+            VoiceRequestQueue reorderedQueue = new VoiceRequestQueue();
 
             reorderedQueue.Enqueue(request);
 
@@ -451,17 +439,17 @@ namespace Tour_Endi_Earth
                 if (voiceQueue.Count == 0)
                     break;
 
-                VoiceRequest request = voiceQueue.Dequeue();
+                VoiceRequest? request = voiceQueue.Dequeue();
 
-                if (request.Clip == null)
+                if (request.Value.Clip == null)
                     continue;
 
                 audioSource.pitch = normalPitch;
-                audioSource.clip = request.Clip;
+                audioSource.clip = request.Value.Clip;
                 audioSource.Play();
 
                 if (showDebugLogs)
-                    Debug.Log("TourVoiceManager: playing voice for " + request.Reason);
+                    Debug.Log("TourVoiceManager: playing voice for " + request.Value.Reason);
 
                 while (audioSource != null && audioSource.isPlaying)
                     yield return null;

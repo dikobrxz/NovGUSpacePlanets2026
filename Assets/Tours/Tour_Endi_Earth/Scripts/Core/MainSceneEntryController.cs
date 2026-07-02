@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 using Unity.XR.CoreUtils;
 
@@ -155,7 +156,7 @@ namespace Tour_Endi_Earth
                 if (delayBeforeSceneReload > 0f)
                     yield return new WaitForSeconds(delayBeforeSceneReload);
 
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                Addressables.LoadSceneAsync("Tour_Endi_Earth", LoadSceneMode.Single);
                 yield break;
             }
 
