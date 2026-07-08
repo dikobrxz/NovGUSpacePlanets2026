@@ -1,36 +1,41 @@
 using TMPro;
 using UnityEngine;
 
-public class CanvasWorldHint : MonoBehaviour
+namespace Tour_ENDI_PlanetsUranus
 {
-    [Header("References")]
-    [SerializeField] private TMP_Text hintText;
-    [SerializeField] private GameObject hintPanel;
 
-    void Start()
+    public class CanvasWorldHint : MonoBehaviour
     {
-        HideHint();
-    }
+        [Header("References")]
+        [SerializeField] private TMP_Text hintText;
+        [SerializeField] private GameObject hintPanel;
 
-    public void ShowHint(string text)
-    {
-        if (hintPanel != null)
+        void Start()
         {
-            hintPanel.SetActive(true);
-            hintText.text = text;
+            HideHint();
+        }
+
+        public void ShowHint(string text)
+        {
+            if (hintPanel != null)
+            {
+                hintPanel.SetActive(true);
+                hintText.text = text;
+            }
+        }
+
+        public void HideHint()
+        {
+            if (hintPanel != null)
+            {
+                hintPanel.SetActive(false);
+            }
+        }
+
+        public void DestroyHint()
+        {
+            Destroy(gameObject);
         }
     }
 
-    public void HideHint()
-    {
-        if (hintPanel != null)
-        {
-            hintPanel.SetActive(false);
-        }
-    }
-
-    public void DestroyHint()
-    {
-        Destroy(gameObject);
-    }
 }

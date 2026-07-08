@@ -1,20 +1,25 @@
 using Unity.XR.CoreUtils;
 using UnityEngine;
 
-public class ReturnPlatform : MonoBehaviour
+namespace Tour_ENDI_PlanetsUranus
 {
-    private StageVisuals stageVisuals;
 
-    void Start()
+    public class ReturnPlatform : MonoBehaviour
     {
-        stageVisuals = FindFirstObjectByType<StageVisuals>();
-    }
+        private StageVisuals stageVisuals;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.GetComponent<XROrigin>() != null)
+        void Start()
         {
-            stageVisuals?.TeleportPlayerToShip();
+            stageVisuals = FindFirstObjectByType<StageVisuals>();
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.GetComponent<XROrigin>() != null)
+            {
+                stageVisuals?.TeleportPlayerToShip();
+            }
         }
     }
+
 }

@@ -10,14 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Default Local Group
+  m_Name: Tour_ENDI_PlanetsUranusDLL
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Default Local Group
-  m_GUID: a19ac383421ab744aab3a3953c18a427
-  m_SerializeEntries: []
+  m_GroupName: Tour_ENDI_PlanetsUranusDLL
+  m_GUID: 14b77be03cdf7064095d966fce4336b9
+  m_SerializeEntries:
+  - m_GUID: fa74b7be68aafdd4ea94bbfb3c8670ea
+    m_Address: Tour_ENDI_PlanetsUranus
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Tour_ENDI_PlanetsUranus.dll
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d1722fe7a5b49be4f942aaf8f4dbaf62, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 1775e7d0891a1334fb1d91c2ccd37439, type: 2}
-    - {fileID: 11400000, guid: f0a79b17eaad2eb44aa499bba691d2e5, type: 2}
+    - {fileID: 11400000, guid: 1f0a1d4d2bc29bc4595ee777ef8bcb4c, type: 2}
+    - {fileID: 11400000, guid: 7fc310eadec6d5f42a68862a2714f855, type: 2}

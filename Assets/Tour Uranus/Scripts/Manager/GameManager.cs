@@ -1,111 +1,116 @@
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+namespace Tour_ENDI_PlanetsUranus
 {
-    private ScenarioManager scenarioManager;
-    private float stageTimer = 0f;
-    private float questTimer = 0f;
-    private bool isScenarioFinished = false;
-    private bool isQuestActive = false;
-    private bool isDrawing = false;
-    private bool isQuestCompleted = false;
 
-    [SerializeField] private float questDrawingTime = 90f;
-
-    void Start()
+    public class GameManager : MonoBehaviour
     {
-        scenarioManager = GetComponent<ScenarioManager>();
-        if (scenarioManager == null) return;
+        private ScenarioManager scenarioManager;
+        private float stageTimer = 0f;
+        private float questTimer = 0f;
+        private bool isScenarioFinished = false;
+        private bool isQuestActive = false;
+        private bool isDrawing = false;
+        private bool isQuestCompleted = false;
 
-        scenarioManager.StartScenario();
-    }
+        [SerializeField] private float questDrawingTime = 90f;
 
-    void Update()
-    {
-        if (isScenarioFinished) return;
-
-        SceneState currentState = scenarioManager.GetCurrentState();
-
-        if (currentState == SceneState.Quest)
+        void Start()
         {
-            HandleQuestStage();
-        }
-        else
-        {
-            HandleNormalStage(currentState);
-        }
-    }
+            scenarioManager = GetComponent<ScenarioManager>();
+            if (scenarioManager == null) return;
 
-    private void HandleNormalStage(SceneState currentState)
-    {
-        float duration = scenarioManager.GetStageDuration(currentState);
-
-        if (duration < 0)
-        {
-            return;
+            scenarioManager.StartScenario();
         }
 
-        stageTimer += Time.deltaTime;
-
-        if (stageTimer >= duration)
+        void Update()
         {
-            stageTimer = 0f;
-            scenarioManager.NextStage();
-        }
-    }
+            if (isScenarioFinished) return;
 
-    private void HandleQuestStage()
-    {
-        if (isQuestCompleted) return;
+            SceneState currentState = scenarioManager.GetCurrentState();
 
-        if (!isQuestActive)
-        {
-            stageTimer += Time.deltaTime;
-
-            if (stageTimer >= 4f)
+            if (currentState == SceneState.Quest)
             {
-                stageTimer = 0f;
-                isQuestActive = true;
-                isDrawing = true;
+                HandleQuestStage();
+            }
+            else
+            {
+                HandleNormalStage(currentState);
             }
         }
-        else if (isDrawing)
-        {
-            questTimer += Time.deltaTime;
 
-            if (questTimer >= questDrawingTime)
+        private void HandleNormalStage(SceneState currentState)
+        {
+            float duration = scenarioManager.GetStageDuration(currentState);
+
+            if (duration < 0)
+            {
+                return;
+            }
+
+            stageTimer += Time.deltaTime;
+
+            if (stageTimer >= duration)
+            {
+                stageTimer = 0f;
+                scenarioManager.NextStage();
+            }
+        }
+
+        private void HandleQuestStage()
+        {
+            if (isQuestCompleted) return;
+
+            if (!isQuestActive)
+            {
+                stageTimer += Time.deltaTime;
+
+                if (stageTimer >= 4f)
+                {
+                    stageTimer = 0f;
+                    isQuestActive = true;
+                    isDrawing = true;
+                }
+            }
+            else if (isDrawing)
+            {
+                questTimer += Time.deltaTime;
+
+                if (questTimer >= questDrawingTime)
+                {
+                    CompleteQuest();
+                }
+            }
+        }
+
+        private void CompleteQuest()
+        {
+            if (isQuestCompleted) return;
+
+            isDrawing = false;
+            isQuestActive = false;
+            isQuestCompleted = true;
+            questTimer = 0f;
+            stageTimer = 0f;
+
+            scenarioManager.NextStage();
+        }
+
+        public void OnSendDrawingButtonPressed()
+        {
+            if (scenarioManager.GetCurrentState() == SceneState.Quest && isDrawing && !isQuestCompleted)
             {
                 CompleteQuest();
             }
         }
-    }
 
-    private void CompleteQuest()
-    {
-        if (isQuestCompleted) return;
-
-        isDrawing = false;
-        isQuestActive = false;
-        isQuestCompleted = true;
-        questTimer = 0f;
-        stageTimer = 0f;
-
-        scenarioManager.NextStage();
-    }
-
-    public void OnSendDrawingButtonPressed()
-    {
-        if (scenarioManager.GetCurrentState() == SceneState.Quest && isDrawing && !isQuestCompleted)
+        public void OnPlayerReturnedToShip()
         {
-            CompleteQuest();
+            if (scenarioManager.GetCurrentState() == SceneState.Return)
+            {
+                scenarioManager.CompleteReturn();
+            }
         }
     }
 
-    public void OnPlayerReturnedToShip()
-    {
-        if (scenarioManager.GetCurrentState() == SceneState.Return)
-        {
-            scenarioManager.CompleteReturn();
-        }
-    }
 }
