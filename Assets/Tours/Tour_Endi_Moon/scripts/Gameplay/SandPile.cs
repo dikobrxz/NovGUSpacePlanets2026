@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// Кучка земли, которая погружается в грунт при каждом ударе лопатой.

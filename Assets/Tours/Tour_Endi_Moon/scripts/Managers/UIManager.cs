@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// Менеджер UI. Показывает подсказки и счётчик артефактов.

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// Управляет автоматическими переходами первых трёх этапов сценария.

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// Менеджер озвучки. Проигрывает голос за кадром на каждом этапе сценария.

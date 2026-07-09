@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// Вешается на объект-платформу (стартовая площадка).

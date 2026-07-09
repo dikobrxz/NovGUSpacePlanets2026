@@ -1,4 +1,4 @@
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// Этапы сценария "Луна". Вся игра идёт в одной сцене moon.unity.

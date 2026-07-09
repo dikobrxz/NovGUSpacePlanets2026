@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// World-Space экран старта с кнопкой «Начать».

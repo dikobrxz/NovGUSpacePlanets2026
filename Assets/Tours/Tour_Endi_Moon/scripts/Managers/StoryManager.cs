@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// Менеджер сценария. Хранит текущее состояние и оповещает подписчиков о смене этапов.

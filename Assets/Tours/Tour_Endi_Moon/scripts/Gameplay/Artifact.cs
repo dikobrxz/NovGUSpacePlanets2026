@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     [RequireComponent(typeof(Collider))]
     public class Artifact : MonoBehaviour

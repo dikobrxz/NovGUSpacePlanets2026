@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// Управляет телепортацией игрока между тремя спавн-точками.
@@ -72,8 +72,8 @@ namespace MoonGame
             //    MoveRig(spawn1);
             
             // Временно для теста
-            if (story != null)
-                story.SetStage(GameState.Return);
+            /*if (story != null)
+                story.SetStage(GameState.Return);*/
         }
 
         private void OnDestroy()

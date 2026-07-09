@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     public class QuizUI : MonoBehaviour
     {

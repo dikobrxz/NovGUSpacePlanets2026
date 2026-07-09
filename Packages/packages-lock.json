@@ -15,6 +15,15 @@
       "dependencies": {},
       "hash": "fcef6dfe8ed715cc60a7618a1d2ad62bcace3a80"
     },
+    "com.endesign.tourverse-toolkit": {
+      "version": "https://github.com/ini-dev2/TourverseToolkit.git#upm",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.addressables": "2.7.6"
+      },
+      "hash": "3ef3a0d5e22c261094dc0ae9404ce9b78f21b2d8"
+    },
     "com.unity.addressables": {
       "version": "2.7.6",
       "depth": 0,

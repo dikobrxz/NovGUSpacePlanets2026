@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// Зона возврата возле корабля. Когда игрок входит в неё после сбора артефактов —

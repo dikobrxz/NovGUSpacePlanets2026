@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// Главный менеджер приложения. Singleton, точка входа.

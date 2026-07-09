@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MoonGame
+namespace Tour_Endi_Moon
 {
     /// <summary>
     /// Управляет видимостью объекта в зависимости от этапа сценария.
