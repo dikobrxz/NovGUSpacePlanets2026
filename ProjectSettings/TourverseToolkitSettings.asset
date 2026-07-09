@@ -16,7 +16,7 @@ MonoBehaviour:
   - tourName: Tour_Endi_Saturn
     tourScene: {fileID: 102900000, guid: 55daccc09a3b69647bbab145b54a3ab3, type: 3}
     tourAssembly: {fileID: 5897886265953266890, guid: 8e220b76e3aa9594ca03c31c6437274e, type: 3}
-    tourAddressablesUuid: https://api-scenes-equipments.iwater-crm.online/files/5ed5beba-70bb-411a-8cf5-95187664deb0/oculus
+    tourAddressablesUuid: 
   generateHybrid: 0
   generateOnceObject: 0
   onceObjectName: 
