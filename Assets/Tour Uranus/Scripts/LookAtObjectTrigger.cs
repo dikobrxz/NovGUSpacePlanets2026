@@ -2,7 +2,7 @@ using System.Collections;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 
-namespace Tour_ENDI_PlanetsUranus
+namespace Tour_ENDI_TourStub3
 {
 
     public class LookAtObjectTrigger : MonoBehaviour

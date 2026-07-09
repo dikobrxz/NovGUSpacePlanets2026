@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace Tour_ENDI_PlanetsUranus
+namespace Tour_ENDI_TourStub3
 {
 
     public class CanvasWorldHint : MonoBehaviour

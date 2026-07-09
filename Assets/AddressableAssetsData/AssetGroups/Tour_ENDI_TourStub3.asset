@@ -10,14 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Tour_ENDI_PlanetsUranus
+  m_Name: Tour_ENDI_TourStub3
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Tour_ENDI_PlanetsUranus
-  m_GUID: fd1be23958610304b814ebdd00d6c176
-  m_SerializeEntries: []
+  m_GroupName: Tour_ENDI_TourStub3
+  m_GUID: 8fc0ede3e18243f4688e8e52b1099ed1
+  m_SerializeEntries:
+  - m_GUID: 820b3db6183297749b48558a7595a0da
+    m_Address: Tour_ENDI_TourStub3
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Tour_ENDI_TourStub3
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d1722fe7a5b49be4f942aaf8f4dbaf62, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: ed619cac02703f34a8c1f106cacd1e1d, type: 2}
-    - {fileID: 11400000, guid: dfed6cd872cf7c74e952763554e3e334, type: 2}
+    - {fileID: 11400000, guid: a64fd4e9142e9584ca8e02ad2ece2c1e, type: 2}
+    - {fileID: 11400000, guid: 0a1e7797cf15e184dad4a3e706f13d83, type: 2}

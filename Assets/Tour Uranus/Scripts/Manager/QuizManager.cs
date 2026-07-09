@@ -4,7 +4,7 @@ using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Tour_ENDI_PlanetsUranus
+namespace Tour_ENDI_TourStub3
 {
 
     public class QuizManager : MonoBehaviour

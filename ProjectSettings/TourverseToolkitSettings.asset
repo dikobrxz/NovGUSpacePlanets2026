@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: TourverseToolkit.Editor::TourverseToolkit.Editor.TourverseSettings
   toursList:
-  - tourName: Tour_ENDI_PlanetsUranus
+  - tourName: Tour_ENDI_TourStub3
     tourScene: {fileID: 102900000, guid: 820b3db6183297749b48558a7595a0da, type: 3}
     tourAssembly: {fileID: 5897886265953266890, guid: c43347c8a09649f4a94450be5d19eaf5, type: 3}
-    tourAddressablesUuid: https://api-scenes-equipments.iwater-crm.online/files/5ed5beba-70bb-411a-8cf5-95187664deb0/oculus
+    tourAddressablesUuid: 
   generateHybrid: 0
   generateOnceObject: 0
   onceObjectName: 

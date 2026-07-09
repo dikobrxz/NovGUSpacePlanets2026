@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
-namespace Tour_ENDI_PlanetsUranus
+namespace Tour_ENDI_TourStub3
 {
 
     public class GrabLogger : MonoBehaviour

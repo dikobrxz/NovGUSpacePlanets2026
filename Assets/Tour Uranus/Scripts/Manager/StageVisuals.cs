@@ -4,7 +4,7 @@ using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Tour_ENDI_PlanetsUranus
+namespace Tour_ENDI_TourStub3
 {
 
     public class StageVisuals : MonoBehaviour

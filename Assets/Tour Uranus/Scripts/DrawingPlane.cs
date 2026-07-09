@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
-namespace Tour_ENDI_PlanetsUranus
+namespace Tour_ENDI_TourStub3
 {
 
     public class DrawingPlane : MonoBehaviour
@@ -126,7 +126,11 @@ namespace Tour_ENDI_PlanetsUranus
 
         private bool IsTouchingCanvas(out Vector3 hitPoint)
         {
+            
             Ray ray = new Ray(brushTip.position, brushTip.forward);
+
+            Debug.DrawRay(ray.origin, ray.direction * 0.6f, Color.green);
+
             bool hit = Physics.Raycast(ray, out RaycastHit info, 0.6f);
             hitPoint = hit ? info.point : Vector3.zero;
             return hit && info.collider == canvasCollider;
