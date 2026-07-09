@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Tour_ENDI_TourStub4
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Tour_ENDI_TourStub4
+  m_GUID: 6266ccbc9303a1345afd463a145dea3d
+  m_SerializeEntries:
+  - m_GUID: 570f5ad848db04244b0ecb1045e55dfd
+    m_Address: Tour_Endi_Moon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Tour_ENDI_TourStub4
+    - Tour_Endi_Moon
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d1722fe7a5b49be4f942aaf8f4dbaf62, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 56196ae53904bf64680e323142d50dc2, type: 2}
+    - {fileID: 11400000, guid: 85a5a87b5954c13409eaa75f3ce82936, type: 2}

@@ -6,10 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Tours/Tour_Endi_Moon/Scenes/Startload.unity
+    path: Assets/Tours/Tour_ENDI_TourStub4/Scenes/Startload.unity
     guid: f0e684c8c3c280c45b28513554414f1c
   - enabled: 0
-    path: Assets/Tours/Tour_Endi_Moon/Scenes/Tour_Endi_Moon.unity
+    path: Assets/Tours/Tour_ENDI_TourStub4/Scenes/Tour_ENDI_TourStub4.unity
     guid: 570f5ad848db04244b0ecb1045e55dfd
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260, type: 2}

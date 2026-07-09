@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: a19ac383421ab744aab3a3953c18a427
   m_currentHash:
     serializedVersion: 2
-    Hash: 29e9907117a00aff99cd8d4e1a768589
+    Hash: 6b5f83d4790a9219668520702c965989
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 1
   m_BundleLocalCatalog: 0
@@ -62,6 +62,8 @@ MonoBehaviour:
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
   - {fileID: 11400000, guid: 575474d47030ba9418bd6216b9313667, type: 2}
+  - {fileID: 11400000, guid: e5bbd22971edb1f499215fe11c1e69c3, type: 2}
+  - {fileID: 11400000, guid: b5903e3ebf79e0c468250ccb7cbea2cf, type: 2}
   - {fileID: 11400000, guid: 19ba61a61877da549afd8ebd9c18ba99, type: 2}
   - {fileID: 11400000, guid: 5a4656c8155460f4f829a6a31357cfc4, type: 2}
   - {fileID: 11400000, guid: 12a1b815edf943346ad06f170bc37cb3, type: 2}
@@ -80,11 +82,11 @@ MonoBehaviour:
       - m_Id: 08b9d6500d24a9f4480e3434452fba34
         m_Value: oculus
       - m_Id: 73bc017e46d0f6f48a7d42300baf195e
-        m_Value: '{AddressablesUuid}/Tour_Endi_Moon/Android'
+        m_Value: '{AddressablesUuid}/Tour_ENDI_TourStub4/Android'
       - m_Id: 7c9329451e4a0c741958f623ae27d0e4
         m_Value: '[UnityEditor.EditorUserBuildSettings.activeBuildTarget]'
       - m_Id: 7e339607f411df8458224e14dbf8aef0
-        m_Value: ServerData/Tour_Endi_Moon/Android
+        m_Value: ServerData/Tour_ENDI_TourStub4/Android
       - m_Id: b7671aa1e9df66c4c8ffaf91f65ee447
         m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
       - m_Id: da10f80c7c050f9408408415553e0bd5
@@ -117,6 +119,8 @@ MonoBehaviour:
     - default
     - Tour_Endi_Moon
     - Tour_Endi_Moon.dll
+    - Tour_ENDI_TourStub4
+    - Tour_ENDI_TourStub4.dll
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: ae3ff7e907ddfcf4488c6d9d90f3b0c4, type: 2}

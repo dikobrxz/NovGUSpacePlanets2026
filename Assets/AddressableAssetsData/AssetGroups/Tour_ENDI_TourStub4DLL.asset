@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Tour_ENDI_TourStub4DLL
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Tour_ENDI_TourStub4DLL
+  m_GUID: 984b5cd2b5590db4cb09b6a21276288e
+  m_SerializeEntries:
+  - m_GUID: a58356eadab17f2428bc0266e108051d
+    m_Address: Tour_ENDI_TourStub4
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Tour_ENDI_TourStub4.dll
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d1722fe7a5b49be4f942aaf8f4dbaf62, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 06e3dadcc504a3c48ac67547eff63e18, type: 2}
+    - {fileID: 11400000, guid: 7dafef50bcf3b694189f1dabf454077c, type: 2}

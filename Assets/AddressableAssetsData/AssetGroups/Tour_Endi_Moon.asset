@@ -14,13 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Tour_Endi_Moon
   m_GUID: f939c7a6ddce4aa48b707d976bfb80fd
-  m_SerializeEntries:
-  - m_GUID: 570f5ad848db04244b0ecb1045e55dfd
-    m_Address: Tour_Endi_Moon
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Tour_Endi_Moon
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d1722fe7a5b49be4f942aaf8f4dbaf62, type: 2}
   m_SchemaSet:

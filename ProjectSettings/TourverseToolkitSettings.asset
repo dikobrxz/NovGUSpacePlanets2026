@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: TourverseToolkit.Editor::TourverseToolkit.Editor.TourverseSettings
   toursList:
-  - tourName: Tour_Endi_Moon
+  - tourName: Tour_ENDI_TourStub4
     tourScene: {fileID: 102900000, guid: 570f5ad848db04244b0ecb1045e55dfd, type: 3}
     tourAssembly: {fileID: 5897886265953266890, guid: 30550e1e53449d6429fbaa09c174b1ef, type: 3}
     tourAddressablesUuid: 
