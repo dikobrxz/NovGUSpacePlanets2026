@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 156c46f9e50ded04eaa34ee1c819d84f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20492
+  packageName: Ice Axe
+  packageVersion: initial
+  assetPath: Assets/IceAxe/Materials/HDRP/IceAxe_HDRP.mat
+  uploadId: 740529

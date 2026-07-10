@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f0461a549b689ae438d314e8ac88f67f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20492
+  packageName: Ice Axe
+  packageVersion: initial
+  assetPath: Assets/IceAxe/Materials/BuiltIn_RP/IceAxe_material_BIRP.mat
+  uploadId: 740529

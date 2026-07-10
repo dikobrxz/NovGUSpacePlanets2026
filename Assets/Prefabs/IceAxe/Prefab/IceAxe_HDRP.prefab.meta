@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 828cb87e1a6399c4d8948d908811743e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20492
+  packageName: Ice Axe
+  packageVersion: initial
+  assetPath: Assets/IceAxe/Prefab/IceAxe_HDRP.prefab
+  uploadId: 740529

@@ -37,17 +37,38 @@ public class GameManager : MonoBehaviour
         Debug.Log($"GameManager: {appState}");
     }
 
-    private void Update()       //тестовое управление для переключения этапов
+
+    private void Update()
     {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            if (SceneManager != null)
+            var sceneManager = FindAnyObjectByType<SceneManager>();
+            if (sceneManager == null) return;
+
+            // Старт сценария
+            if (!sceneManager.IsScenarioStarted())
             {
-                SceneManager.AdvanceToNextStage();
+                sceneManager.StartScenario();
+                return;
             }
+
+            // Блокируем пробел, если квиз ещё идёт
+            var quiz = FindAnyObjectByType<QuizManager>();
+            if (quiz != null && quiz.IsRunning())
+            {
+                return; // Игнорируем нажатие
+            }
+
+            // Блокируем пробел, если финальный этап уже активен
+            if (sceneManager.GetCurrentState() == SceneManager.ScenarioState.QuestComplete)
+            {
+                return; // Игнорируем нажатие
+            }
+
+            sceneManager.AdvanceToNextStage();
         }
     }
-
+    
     public void SetFinished()
     {
         SetAppState(AppState.Finished);

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 30c5a7b65bfc5dd478b52262d76781f0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 20492
+  packageName: Ice Axe
+  packageVersion: initial
+  assetPath: Assets/IceAxe/Misc/Materials/IceAxe_diff.mat
+  uploadId: 740529
