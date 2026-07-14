@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 
         if (SceneManager != null)    //запуск при старте
         {
-            SceneManager.StartScenario();
+            //SceneManager.StartScenario();
         }
         else
         {

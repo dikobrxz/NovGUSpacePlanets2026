@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using Unity.XR.CoreUtils;
 
 public class SceneManager : MonoBehaviour
 {
@@ -32,8 +34,8 @@ public class SceneManager : MonoBehaviour
     [SerializeField] private GameObject charonModel;
     [SerializeField] private AudioSource orbitAudioSource;
     [SerializeField] private float charonSpeed = 0.05f;
-    [SerializeField] private Vector3 charonStartPosition = new Vector3(208.4f, 15f, 161.5f);
-    [SerializeField] private Vector3 charonEndPosition = new Vector3(-34.3f, 15f, 98.6f);
+    [SerializeField] private Transform charonStartPosition;// = new Vector3(208.4f, 15f, 161.5f);
+    [SerializeField] private Transform charonEndPosition;// = new Vector3(-34.3f, 15f, 98.6f);
     [SerializeField] private float charonArcHeight = 40f;
     private bool isCharonMoving = false;
     private float charonProgress = 0f;
@@ -69,12 +71,33 @@ public class SceneManager : MonoBehaviour
     [SerializeField] private AudioSource pickaxeHitAudioSource;  
     [SerializeField] private AudioClip pickaxeHitSound;
     [SerializeField] private AudioSource bucketAudioSource;     
-    [SerializeField] private AudioClip iceInBucketSound;    
+    [SerializeField] private AudioClip iceInBucketSound;
+    [SerializeField] private AudioClip _startIntroClip;
+    [SerializeField] private AudioClip _landingFactClip;
+    [SerializeField] private AudioClip _observationFactClip;
+    [SerializeField] private AudioClip _questInstructionClip;
+    [SerializeField] private AudioClip _questCompleteClip;
 
     [Header("Cryovolcano")]
     [SerializeField] private GameObject cryovolcano;
     [SerializeField] private GameObject activatorPrefab;
     [SerializeField] private Transform activatorSpawnPoint;
+
+    [Space, Header("Other")]
+    [SerializeField] private GameObject _playerMove;
+    [SerializeField] private GameObject _hintMine;
+    [SerializeField] private GameObject _hintGrab;
+    [SerializeField] private GameObject _hintProbe;
+    [SerializeField] private GameObject _hintComplete;
+    [SerializeField] private XRGrabInteractable _axeInteract;
+    [SerializeField] private XRGrabInteractable _remoteInteract;
+    [SerializeField] private GameObject _world;
+    [SerializeField] private GameObject _space;
+    [SerializeField] private XROrigin _xrOrigin;
+    [SerializeField] private Transform _worldPosition;
+    [SerializeField] private Transform _spacePosition;
+    [SerializeField] private GameObject _platform;
+
     private bool isCryovolcanoActivated = false;
     private bool isCryovolcanoSampleCollected = false;
 
@@ -105,7 +128,7 @@ public class SceneManager : MonoBehaviour
 
         if (Time.time % 3 < 0.02f)
         {
-            RecoverLostItems();
+            //RecoverLostItems();
         }
     }
 
@@ -139,17 +162,89 @@ public class SceneManager : MonoBehaviour
     private void ActivateStartStage()
     {
         isStartStageActive = true;
-        if (startAudioSource != null && startAudioSource.clip != null) startAudioSource.Play();
-        if (plutoModel != null) plutoModel.gameObject.SetActive(true);
-        if (terrainObject != null) terrainObject.SetActive(false);
-        if (probe != null) probe.SetActive(false); 
-        if (charonModel != null) charonModel.SetActive(false);
-        if (pickaxe != null) pickaxe.SetActive(false); 
-        if (bucket != null) bucket.SetActive(false);
-        if (remoteControl != null) remoteControl.SetActive(false);
-        if (iceBlock != null) iceBlock.SetActive(false);
-        if (cryovolcano != null) cryovolcano.SetActive(false);
+        if (startAudioSource != null && startAudioSource.clip != null) startAudioSource.PlayOneShot(_startIntroClip);
         HUDManager.ShowHint("Нажмите ПРОБЕЛ для перехода к посадке");
+
+        StartCoroutine(StartLandingDelayCoroutine(_startIntroClip.length));
+    }
+
+    private IEnumerator StartLandingDelayCoroutine(float delay)
+    { 
+        yield return new WaitForSeconds(delay + 1f);
+        AdvanceToNextStage();
+
+        _playerMove.SetActive(true);
+
+        startAudioSource.PlayOneShot(_landingFactClip);
+        yield return new WaitForSeconds(_landingFactClip.length + 1f);
+        AdvanceToNextStage();
+
+        startAudioSource.PlayOneShot(_observationFactClip);
+        yield return new WaitForSeconds(_observationFactClip.length + 1f);
+        AdvanceToNextStage();
+
+        startAudioSource.PlayOneShot(_questInstructionClip);
+        _hintMine.SetActive(true);
+
+        _axeInteract.enabled = true;
+        _remoteInteract.enabled = true;
+
+        yield return new WaitForSeconds(_questInstructionClip.length + 1f);
+        AdvanceToNextStage();
+    }
+
+    public void RestartStage()
+    {
+        _space.SetActive(false);
+        _world.SetActive(true);
+        HideAllHints();
+        _platform.SetActive(false);
+
+        StartCoroutine(RestartStageCoroutine());
+    }
+
+    private IEnumerator RestartStageCoroutine()
+    {
+        yield return null;
+
+        _xrOrigin.MoveCameraToWorldLocation(_worldPosition.transform.position);
+        _xrOrigin.MatchOriginUpCameraForward(Vector3.up, _worldPosition.transform.forward.normalized);
+        _playerMove.SetActive(true);
+
+        yield return new WaitForSeconds(1f);
+
+        startAudioSource.PlayOneShot(_landingFactClip);
+        yield return new WaitForSeconds(_landingFactClip.length + 1f);
+
+        startAudioSource.PlayOneShot(_observationFactClip);
+        yield return new WaitForSeconds(_observationFactClip.length + 3f);
+
+        _platform.SetActive(true);
+    }
+
+    public void SetGrabHint()
+    {
+        HideAllHints();
+        _hintGrab.SetActive(true);
+    }
+
+    public void SetProbeHint()
+    {
+        HideAllHints();
+        _hintProbe.SetActive(true);
+    }
+
+    public void SetCompleteHint()
+    {
+        HideAllHints();
+        _hintComplete.SetActive(true);
+    }
+
+    public void HideAllHints()
+    {
+        _hintMine.SetActive(false);
+        _hintGrab.SetActive(false);
+        _hintComplete.SetActive(false);
     }
 
     private void DeactivateStartStage()
@@ -163,10 +258,11 @@ public class SceneManager : MonoBehaviour
         isTransitioning = true;
         
         if (startAudioSource != null && startAudioSource.isPlaying) startAudioSource.Stop();
-        if (plutoModel != null) plutoModel.gameObject.SetActive(false);
-        if (spaceship != null) spaceship.SetActive(false);
-        if (terrainObject != null) terrainObject.SetActive(true);
-        if (iceBlock != null) iceBlock.SetActive(true);
+        _space.SetActive(false);
+        _world.SetActive(true);
+
+        _xrOrigin.MoveCameraToWorldLocation(_worldPosition.transform.position);
+        _xrOrigin.MatchOriginUpCameraForward(Vector3.up, _worldPosition.transform.forward.normalized);
 
         if (cryovolcano != null)
         {
@@ -187,7 +283,7 @@ public class SceneManager : MonoBehaviour
 
         if (landingAudioSource != null && landingAudioSource.clip != null)
         {
-            landingAudioSource.Play();
+            //landingAudioSource.Play();
             Debug.Log("Landing аудио играет");
         }
 
@@ -196,17 +292,46 @@ public class SceneManager : MonoBehaviour
         HUDManager.ShowHint("Нажмите ПРОБЕЛ для перехода к орбите Харона");
     }
 
+    public void TeleportPlayerToShip()
+    {
+        _space.SetActive(true);
+        _world.SetActive(false);
+
+        StartCoroutine(TransitionCoroutine());
+
+        _playerMove.SetActive(false);
+
+        QuizManager quiz = FindAnyObjectByType<QuizManager>();
+        if (quiz != null && !quiz.IsRunning())
+            quiz.StartQuiz();
+    }
+
+    private IEnumerator TransitionCoroutine()
+    { 
+        yield return null;
+
+        _xrOrigin.MoveCameraToWorldLocation(_spacePosition.transform.position);
+        _xrOrigin.MatchOriginUpCameraForward(Vector3.up, _spacePosition.transform.forward.normalized);
+    }
+
+    public void CompleteProbeQuest()
+    {
+        startAudioSource.PlayOneShot(_questCompleteClip);
+        _platform.SetActive(true);
+        SetCompleteHint();
+    }
+
     private void ActivateOrbitStage()
     {
         if (charonModel != null)
         {
             charonModel.SetActive(true);
             charonProgress = 0f;
-            arcControlPoint = ((charonStartPosition + charonEndPosition) * 0.5f) + Vector3.up * charonArcHeight;
-            charonModel.transform.position = charonStartPosition;
+            arcControlPoint = ((charonStartPosition.position + charonEndPosition.position) * 0.5f) + Vector3.up * charonArcHeight;
+            charonModel.transform.position = charonStartPosition.position;
             isCharonMoving = true;
         }
-        if (orbitAudioSource != null) orbitAudioSource.Play();
+        //if (orbitAudioSource != null) orbitAudioSource.Play();
         HUDManager.ShowHint("Наблюдайте за полётом Харона. ПРОБЕЛ — следующий этап");
     }
 
@@ -216,7 +341,7 @@ public class SceneManager : MonoBehaviour
         if (charonProgress >= 1f) { charonProgress = 1f; isCharonMoving = false; }
         float t = charonProgress;
         float u = 1f - t;
-        charonModel.transform.position = (u*u*charonStartPosition) + (2*u*t*arcControlPoint) + (t*t*charonEndPosition);
+        charonModel.transform.position = (u*u*charonStartPosition.position) + (2*u*t*arcControlPoint) + (t*t*charonEndPosition.position);
         charonModel.transform.Rotate(Vector3.up, 5f * Time.deltaTime);
     }
 
@@ -273,10 +398,10 @@ public class SceneManager : MonoBehaviour
         isCryovolcanoSampleCollected = false;
         probeStep = 0;
 
-        if (explorationAudioSource != null) explorationAudioSource.Play();
+        //if (explorationAudioSource != null) explorationAudioSource.Play();
         if (pickaxe != null) pickaxe.SetActive(true);
-        if (bucket != null) bucket.SetActive(false);
-        if (remoteControl != null) remoteControl.SetActive(false);
+        //if (bucket != null) bucket.SetActive(false);
+        //if (remoteControl != null) remoteControl.SetActive(false);
         if (probe != null) probe.SetActive(false); 
         HUDManager.ShowHint("Откопайте лёд киркой (3 удара)");
     }

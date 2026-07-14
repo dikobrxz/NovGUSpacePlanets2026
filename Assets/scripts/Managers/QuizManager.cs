@@ -5,6 +5,7 @@ using System.Collections;
 
 public class QuizManager : MonoBehaviour
 {
+    [SerializeField] private SceneManager _sceneManager;
     [Header("UI")]
     [SerializeField] private TextMeshProUGUI questionText;
     [SerializeField] private Button[] answerButtons;
@@ -12,6 +13,7 @@ public class QuizManager : MonoBehaviour
     [SerializeField] private GameObject quizPanel;
     [SerializeField] private GameObject resultPanel;
     [SerializeField] private TextMeshProUGUI explanationText;
+    [SerializeField] private GameObject explanationBack;
     [SerializeField] private Button continueButton;
     [SerializeField] private Color correctColor = Color.green;
     [SerializeField] private Color wrongColor = Color.red;
@@ -98,6 +100,7 @@ public class QuizManager : MonoBehaviour
 
         if (explanationText != null) 
         {
+            explanationBack.SetActive(false);
             explanationText.gameObject.SetActive(false);
             explanationText.text = "";
         }
@@ -126,8 +129,8 @@ public class QuizManager : MonoBehaviour
             answerButtons[i].onClick.AddListener(() => OnAnswer(buttonIndex));
 
             var btnText = answerButtons[i].GetComponentInChildren<TextMeshProUGUI>();
-            if (btnText) btnText.text = $"{(char)('А' + i)}) {q.answers[i]}";
-            
+            if (btnText) btnText.text = $"{q.answers[i]}";//$"{(char)('А' + i)}) {q.answers[i]}";
+
             var image = answerButtons[i].GetComponent<Image>();
             if (image != null) image.color = defaultColor;
         }
@@ -186,6 +189,7 @@ public class QuizManager : MonoBehaviour
             explanationText.text = prefix + q.explanation;
             explanationText.color = isCorrect ? correctColor : wrongColor;
             explanationText.gameObject.SetActive(true);
+            explanationBack.SetActive(true);
         }
         
         if (continueButton != null)
@@ -275,18 +279,29 @@ public class QuizManager : MonoBehaviour
                 btn.interactable = false;
             }
         }
-        
+
         // Возвращаем игрока
-        if (playerRoot != null && lockPoint != null)
+        //if (playerRoot != null && lockPoint != null)
+        //{
+        //    playerRoot.transform.position = savedPlayerPos;
+        //}
+        if (score >= 3)
         {
-            playerRoot.transform.position = savedPlayerPos;
+            Debug.Log("Квиз завершён!");
+            if (finalVoiceOver != null && finalVoiceOver.clip != null)
+            {
+                Invoke(nameof(PlayFinalVoice), 1f);
+            }
         }
-        
-        Debug.Log("Квиз завершён!");
-        if (finalVoiceOver != null && finalVoiceOver.clip != null)
+        else 
         {
-            Invoke(nameof(PlayFinalVoice), 1f);
+            Invoke(nameof(Restart), 4f);
         }
+    }
+
+    private void Restart()
+    { 
+        _sceneManager.RestartStage();
     }
 
     private void PlayFinalVoice()
