@@ -1,14 +1,19 @@
 using UnityEngine;
 
-public class PlatformController : MonoBehaviour
+namespace Tour_ENDI_TourStub5
 {
-    [SerializeField] private SceneManager _sceneManager;
 
-    private void OnTriggerEnter(Collider other)
+    public class PlatformController : MonoBehaviour
     {
-        if (other.tag == "Tag3")
+        [SerializeField] private SceneManager _sceneManager;
+
+        private void OnTriggerEnter(Collider other)
         {
-            _sceneManager.TeleportPlayerToShip();
+            if (other.tag == "Tag3")
+            {
+                _sceneManager.TeleportPlayerToShip();
+            }
         }
     }
+
 }

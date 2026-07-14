@@ -1,14 +1,19 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class HoverSound : MonoBehaviour, IPointerEnterHandler
+namespace Tour_ENDI_TourStub5
 {
-    [SerializeField] private AudioClip sound;
-    private AudioSource audioSource;
 
-    private void Awake() => audioSource = gameObject.AddComponent<AudioSource>();
-    public void OnPointerEnter(PointerEventData eventData)
+    public class HoverSound : MonoBehaviour, IPointerEnterHandler
     {
-        if (sound != null) audioSource.PlayOneShot(sound);
+        [SerializeField] private AudioClip sound;
+        private AudioSource audioSource;
+
+        private void Awake() => audioSource = gameObject.AddComponent<AudioSource>();
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (sound != null) audioSource.PlayOneShot(sound);
+        }
     }
+
 }

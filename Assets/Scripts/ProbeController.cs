@@ -1,22 +1,32 @@
 using UnityEngine;
 
-public class ProbeController : MonoBehaviour
+namespace Tour_ENDI_TourStub5
 {
-    [SerializeField] private BucketController _bucket;
-    [SerializeField] private AudioSource _audio;
-    [SerializeField] private AudioClip _pickClip;
-    [SerializeField] private SceneManager _sceneManager;
 
-    public void SetFragment()
-    { 
-        var fragment = _bucket.GetFragment();
-
-        fragment.transform.SetParent(transform);
-        _audio.PlayOneShot(_pickClip);
-    }
-
-    public void CompleteScene()
+    public class ProbeController : MonoBehaviour
     {
-        _sceneManager.CompleteProbeQuest();
+        [SerializeField] private BucketController _bucket;
+        [SerializeField] private AudioSource _audio;
+        [SerializeField] private AudioClip _pickClip;
+        [SerializeField] private SceneManager _sceneManager;
+
+        public void SetFragment()
+        {
+            var fragment = _bucket.GetFragment();
+
+            fragment.transform.SetParent(transform);
+            _audio.PlayOneShot(_pickClip);
+        }
+
+        public void CompleteScene()
+        {
+            _sceneManager.CompleteProbeQuest();
+        }
+
+        public void Disable()
+        {
+            gameObject.SetActive(false);
+        }
     }
+
 }

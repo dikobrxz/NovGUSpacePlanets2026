@@ -1,76 +1,48 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public class GameManager : MonoBehaviour
+namespace Tour_ENDI_TourStub5
 {
-    public enum AppState { NotStarted, Running, Paused, Finished } //перечисление состояния приложения
-    private AppState appState = AppState.NotStarted;
 
-    [SerializeField] private SceneManager SceneManager; //ссылка на scene manager
-
-    private void Awake()
+    public class GameManager : MonoBehaviour
     {
-        if (SceneManager == null)    //автопоиск если инспектор подтупил
+        public enum AppState { NotStarted, Running, Paused, Finished } //перечисление состояния приложения
+        private AppState appState = AppState.NotStarted;
+
+        [SerializeField] private SceneManager SceneManager; //ссылка на scene manager
+
+        private void Awake()
         {
-            SceneManager = GetComponent<SceneManager>();
-        }
-    }
-
-    private void Start()
-    {
-        SetAppState(AppState.Running);
-        Debug.Log("GameManager Entry Point");
-
-        if (SceneManager != null)    //запуск при старте
-        {
-            //SceneManager.StartScenario();
-        }
-        else
-        {
-            Debug.LogError("GameManager нет ссылки на SceneManager");
-        }
-    }
-
-    private void SetAppState(AppState newState)     //управление состоянием
-    {
-        appState = newState;
-        Debug.Log($"GameManager: {appState}");
-    }
-
-
-    private void Update()
-    {
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            var sceneManager = FindAnyObjectByType<SceneManager>();
-            if (sceneManager == null) return;
-
-            // Старт сценария
-            if (!sceneManager.IsScenarioStarted())
+            if (SceneManager == null)    //автопоиск если инспектор подтупил
             {
-                sceneManager.StartScenario();
-                return;
+                SceneManager = GetComponent<SceneManager>();
             }
+        }
 
-            // Блокируем пробел, если квиз ещё идёт
-            var quiz = FindAnyObjectByType<QuizManager>();
-            if (quiz != null && quiz.IsRunning())
+        private void Start()
+        {
+            SetAppState(AppState.Running);
+            Debug.Log("GameManager Entry Point");
+
+            if (SceneManager != null)    //запуск при старте
             {
-                return; // Игнорируем нажатие
+                //SceneManager.StartScenario();
             }
-
-            // Блокируем пробел, если финальный этап уже активен
-            if (sceneManager.GetCurrentState() == SceneManager.ScenarioState.QuestComplete)
+            else
             {
-                return; // Игнорируем нажатие
+                Debug.LogError("GameManager нет ссылки на SceneManager");
             }
+        }
 
-            sceneManager.AdvanceToNextStage();
+        private void SetAppState(AppState newState)     //управление состоянием
+        {
+            appState = newState;
+            Debug.Log($"GameManager: {appState}");
+        }
+
+        public void SetFinished()
+        {
+            SetAppState(AppState.Finished);
         }
     }
-    
-    public void SetFinished()
-    {
-        SetAppState(AppState.Finished);
-    }
+
 }

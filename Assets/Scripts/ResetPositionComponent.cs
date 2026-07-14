@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-namespace Tour_Endi_Lukomorie
+namespace Tour_ENDI_TourStub5
 {
 
     public class ResetPositionComponent : MonoBehaviour

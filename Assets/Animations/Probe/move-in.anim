@@ -108,7 +108,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 15.033334
-        value: {x: 99.33, y: 7.867, z: 134.185}
+        value: {x: 99.33, y: 7.693, z: 134.185}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -118,8 +118,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 16.016666
         value: {x: 99.33, y: 8.027, z: 134.421}
-        inSlope: {x: 0, y: 0.14178073, z: 0.36871922}
-        outSlope: {x: 0, y: 0.14178073, z: 0.36871922}
+        inSlope: {x: 0, y: 0.21328768, z: 0.36871922}
+        outSlope: {x: 0, y: 0.21328768, z: 0.36871922}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
@@ -322,7 +322,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 15.033334
-        value: 7.867
+        value: 7.693
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -332,8 +332,8 @@ AnimationClip:
       - serializedVersion: 3
         time: 16.016666
         value: 8.027
-        inSlope: 0.14178073
-        outSlope: 0.14178073
+        inSlope: 0.21328768
+        outSlope: 0.21328768
         tangentMode: 136
         weightedMode: 0
         inWeight: 0.33333334
@@ -740,6 +740,13 @@ AnimationClip:
     messageOptions: 0
   - time: 22.05
     functionName: CompleteScene
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 77.88333
+    functionName: Disable
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

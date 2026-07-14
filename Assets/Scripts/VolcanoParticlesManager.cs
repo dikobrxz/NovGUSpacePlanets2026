@@ -1,47 +1,52 @@
 using System.Collections;
 using UnityEngine;
 
-public class VolcanoParticlesManager : MonoBehaviour
+namespace Tour_ENDI_TourStub5
 {
-    [SerializeField] private ParticleSystem _particleSystem;
-    [SerializeField] private AudioSource _audioSource;
-    [SerializeField] private AudioClip _audioClip;
 
-    private bool _isPlay = true;
-
-    private void OnEnable()
+    public class VolcanoParticlesManager : MonoBehaviour
     {
-        _isPlay = true;
+        [SerializeField] private ParticleSystem _particleSystem;
+        [SerializeField] private AudioSource _audioSource;
+        [SerializeField] private AudioClip _audioClip;
 
-        StopAllCoroutines();
-        StartCoroutine(EmitCoroutine());
-    }
+        private bool _isPlay = true;
 
-    private IEnumerator EmitCoroutine()
-    {
-        yield return new WaitForSeconds(Random.Range(1f, 7f));
-        while (_isPlay) 
+        private void OnEnable()
         {
-            _particleSystem.Play();
-            _audioSource.PlayOneShot(_audioClip);
+            _isPlay = true;
 
-            yield return new WaitForSeconds(Random.Range(12f, 25f));
+            StopAllCoroutines();
+            StartCoroutine(EmitCoroutine());
+        }
+
+        private IEnumerator EmitCoroutine()
+        {
+            yield return new WaitForSeconds(Random.Range(1f, 7f));
+            while (_isPlay)
+            {
+                _particleSystem.Play();
+                _audioSource.PlayOneShot(_audioClip);
+
+                yield return new WaitForSeconds(Random.Range(12f, 25f));
+            }
+        }
+
+        private void DisableEmit()
+        {
+            _isPlay = false;
+            StopAllCoroutines();
+        }
+
+        private void OnDisable()
+        {
+            DisableEmit();
+        }
+
+        private void OnDestroy()
+        {
+            DisableEmit();
         }
     }
 
-    private void DisableEmit()
-    {
-        _isPlay = false;
-        StopAllCoroutines();
-    }
-
-    private void OnDisable()
-    {
-        DisableEmit();
-    }
-
-    private void OnDestroy()
-    {
-        DisableEmit();
-    }
 }
