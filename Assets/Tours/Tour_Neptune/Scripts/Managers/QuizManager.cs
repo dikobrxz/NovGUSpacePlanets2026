@@ -5,6 +5,7 @@ using System.Collections;
 
 public class QuizManager : MonoBehaviour
 {
+    [SerializeField] private StoryManager _storyManager;
     [Header("UI")]
     public GameObject quizPanel;
     public GameObject resultsPanel;
@@ -44,7 +45,7 @@ public class QuizManager : MonoBehaviour
         new string[] { "Да", "Нет", "Когда-то была", "Возможно на спутниках" }
     };
 
-    private int[] correctIndices = { 2, 2, 0, 1, 1 };
+    private int[] correctIndices = { 3, 2, 0, 1, 1 };
 
     void Start()
     {
@@ -150,7 +151,10 @@ public class QuizManager : MonoBehaviour
             if (correctAnswers == 5)
                 resultText.text = "Невероятный успех! Твои знания помогут человечеству!";
             else if (correctAnswers >= 3)
+            {
                 resultText.text = "Молодец! Твоих знаний хватит для новой миссии!";
+                StartCoroutine(RestartSceneCoroutine());
+            }
             else
                 resultText.text = "Попробуй ещё раз! Стоит снова посетить планету.";
         }
@@ -160,5 +164,11 @@ public class QuizManager : MonoBehaviour
 
         if (wrongAnswerText != null)
             wrongAnswerText.text = "Не правильно: " + wrongCount;
+    }
+
+    private IEnumerator RestartSceneCoroutine()
+    {
+        yield return new WaitForSeconds(5f);
+        _storyManager.OnStartPressed();
     }
 }

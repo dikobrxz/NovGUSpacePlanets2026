@@ -73,6 +73,8 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+.utmp/
+/HybridCLRData/
 
 # End of https://www.toptal.com/developers/gitignore/api/unity
 Assets/_RiverMarket/Models/Polytope Studio/Lowpoly_Characters/SRP/Polytope Studio/Polytope Studio/Lowpoly_Characters/SRP/PT_Peasants_Free_URP_10.10.1.unitypackage.meta

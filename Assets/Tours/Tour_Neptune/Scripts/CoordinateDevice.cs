@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.Experimental.GlobalIllumination;
+using System.Collections;
 
 public class CoordinateDevice : MonoBehaviour
 {
@@ -13,15 +15,29 @@ public class CoordinateDevice : MonoBehaviour
     public AudioClip clickSound;
     public AudioClip successSound;
 
+    [Space, Header("Other")]
+    [SerializeField] private GameObject _impactSound;
+    [SerializeField] private GameObject _landingSound;
+    [SerializeField] private GameObject _fxParticles;
+    [SerializeField] private GameObject _landingLight;
+    [SerializeField] private PointLight[] _displayLights;
+    [SerializeField] private Animator _animation;
+    [SerializeField] private AudioSource _audio;
+    [SerializeField] private AudioClip _displaySound;
+    [SerializeField] private GameObject _hint;
+    [SerializeField] private GameObject _landCollider;
+
     private int[] targetCode = { 4, 7, 2 };
     private int[] currentCode = { 0, 0, 0 };
     private int activeSlot = 0;
     private bool missionComplete = false;
     private bool interactionEnabled = false;
 
+    private static int _displayKey = Animator.StringToHash("display");
+
     void Start()
     {
-        UpdateDisplay();
+        //UpdateDisplay();
         if (statusText != null)
             statusText.text = "";
     }
@@ -104,8 +120,9 @@ public class CoordinateDevice : MonoBehaviour
                     line += " " + currentCode[i] + " ";
                 if (i < 2) line += "  ";
             }
-            displayText.text = line + "\nНажми экран для отправки";
+            displayText.text = line;
         }
+        statusText.text = "Введите код: 4 - 7 - 2";
     }
 
     void UpdateNeedle()
@@ -121,5 +138,29 @@ public class CoordinateDevice : MonoBehaviour
     {
         if (deviceAudio != null && clickSound != null)
             deviceAudio.PlayOneShot(clickSound);
+    }
+
+    public void LandingEvent()
+    {
+        _impactSound.SetActive(true);
+        _fxParticles.SetActive(true);
+        _landingLight.SetActive(false);
+        _landingSound.SetActive(false);
+        _landCollider.SetActive(false);
+
+        StartCoroutine(DisplayCoroutine());
+    }
+
+    private IEnumerator DisplayCoroutine()
+    {
+        yield return new WaitForSeconds(4f);
+
+        _animation.SetTrigger(_displayKey);
+        _audio.PlayOneShot(_displaySound);
+    }
+
+    public void DisableHint()
+    { 
+        _hint.SetActive(false);
     }
 }
