@@ -1,11 +1,16 @@
 using UnityEngine;
 
-public class ButtonActivator : MonoBehaviour
+namespace Tour_ENDI_TourStub6
 {
-    public CompassDevice compassDevice;
 
-    void OnMouseDown()
+    public class ButtonActivator : MonoBehaviour
     {
-        compassDevice.ActivateCompass();
+        public CompassDevice compassDevice;
+
+        void OnMouseDown()
+        {
+            compassDevice.ActivateCompass();
+        }
     }
+
 }

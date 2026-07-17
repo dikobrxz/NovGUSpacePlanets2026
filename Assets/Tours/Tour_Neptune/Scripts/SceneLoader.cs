@@ -1,16 +1,21 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SceneLoader : MonoBehaviour
+namespace Tour_ENDI_TourStub6
 {
-    public void LoadNeptuneScene()
+
+    public class SceneLoader : MonoBehaviour
     {
-        PlayerPrefs.SetInt("visited", 1);
-        SceneManager.LoadScene("Neptune");
+        public void LoadNeptuneScene()
+        {
+            PlayerPrefs.SetInt("visited", 1);
+            SceneManager.LoadScene("Neptune");
+        }
+
+        public void LoadStartScene()
+        {
+            SceneManager.LoadScene("StartScene");
+        }
     }
 
-    public void LoadStartScene()
-    {
-        SceneManager.LoadScene("StartScene");
-    }
 }

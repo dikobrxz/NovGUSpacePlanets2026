@@ -1,12 +1,17 @@
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+namespace Tour_ENDI_TourStub6
 {
-    public static bool visitedNeptune = false;
 
-    void Start()
+    public class GameManager : MonoBehaviour
     {
-        // StoryManager сам настраивает начальное состояние в своём Start()
-        // Кнопка "Начать" вызывает StoryManager.OnStartPressed()
+        public static bool visitedNeptune = false;
+
+        void Start()
+        {
+            // StoryManager сам настраивает начальное состояние в своём Start()
+            // Кнопка "Начать" вызывает StoryManager.OnStartPressed()
+        }
     }
+
 }

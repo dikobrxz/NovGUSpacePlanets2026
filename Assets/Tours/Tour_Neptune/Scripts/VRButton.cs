@@ -1,18 +1,23 @@
 using UnityEngine;
 
-
-public class VRButton : MonoBehaviour
+namespace Tour_ENDI_TourStub6
 {
-    public UnityEngine.Events.UnityEvent onPress;
-    private bool isHovered = false;
 
-    void Start()
+    public class VRButton : MonoBehaviour
     {
-        var interactable = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable>();
-        interactable.hoverEntered.AddListener((args) => isHovered = true);
-        interactable.hoverExited.AddListener((args) => isHovered = false);
-        interactable.selectEntered.AddListener((args) => {
-            if (isHovered) onPress.Invoke();
-        });
+        public UnityEngine.Events.UnityEvent onPress;
+        private bool isHovered = false;
+
+        void Start()
+        {
+            var interactable = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRSimpleInteractable>();
+            interactable.hoverEntered.AddListener((args) => isHovered = true);
+            interactable.hoverExited.AddListener((args) => isHovered = false);
+            interactable.selectEntered.AddListener((args) =>
+            {
+                if (isHovered) onPress.Invoke();
+            });
+        }
     }
+
 }

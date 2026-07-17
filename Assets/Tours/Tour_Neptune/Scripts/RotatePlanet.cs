@@ -1,11 +1,16 @@
 using UnityEngine;
 
-public class RotatePlanet : MonoBehaviour
+namespace Tour_ENDI_TourStub6
 {
-    public float speed = 15f;
 
-    void Update()
+    public class RotatePlanet : MonoBehaviour
     {
-        transform.Rotate(Vector3.up * speed * Time.deltaTime);
+        public float speed = 15f;
+
+        void Update()
+        {
+            transform.Rotate(Vector3.up * speed * Time.deltaTime);
+        }
     }
+
 }

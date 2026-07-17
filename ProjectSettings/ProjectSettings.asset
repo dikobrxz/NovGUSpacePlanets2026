@@ -147,9 +147,6 @@ PlayerSettings:
   - {fileID: 11400000, guid: f8a442de0c8906f4d9c00184993fc289, type: 2}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: -3728528452315536981, guid: 2462f957eee75f940a3393fd6f039795, type: 2}
-  - {fileID: -2264778514210020867, guid: 136958f90a130274b8b70a31eed352fb, type: 2}
-  - {fileID: 11400000, guid: 56a98106ce58f09459a9990007b50acb, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -924,7 +921,7 @@ PlayerSettings:
   gcIncremental: 0
   gcWBarrierValidation: 0
   apiCompatibilityLevelPerPlatform: {}
-  editorAssembliesCompatibilityLevel: 1
+  editorAssembliesCompatibilityLevel: 2
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: SampleProject
@@ -1002,7 +999,7 @@ PlayerSettings:
   hmiCpuConfiguration: 
   hmiLogStartupTiming: 0
   qnxGraphicConfPath: 
-  apiCompatibilityLevel: 6
+  apiCompatibilityLevel: 3
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0

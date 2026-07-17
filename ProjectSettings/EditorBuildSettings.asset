@@ -11,8 +11,8 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/StartScene.unity
     guid: 709db9a836cfc442f9dbfe8338f6fe5c
-  - enabled: 1
-    path: Assets/Tours/Tour_Neptune/Scenes/Neptune.unity
+  - enabled: 0
+    path: Assets/Tours/Tour_Neptune/Scenes/Tour_ENDI_TourStub6.unity
     guid: ae401718ad96d4f61a146e24b81270e9
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: bfa1182bd221b4ca89619141f66f1260, type: 2}

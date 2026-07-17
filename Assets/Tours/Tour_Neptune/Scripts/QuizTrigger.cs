@@ -1,12 +1,17 @@
 using UnityEngine;
 
-public class QuizTrigger : MonoBehaviour
+namespace Tour_ENDI_TourStub6
 {
-    public QuizManager quizManager;
 
-    void OnTriggerEnter(Collider other)
+    public class QuizTrigger : MonoBehaviour
     {
-        if (other.CompareTag("Player"))
-            quizManager.StartQuiz();
+        public QuizManager quizManager;
+
+        void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("Player"))
+                quizManager.StartQuiz();
+        }
     }
+
 }

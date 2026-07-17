@@ -1,51 +1,56 @@
 using UnityEngine;
 using System.Collections;
 
-public class NeptuneAtmosphere : MonoBehaviour
+namespace Tour_ENDI_TourStub6
 {
-    [Header("Слои газа (Particle Systems)")]
-    public ParticleSystem lowFog;
-    public ParticleSystem midGas;
-    public ParticleSystem highClouds;
-    public ParticleSystem crystalParticles;
 
-    public IEnumerator Dissipate(float duration)
+    public class NeptuneAtmosphere : MonoBehaviour
     {
-        float startLow = GetRate(lowFog);
-        float startMid = GetRate(midGas);
-        float startHigh = GetRate(highClouds);
-        float startCrystal = GetRate(crystalParticles);
+        [Header("Слои газа (Particle Systems)")]
+        public ParticleSystem lowFog;
+        public ParticleSystem midGas;
+        public ParticleSystem highClouds;
+        public ParticleSystem crystalParticles;
 
-        float t = 0;
-        while (t < duration)
+        public IEnumerator Dissipate(float duration)
         {
-            t += Time.deltaTime;
-            float p = t / duration;
+            float startLow = GetRate(lowFog);
+            float startMid = GetRate(midGas);
+            float startHigh = GetRate(highClouds);
+            float startCrystal = GetRate(crystalParticles);
 
-            SetRate(lowFog, Mathf.Lerp(startLow, 0, p));
-            SetRate(midGas, Mathf.Lerp(startMid, 0, p));
-            SetRate(highClouds, Mathf.Lerp(startHigh, 0, p));
-            SetRate(crystalParticles, Mathf.Lerp(startCrystal, 0, p));
+            float t = 0;
+            while (t < duration)
+            {
+                t += Time.deltaTime;
+                float p = t / duration;
 
-            yield return null;
+                SetRate(lowFog, Mathf.Lerp(startLow, 0, p));
+                SetRate(midGas, Mathf.Lerp(startMid, 0, p));
+                SetRate(highClouds, Mathf.Lerp(startHigh, 0, p));
+                SetRate(crystalParticles, Mathf.Lerp(startCrystal, 0, p));
+
+                yield return null;
+            }
+
+            if (lowFog != null) lowFog.Stop();
+            if (midGas != null) midGas.Stop();
+            if (highClouds != null) highClouds.Stop();
+            if (crystalParticles != null) crystalParticles.Stop();
         }
 
-        if (lowFog != null) lowFog.Stop();
-        if (midGas != null) midGas.Stop();
-        if (highClouds != null) highClouds.Stop();
-        if (crystalParticles != null) crystalParticles.Stop();
+        float GetRate(ParticleSystem ps)
+        {
+            if (ps == null) return 0;
+            return ps.emission.rateOverTime.constant;
+        }
+
+        void SetRate(ParticleSystem ps, float rate)
+        {
+            if (ps == null) return;
+            var em = ps.emission;
+            em.rateOverTime = rate;
+        }
     }
 
-    float GetRate(ParticleSystem ps)
-    {
-        if (ps == null) return 0;
-        return ps.emission.rateOverTime.constant;
-    }
-
-    void SetRate(ParticleSystem ps, float rate)
-    {
-        if (ps == null) return;
-        var em = ps.emission;
-        em.rateOverTime = rate;
-    }
 }
