@@ -17,6 +17,6 @@ MonoBehaviour:
     tourScene: {fileID: 102900000, guid: 46beb38feaa52364f8970154abc9349d, type: 3}
     tourAssembly: {fileID: 5897886265953266890, guid: cba69a3b447d5074bbf057ba34d23fcf, type: 3}
     tourAddressablesUuid: 
-  generateHybrid: 0
+  generateHybrid: 1
   generateOnceObject: 0
   onceObjectName: 
