@@ -164,7 +164,10 @@ namespace Tour_ENDI_TourStub4
                 narratorSource.Play();
                 Debug.Log($"[AudioManager] Играет: «{next.name}»");
 
-                yield return new WaitWhile(() => narratorSource.isPlaying);
+                while(narratorSource.isPlaying)
+                {
+                    yield return null;
+                }
                 yield return new WaitForSeconds(0.3f);
             }
             playbackCoroutine = null;
